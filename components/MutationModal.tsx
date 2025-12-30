@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Save, Send, MapPin, Calendar, Building, Info, AlertTriangle, FileText, CheckCircle2, Clock } from 'lucide-react';
+import { X, Send, MapPin, Building, Info, AlertTriangle, User } from 'lucide-react';
 import { MutationRecord, VehicleRecord } from '../types';
 
 interface Props {
@@ -25,7 +25,9 @@ export const MutationModal: React.FC<Props> = ({
     status: 'Draft',
     statusApproval: 'Pending',
     tglPermintaan: new Date().toISOString().split('T')[0],
-    tipeMutasi: 'Permanent'
+    tipeMutasi: 'Permanent',
+    picBefore: '',
+    picAfter: ''
   });
 
   useEffect(() => {
@@ -40,7 +42,9 @@ export const MutationModal: React.FC<Props> = ({
             tipeMutasi: 'Permanent',
             noPolisi: '',
             lokasiAsal: '',
-            lokasiTujuan: ''
+            lokasiTujuan: '',
+            picBefore: '',
+            picAfter: ''
         });
       }
       setActiveTab('DETAILS');
@@ -60,10 +64,11 @@ export const MutationModal: React.FC<Props> = ({
               ...prev,
               noPolisi: vehicle.noPolisi,
               cabangAset: vehicle.cabang,
-              lokasiAsal: vehicle.cabang // Auto-set origin to current branch
+              lokasiAsal: vehicle.cabang, // Auto-set origin to current branch
+              picBefore: vehicle.pengguna || '' // Auto-set previous PIC if available
           }));
       } else {
-          setForm(prev => ({ ...prev, noPolisi: selectedNoPol, cabangAset: '', lokasiAsal: '' }));
+          setForm(prev => ({ ...prev, noPolisi: selectedNoPol, cabangAset: '', lokasiAsal: '', picBefore: '' }));
       }
   };
 
@@ -101,7 +106,7 @@ export const MutationModal: React.FC<Props> = ({
         </div>
 
         {/* Content */}
-        <div className="p-10 overflow-y-auto custom-scrollbar">
+        <div className="p-10 overflow-y-auto custom-scrollbar bg-[#FBFBFB]">
             {activeTab === 'DETAILS' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Vehicle Selection */}
@@ -127,13 +132,6 @@ export const MutationModal: React.FC<Props> = ({
                             </select>
                         </div>
                         <div>
-                            <Label>Cabang Saat Ini</Label>
-                            <div className="flex items-center gap-3 bg-gray-50 px-5 py-4 rounded-2xl border border-gray-100">
-                                <Building size={16} className="text-gray-400" />
-                                <span className="text-[12px] font-black text-gray-600 uppercase">{form.cabangAset || '-'}</span>
-                            </div>
-                        </div>
-                        <div>
                             <Label>Tanggal Permintaan</Label>
                             <input 
                                 type="date"
@@ -142,6 +140,25 @@ export const MutationModal: React.FC<Props> = ({
                                 value={form.tglPermintaan}
                                 onChange={(e) => setForm({...form, tglPermintaan: e.target.value})}
                             />
+                        </div>
+                        <div>
+                            <Label required>Tipe Mutasi</Label>
+                            <div className="flex gap-2">
+                                {['Permanent', 'Temporary'].map(type => (
+                                    <button
+                                        key={type}
+                                        onClick={() => !isView && setForm({...form, tipeMutasi: type})}
+                                        disabled={isView}
+                                        className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest rounded-2xl border transition-all ${
+                                            form.tipeMutasi === type 
+                                            ? 'bg-black text-white border-black shadow-lg' 
+                                            : 'bg-white text-gray-400 border-gray-200 hover:border-black hover:text-black'
+                                        }`}
+                                    >
+                                        {type}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -154,41 +171,73 @@ export const MutationModal: React.FC<Props> = ({
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <Label required>Tipe Mutasi</Label>
-                            <div className="flex gap-2">
-                                {['Permanent', 'Temporary'].map(type => (
-                                    <button
-                                        key={type}
-                                        onClick={() => !isView && setForm({...form, tipeMutasi: type})}
+                        
+                        {/* Origin Group */}
+                        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                            <div className="md:col-span-2 border-b border-gray-200 pb-2 mb-2">
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">ASAL (ORIGIN)</span>
+                            </div>
+                            <div>
+                                <Label>Cabang Asal</Label>
+                                <div className="flex items-center gap-3 bg-white px-5 py-4 rounded-2xl border border-gray-200 shadow-sm">
+                                    <Building size={16} className="text-gray-400" />
+                                    <span className="text-[12px] font-black text-gray-600 uppercase">{form.cabangAset || '-'}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <Label>PIC Asal / Sebelumnya</Label>
+                                <div className="relative">
+                                    <input 
+                                        type="text"
                                         disabled={isView}
-                                        className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl border transition-all ${
-                                            form.tipeMutasi === type 
-                                            ? 'bg-black text-white border-black shadow-lg' 
-                                            : 'bg-white text-gray-400 border-gray-200 hover:border-black hover:text-black'
-                                        }`}
-                                    >
-                                        {type}
-                                    </button>
-                                ))}
+                                        className="w-full bg-white border-none rounded-2xl px-5 py-4 pl-12 text-[12px] font-black text-black outline-none shadow-sm focus:ring-2 focus:ring-black/5 disabled:text-gray-400"
+                                        placeholder="Nama PIC Lama"
+                                        value={form.picBefore || ''}
+                                        onChange={(e) => setForm({...form, picBefore: e.target.value})}
+                                    />
+                                    <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                </div>
                             </div>
                         </div>
-                        
-                        <div>
-                            <Label required>Lokasi Tujuan</Label>
-                            <select 
-                                disabled={isView}
-                                className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none shadow-sm focus:ring-2 focus:ring-black/5 disabled:text-gray-400 appearance-none cursor-pointer"
-                                value={form.lokasiTujuan || ''}
-                                onChange={(e) => setForm({...form, lokasiTujuan: e.target.value})}
-                            >
-                                <option value="">-- Pilih Tujuan --</option>
-                                <option value="Jakarta">Jakarta Head Office</option>
-                                <option value="Surabaya">Surabaya Branch</option>
-                                <option value="Medan">Medan Branch</option>
-                                <option value="Makassar">Makassar Warehouse</option>
-                                <option value="Bandung">Bandung Branch</option>
-                            </select>
+
+                        {/* Destination Group */}
+                        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                            <div className="md:col-span-2 border-b border-gray-200 pb-2 mb-2">
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">TUJUAN (DESTINATION)</span>
+                            </div>
+                            <div>
+                                <Label required>Lokasi Tujuan</Label>
+                                <div className="relative">
+                                    <select 
+                                        disabled={isView}
+                                        className="w-full bg-white border-none rounded-2xl px-5 py-4 pl-12 text-[12px] font-black text-black outline-none shadow-sm focus:ring-2 focus:ring-black/5 disabled:text-gray-400 appearance-none cursor-pointer"
+                                        value={form.lokasiTujuan || ''}
+                                        onChange={(e) => setForm({...form, lokasiTujuan: e.target.value})}
+                                    >
+                                        <option value="">-- Pilih Tujuan --</option>
+                                        <option value="Jakarta">Jakarta Head Office</option>
+                                        <option value="Surabaya">Surabaya Branch</option>
+                                        <option value="Medan">Medan Branch</option>
+                                        <option value="Makassar">Makassar Warehouse</option>
+                                        <option value="Bandung">Bandung Branch</option>
+                                    </select>
+                                    <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                </div>
+                            </div>
+                            <div>
+                                <Label required>PIC Tujuan / Penerima</Label>
+                                <div className="relative">
+                                    <input 
+                                        type="text"
+                                        disabled={isView}
+                                        className="w-full bg-white border-none rounded-2xl px-5 py-4 pl-12 text-[12px] font-black text-black outline-none shadow-sm focus:ring-2 focus:ring-black/5 disabled:text-gray-400"
+                                        placeholder="Nama PIC Baru"
+                                        value={form.picAfter || ''}
+                                        onChange={(e) => setForm({...form, picAfter: e.target.value})}
+                                    />
+                                    <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                </div>
+                            </div>
                         </div>
 
                         <div className="md:col-span-2">
@@ -205,33 +254,8 @@ export const MutationModal: React.FC<Props> = ({
             ) : (
                 <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div className="bg-white p-12 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden">
-                        <div className="absolute left-[51px] top-12 bottom-12 w-[2px] bg-gray-100"></div>
-                        <div className="space-y-10 relative z-10">
-                            <div className="flex gap-8">
-                                <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center shadow-lg shadow-black/20 shrink-0">
-                                    <FileText size={20} strokeWidth={3} />
-                                </div>
-                                <div className="pt-2">
-                                    <h4 className="text-[13px] font-black text-black uppercase tracking-tight">Mutation Request Created</h4>
-                                    <p className="text-[11px] text-gray-400 mt-1">Submitted on {form.tglPermintaan}</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-8">
-                                <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 border-4 border-white shadow-lg ${
-                                    form.statusApproval === 'Approved' ? 'bg-green-500 text-white shadow-green-200' :
-                                    form.statusApproval === 'Rejected' ? 'bg-red-500 text-white shadow-red-200' :
-                                    'bg-orange-500 text-white shadow-orange-200'
-                                }`}>
-                                    {form.statusApproval === 'Approved' ? <CheckCircle2 size={20} /> : 
-                                     form.statusApproval === 'Rejected' ? <X size={20} /> : <Clock size={20} />}
-                                </div>
-                                <div className="pt-2">
-                                    <h4 className="text-[13px] font-black text-black uppercase tracking-tight">Status: {form.statusApproval}</h4>
-                                    <p className="text-[11px] text-gray-400 mt-1">
-                                        {form.statusApproval === 'Approved' ? 'Transfer Approved' : 'Waiting for approval'}
-                                    </p>
-                                </div>
-                            </div>
+                        <div className="text-center p-8">
+                            <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">Workflow Visualization Placeholder</p>
                         </div>
                   </div>
               </div>
@@ -246,7 +270,7 @@ export const MutationModal: React.FC<Props> = ({
                 onClick={() => onSave(form)} 
                 className="px-16 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-white bg-black rounded-2xl hover:bg-gray-900 shadow-xl shadow-black/20 transition-all active:scale-95 flex items-center gap-3"
             >
-                <Save size={18} strokeWidth={2.5} /> Ajukan Mutasi
+                <Send size={18} strokeWidth={2.5} /> Ajukan Mutasi
             </button>
           )}
         </div>

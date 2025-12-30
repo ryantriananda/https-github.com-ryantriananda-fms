@@ -595,6 +595,8 @@ export interface MutationRecord {
   tglPermintaan: string;
   lokasiAsal: string;
   lokasiTujuan: string;
+  picBefore?: string; // New Field: PIC Asal
+  picAfter?: string; // New Field: PIC Tujuan
   status: string;
   statusApproval: string;
   workflow?: WorkflowLog[];
