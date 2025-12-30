@@ -41,7 +41,8 @@ import {
   Stamp,
   RefreshCw,
   Sliders,
-  CheckCircle2
+  CheckCircle2,
+  Headset
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -119,6 +120,7 @@ export const Sidebar: React.FC<Props> = ({
         subItems: [
             { label: 'Asset HC', icon: <Database size={16} /> },
             { label: 'Asset IT', icon: <Monitor size={16} /> },
+            { label: 'Customer Service', icon: <Headset size={16} /> },
         ]
     },
     { label: 'Log Book', icon: <BookOpen size={20} /> },

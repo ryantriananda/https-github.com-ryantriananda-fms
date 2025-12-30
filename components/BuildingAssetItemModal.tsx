@@ -5,7 +5,7 @@ import {
     GitBranch, Users, Plus, UploadCloud, Download, 
     Trash2, CheckCircle2, Clock, AlertCircle, Calendar,
     DollarSign, FileCheck, QrCode, Building, Edit3, Briefcase, TrendingUp,
-    Image as ImageIcon, Paperclip
+    Image as ImageIcon, Paperclip, User
 } from 'lucide-react';
 import { BuildingAssetRecord, MaintenanceProposal, BuildingRecord, GeneralMasterItem, VendorRecord } from '../types';
 
@@ -44,7 +44,8 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
     maintenanceFrequency: 'Quarterly',
     ownership: 'Own',
     buildingName: '',
-    proposals: []
+    proposals: [],
+    pic: ''
   });
 
   // Document States (Global Tab)
@@ -88,7 +89,8 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
             maintenanceFrequency: 'Quarterly',
             ownership: 'Own',
             buildingName: '',
-            proposals: []
+            proposals: [],
+            pic: ''
         });
         setDocPreviews({ photo: null, proposal: null });
       }
@@ -198,17 +200,20 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
     </label>
   );
 
-  const InputField = ({ label, value, field, type = "text", disabled = false, placeholder = "" }: any) => (
-    <div>
+  const InputField = ({ label, value, field, type = "text", disabled = false, placeholder = "", icon: Icon }: any) => (
+    <div className="relative">
       <Label>{label}</Label>
-      <input 
-        type={type} 
-        disabled={isView || disabled}
-        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all placeholder:text-gray-300 shadow-sm"
-        value={value || ''}
-        placeholder={placeholder}
-        onChange={(e) => setForm({...form, [field]: e.target.value})}
-      />
+      <div className="relative">
+        <input 
+            type={type} 
+            disabled={isView || disabled}
+            className={`w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 ${Icon ? 'pl-12' : ''} text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all placeholder:text-gray-300 shadow-sm`}
+            value={value || ''}
+            placeholder={placeholder}
+            onChange={(e) => setForm({...form, [field]: e.target.value})}
+        />
+        {Icon && <Icon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />}
+      </div>
     </div>
   );
 
@@ -299,6 +304,17 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
                                 </div>
                                 
                                 <InputField label="Merek / Brand" value={form.brand} field="brand" placeholder="Daikin, Toto, dll" />
+                                
+                                {/* New PIC Field */}
+                                <div className="md:col-span-2">
+                                    <InputField 
+                                        label="PIC / Pengguna (Person In Charge)" 
+                                        value={form.pic} 
+                                        field="pic" 
+                                        placeholder="Nama Penanggung Jawab / User" 
+                                        icon={User}
+                                    />
+                                </div>
                             </div>
                         </div>
 

@@ -87,7 +87,6 @@ export const MOCK_BUILDING_DATA: BuildingRecord[] = [
 ];
 
 export const MOCK_BUILDING_ASSETS: BuildingAssetRecord[] = [
-// ... (Keep existing MOCK_BUILDING_ASSETS content)
     {
         id: 'ASSET-001',
         assetCode: 'AC-HO-001',
@@ -101,7 +100,8 @@ export const MOCK_BUILDING_ASSETS: BuildingAssetRecord[] = [
         maintenanceFrequency: 'Quarterly',
         status: 'Good',
         approvalStatus: 'Approved',
-        ownership: 'Own'
+        ownership: 'Own',
+        pic: 'Ibnu Faisal'
     },
     {
         id: 'ASSET-002',
@@ -115,7 +115,8 @@ export const MOCK_BUILDING_ASSETS: BuildingAssetRecord[] = [
         maintenanceFrequency: 'Monthly',
         status: 'Fair',
         approvalStatus: 'Pending Approval',
-        ownership: 'Own'
+        ownership: 'Own',
+        pic: 'Agus Teknisi'
     },
     {
         id: 'ASSET-003',
@@ -129,7 +130,8 @@ export const MOCK_BUILDING_ASSETS: BuildingAssetRecord[] = [
         maintenanceFrequency: 'Yearly',
         status: 'Good',
         approvalStatus: 'Revised',
-        ownership: 'Own'
+        ownership: 'Own',
+        pic: 'Security Chief'
     },
     {
         id: 'ASSET-004',
@@ -143,7 +145,108 @@ export const MOCK_BUILDING_ASSETS: BuildingAssetRecord[] = [
         maintenanceFrequency: 'Monthly',
         status: 'Maintenance',
         approvalStatus: 'Rejected',
-        ownership: 'Own'
+        ownership: 'Own',
+        pic: 'Agus Teknisi'
+    }
+];
+
+export const MOCK_IT_BUILDING_ASSETS: BuildingAssetRecord[] = [
+    {
+        id: 'IT-ASSET-001',
+        assetCode: 'LPT-HO-001',
+        assetType: 'Laptop',
+        assetName: 'MacBook Pro M2 14"',
+        brand: 'Apple',
+        modelNumber: 'A2779',
+        buildingName: 'Head Office Satrio',
+        floor: 'Lantai 3',
+        roomName: 'IT Department',
+        maintenanceFrequency: 'Yearly',
+        status: 'Good',
+        approvalStatus: 'Approved',
+        ownership: 'Own',
+        pic: 'Sarah Amelia'
+    },
+    {
+        id: 'IT-ASSET-002',
+        assetCode: 'SRV-CKG-01',
+        assetType: 'Server',
+        assetName: 'Dell PowerEdge R750',
+        brand: 'Dell',
+        modelNumber: 'R750-XS',
+        buildingName: 'Warehouse Cakung',
+        floor: 'Ground',
+        roomName: 'Server Room',
+        maintenanceFrequency: 'Quarterly',
+        status: 'Good',
+        approvalStatus: 'Approved',
+        ownership: 'Own',
+        pic: 'IT Manager'
+    },
+    {
+        id: 'IT-ASSET-003',
+        assetCode: 'PRN-SBY-02',
+        assetType: 'Printer',
+        assetName: 'HP LaserJet Pro MFP',
+        brand: 'HP',
+        modelNumber: 'M428fdw',
+        buildingName: 'Surabaya Branch',
+        floor: 'Lantai 1',
+        roomName: 'Admin Room',
+        maintenanceFrequency: 'Monthly',
+        status: 'Fair',
+        approvalStatus: 'Pending Approval',
+        ownership: 'Leased',
+        pic: 'Branch Admin'
+    }
+];
+
+export const MOCK_CS_BUILDING_ASSETS: BuildingAssetRecord[] = [
+    {
+        id: 'CS-ASSET-001',
+        assetCode: 'HDS-CS-001',
+        assetType: 'Headset',
+        assetName: 'Jabra Evolve 65',
+        brand: 'Jabra',
+        modelNumber: 'EV-65-MS',
+        buildingName: 'Head Office Satrio',
+        floor: 'Lantai 2',
+        roomName: 'Call Center Area',
+        maintenanceFrequency: 'Yearly',
+        status: 'Good',
+        approvalStatus: 'Approved',
+        ownership: 'Own',
+        pic: 'CS Supervisor'
+    },
+    {
+        id: 'CS-ASSET-002',
+        assetCode: 'DSK-CS-010',
+        assetType: 'Furniture',
+        assetName: 'CS Cubicle Desk',
+        brand: 'Informa',
+        buildingName: 'Head Office Satrio',
+        floor: 'Lantai 2',
+        roomName: 'Call Center Area',
+        maintenanceFrequency: 'None',
+        status: 'Good',
+        approvalStatus: 'Approved',
+        ownership: 'Own',
+        pic: 'Facility'
+    },
+    {
+        id: 'CS-ASSET-003',
+        assetCode: 'QMS-MEC-01',
+        assetType: 'Kiosk',
+        assetName: 'Queue Management Kiosk',
+        brand: 'Advantech',
+        buildingName: 'MEC Suryo',
+        floor: 'Lobby',
+        roomName: 'Reception',
+        maintenanceFrequency: 'Quarterly',
+        status: 'Fair',
+        approvalStatus: 'Pending Approval',
+        ownership: 'Own',
+        pic: 'Store Manager'
     }
 ];
 

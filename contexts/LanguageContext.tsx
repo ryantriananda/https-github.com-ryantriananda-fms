@@ -43,6 +43,7 @@ const translations: Record<string, Record<Language, string>> = {
   // General Asset
   'Asset HC': { id: 'Aset HC', en: 'HC Asset' },
   'Asset IT': { id: 'Aset IT', en: 'IT Asset' },
+  'Customer Service': { id: 'Customer Service', en: 'Customer Service' },
   'General Asset List': { id: 'Daftar Aset Umum', en: 'General Asset List' },
 
   // Kendaraan
@@ -123,6 +124,7 @@ const translations: Record<string, Record<Language, string>> = {
   'Request Vehicle': { id: 'Request Kendaraan', en: 'Request Vehicle' },
   'Request Asset HC': { id: 'Request Aset HC', en: 'Request HC Asset' },
   'Request Asset IT': { id: 'Request Aset IT', en: 'Request IT Asset' },
+  'Request Asset CS': { id: 'Request Aset CS', en: 'Request CS Asset' },
   'New Branch Req': { id: 'Req Cabang Baru', en: 'New Branch Req' },
   'New Contract': { id: 'Kontrak Baru', en: 'New Contract' },
   'Request Tax/KIR': { id: 'Request Pajak/KIR', en: 'Request Tax/KIR' },

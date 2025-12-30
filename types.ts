@@ -190,6 +190,7 @@ export interface BuildingAssetRecord {
   modelNumber?: string;
   serialNumber?: string;
   capacity?: string;
+  pic?: string; // Person In Charge
   
   // Placement
   buildingName: string;
@@ -238,8 +239,8 @@ export interface BuildingMaintenanceRecord {
 }
 
 export interface WorkflowStep {
-  role: 'BM' | 'Regional Branches' | 'AVP Dealership' | 'Owner';
-  status: 'Pending' | 'Approved' | 'Rejected' | 'Skipped';
+  role: 'BM' | 'Regional Branches' | 'AVP Dealership' | 'Owner' | string;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Skipped' | 'Revised' | string;
   date?: string;
   approver?: string;
   comment?: string;
