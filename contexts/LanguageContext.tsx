@@ -53,6 +53,7 @@ const translations: Record<string, Record<Language, string>> = {
   'Pajak & KIR': { id: 'Pajak & KIR', en: 'Tax & KIR' },
   'Mutasi': { id: 'Mutasi', en: 'Mutation' },
   'Penjualan': { id: 'Penjualan', en: 'Sales' },
+  'Open Bid': { id: 'Lelang (Open Bid)', en: 'Open Bid' },
 
   // Gedung
   'Pemeliharaan Asset': { id: 'Pemeliharaan Aset', en: 'Asset Maintenance' },
@@ -107,6 +108,8 @@ const translations: Record<string, Record<Language, string>> = {
   'URGENT': { id: 'MENDESAK', en: 'URGENT' },
   'WARNING': { id: 'PERINGATAN', en: 'WARNING' },
   'SAFE': { id: 'AMAN', en: 'SAFE' },
+  'LIVE': { id: 'LIVE', en: 'LIVE' },
+  'ENDING SOON': { id: 'SEGERA BERAKHIR', en: 'ENDING SOON' },
 
   // --- BUTTON ACTIONS ---
   'Add': { id: 'Tambah', en: 'Add' },
@@ -134,6 +137,7 @@ const translations: Record<string, Record<Language, string>> = {
   'Add Service': { id: 'Tambah Servis', en: 'Add Service' },
   'New Request': { id: 'Permintaan Baru', en: 'New Request' },
   'Add Workflow': { id: 'Tambah Workflow', en: 'Add Workflow' },
+  'New Auction': { id: 'Lelang Baru', en: 'New Auction' },
   
   // --- UI LABELS ---
   'Search...': { id: 'Cari...', en: 'Search...' },

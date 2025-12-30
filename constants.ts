@@ -1,5 +1,5 @@
 
-import { AssetRecord, MasterItem, VehicleRecord, TaxKirRecord, MasterVendorRecord, DeliveryLocationRecord, LogBookRecord, BuildingRecord, ReminderRecord, VehicleContractRecord, GeneralMasterItem, UserRecord, BuildingAssetRecord, BuildingMaintenanceRecord, UtilityRecord, GeneralAssetRecord, VendorRecord, TimesheetRecord } from './types';
+import { AssetRecord, MasterItem, VehicleRecord, TaxKirRecord, MasterVendorRecord, DeliveryLocationRecord, LogBookRecord, BuildingRecord, ReminderRecord, VehicleContractRecord, GeneralMasterItem, UserRecord, BuildingAssetRecord, BuildingMaintenanceRecord, UtilityRecord, GeneralAssetRecord, VendorRecord, TimesheetRecord, ServiceRecord, MutationRecord, SalesRecord } from './types';
 
 // ... (Existing MOCK_BUILDING_DATA and others remain unchanged)
 
@@ -62,7 +62,6 @@ export const MOCK_TIMESHEET_DATA: TimesheetRecord[] = [
 ];
 
 export const MOCK_BUILDING_DATA: BuildingRecord[] = [
-// ... (Keep existing MOCK_BUILDING_DATA content)
     {
         id: '1',
         name: 'MODENA Experience Center Satrio',
@@ -101,7 +100,9 @@ export const MOCK_BUILDING_ASSETS: BuildingAssetRecord[] = [
         status: 'Good',
         approvalStatus: 'Approved',
         ownership: 'Own',
-        pic: 'Ibnu Faisal'
+        pic: 'Ibnu Faisal',
+        purchasePrice: '4500000',
+        purchaseDate: '2022-01-15'
     },
     {
         id: 'ASSET-002',
@@ -116,7 +117,9 @@ export const MOCK_BUILDING_ASSETS: BuildingAssetRecord[] = [
         status: 'Fair',
         approvalStatus: 'Pending Approval',
         ownership: 'Own',
-        pic: 'Agus Teknisi'
+        pic: 'Agus Teknisi',
+        purchasePrice: '450000000',
+        purchaseDate: '2020-05-10'
     },
     {
         id: 'ASSET-003',
@@ -131,7 +134,9 @@ export const MOCK_BUILDING_ASSETS: BuildingAssetRecord[] = [
         status: 'Good',
         approvalStatus: 'Revised',
         ownership: 'Own',
-        pic: 'Security Chief'
+        pic: 'Security Chief',
+        purchasePrice: '2500000',
+        purchaseDate: '2023-08-20'
     },
     {
         id: 'ASSET-004',
@@ -146,7 +151,9 @@ export const MOCK_BUILDING_ASSETS: BuildingAssetRecord[] = [
         status: 'Maintenance',
         approvalStatus: 'Rejected',
         ownership: 'Own',
-        pic: 'Agus Teknisi'
+        pic: 'Agus Teknisi',
+        purchasePrice: '850000000',
+        purchaseDate: '2019-11-01'
     }
 ];
 
@@ -165,7 +172,9 @@ export const MOCK_IT_BUILDING_ASSETS: BuildingAssetRecord[] = [
         status: 'Good',
         approvalStatus: 'Approved',
         ownership: 'Own',
-        pic: 'Sarah Amelia'
+        pic: 'Sarah Amelia',
+        purchasePrice: '28000000',
+        purchaseDate: '2023-02-10'
     },
     {
         id: 'IT-ASSET-002',
@@ -181,7 +190,9 @@ export const MOCK_IT_BUILDING_ASSETS: BuildingAssetRecord[] = [
         status: 'Good',
         approvalStatus: 'Approved',
         ownership: 'Own',
-        pic: 'IT Manager'
+        pic: 'IT Manager',
+        purchasePrice: '120000000',
+        purchaseDate: '2022-06-15'
     },
     {
         id: 'IT-ASSET-003',
@@ -197,7 +208,9 @@ export const MOCK_IT_BUILDING_ASSETS: BuildingAssetRecord[] = [
         status: 'Fair',
         approvalStatus: 'Pending Approval',
         ownership: 'Leased',
-        pic: 'Branch Admin'
+        pic: 'Branch Admin',
+        purchasePrice: '0',
+        purchaseDate: '2024-01-05'
     }
 ];
 
@@ -216,7 +229,9 @@ export const MOCK_CS_BUILDING_ASSETS: BuildingAssetRecord[] = [
         status: 'Good',
         approvalStatus: 'Approved',
         ownership: 'Own',
-        pic: 'CS Supervisor'
+        pic: 'CS Supervisor',
+        purchasePrice: '3500000',
+        purchaseDate: '2023-05-12'
     },
     {
         id: 'CS-ASSET-002',
@@ -231,7 +246,9 @@ export const MOCK_CS_BUILDING_ASSETS: BuildingAssetRecord[] = [
         status: 'Good',
         approvalStatus: 'Approved',
         ownership: 'Own',
-        pic: 'Facility'
+        pic: 'Facility',
+        purchasePrice: '2500000',
+        purchaseDate: '2021-09-20'
     },
     {
         id: 'CS-ASSET-003',
@@ -246,12 +263,13 @@ export const MOCK_CS_BUILDING_ASSETS: BuildingAssetRecord[] = [
         status: 'Fair',
         approvalStatus: 'Pending Approval',
         ownership: 'Own',
-        pic: 'Store Manager'
+        pic: 'Store Manager',
+        purchasePrice: '15000000',
+        purchaseDate: '2023-11-01'
     }
 ];
 
 export const MOCK_BUILDING_MAINTENANCE_DATA: BuildingMaintenanceRecord[] = [
-// ... (Keep existing data)
     {
         id: 'MNT-2024-001',
         requestDate: '2024-02-15',
@@ -294,7 +312,6 @@ export const MOCK_BUILDING_MAINTENANCE_DATA: BuildingMaintenanceRecord[] = [
 ];
 
 export const MOCK_BRANCH_IMPROVEMENT_DATA: BuildingRecord[] = [
-// ... (Keep existing data)
     {
         id: 'BI-2024-001',
         name: 'MODENA Home Center Bintaro',
@@ -663,6 +680,108 @@ export const MOCK_VEHICLE_CONTRACT_DATA: VehicleContractRecord[] = [{ id: 'CTR-0
 export const MOCK_TAX_KIR_DATA: TaxKirRecord[] = [{ id: 'TAX-001', noPolisi: 'B 1234 ABC', tglRequest: '2024-03-01', jenis: 'Pajak STNK', channel: 'HCO', cabang: 'Jakarta', status: 'Proses', statusApproval: 'Pending', estimasiBiaya: '3500000' }];
 export const MOCK_LOGBOOK_DATA: LogBookRecord[] = [];
 export const MOCK_MASTER_VENDOR_DATA: MasterVendorRecord[] = [];
-export const MOCK_GENERAL_ASSET_DATA: GeneralAssetRecord[] = [{ id: 'GA-001', assetNumber: 'AST-GEN-001', assetCategory: 'Furniture', ownership: 'Own', type: 'Office Desk', assetLocation: 'Jakarta', channel: 'Direct', department: 'HRGA', subLocation: 'Lantai 2 - HR Room', address: 'Jl. Prof. DR. Satrio No. C4', approvalStatus: 'Approved' }, { id: 'GA-002', assetNumber: 'AST-GEN-002', assetCategory: 'Electronic', ownership: 'Rent', type: 'Coffee Machine', assetLocation: 'Surabaya', channel: 'Indirect', department: 'Operation', subLocation: 'Pantry', address: 'Jl. Mayjen Sungkono No. 10', approvalStatus: 'Pending' }];
-export const MOCK_IT_ASSET_DATA: GeneralAssetRecord[] = [{ id: 'IT-001', assetNumber: 'AST-IT-001', assetCategory: 'Hardware', ownership: 'Own', type: 'Laptop', assetLocation: 'Jakarta', channel: 'Direct', department: 'IT', subLocation: 'IT Room', address: 'Jl. Prof. DR. Satrio No. C4', approvalStatus: 'Approved' }, { id: 'IT-002', assetNumber: 'AST-IT-002', assetCategory: 'Peripheral', ownership: 'Own', type: 'Monitor', assetLocation: 'Jakarta', channel: 'Direct', department: 'IT', subLocation: 'Server Room', address: 'Jl. Prof. DR. Satrio No. C4', approvalStatus: 'Pending' }];
+export const MOCK_GENERAL_ASSET_DATA: GeneralAssetRecord[] = [{ id: 'GA-001', assetNumber: 'AST-GEN-001', assetCategory: 'Furniture', ownership: 'Own', type: 'Office Desk', assetLocation: 'Jakarta', channel: 'Direct', department: 'HRGA', subLocation: 'Lantai 2 - HR Room', address: 'Jl. Prof. DR. Satrio No. C4', approvalStatus: 'Approved', purchasePrice: '1500000', purchaseDate: '2023-01-10' }, { id: 'GA-002', assetNumber: 'AST-GEN-002', assetCategory: 'Electronic', ownership: 'Rent', type: 'Coffee Machine', assetLocation: 'Surabaya', channel: 'Indirect', department: 'Operation', subLocation: 'Pantry', address: 'Jl. Mayjen Sungkono No. 10', approvalStatus: 'Pending', purchasePrice: '0', purchaseDate: '2024-02-01' }];
+export const MOCK_IT_ASSET_DATA: GeneralAssetRecord[] = [{ id: 'IT-001', assetNumber: 'AST-IT-001', assetCategory: 'Hardware', ownership: 'Own', type: 'Laptop', assetLocation: 'Jakarta', channel: 'Direct', department: 'IT', subLocation: 'IT Room', address: 'Jl. Prof. DR. Satrio No. C4', approvalStatus: 'Approved', purchasePrice: '25000000', purchaseDate: '2023-05-15' }, { id: 'IT-002', assetNumber: 'AST-IT-002', assetCategory: 'Peripheral', ownership: 'Own', type: 'Monitor', assetLocation: 'Jakarta', channel: 'Direct', department: 'IT', subLocation: 'Server Room', address: 'Jl. Prof. DR. Satrio No. C4', approvalStatus: 'Pending', purchasePrice: '3500000', purchaseDate: '2023-06-01' }];
 export const MOCK_VENDOR_DATA: VendorRecord[] = [{ id: 1, vendorName: 'PT. ATK Jaya Abadi', vendorCode: 'VND-001', type: 'Goods', category: 'Office Supplies', email: 'sales@atkjaya.com', phone: '021-5551234', address: 'Jl. Fatmawati No. 10, Jakarta Selatan', status: 'Active', picName: 'Budi Santoso' }, { id: 2, vendorName: 'CV. Service Komputer Handal', vendorCode: 'VND-002', type: 'Service', category: 'IT Maintenance', email: 'support@servicehandal.com', phone: '0812-9988-7766', address: 'Ruko Mangga Dua Square Blok A', status: 'Active', picName: 'Andi Wijaya' }, { id: 3, vendorName: 'PT. Cleaning Service Prima', vendorCode: 'VND-003', type: 'Service', category: 'Facility Management', email: 'info@cleaningprima.com', phone: '021-7778889', address: 'Jl. Sudirman Kav 50, Jakarta Pusat', status: 'Inactive', picName: 'Siti Aminah' }];
+
+// --- NEW MOCK DATA FOR MISSING SUB-MENUS ---
+
+export const MOCK_SERVICE_DATA: ServiceRecord[] = [
+    {
+        id: 'REQ-SRV-001',
+        noPolisi: 'B 1234 ABC',
+        tglRequest: '2024-03-01',
+        channel: 'HCO',
+        cabang: 'Jakarta',
+        status: 'In Progress',
+        statusApproval: 'Approved',
+        jenisServis: 'Servis Rutin',
+        vendor: 'Auto2000 Tebet',
+        masalah: 'Ganti Oli dan Tune Up Rutin',
+        estimasiBiaya: '2500000',
+        spareParts: [{ name: 'Oli Mesin', qty: 1, price: '800000' }, { name: 'Filter Oli', qty: 1, price: '150000' }]
+    },
+    {
+        id: 'REQ-SRV-002',
+        noPolisi: 'B 5678 DEF',
+        tglRequest: '2024-03-05',
+        channel: 'Management',
+        cabang: 'Surabaya',
+        status: 'Scheduled',
+        statusApproval: 'Pending',
+        jenisServis: 'Ganti Ban',
+        vendor: 'Shop & Drive',
+        masalah: 'Ban depan kanan sobek halus',
+        estimasiBiaya: '1800000',
+        spareParts: [{ name: 'Ban Bridgestone', qty: 1, price: '1800000' }]
+    }
+];
+
+export const MOCK_MUTATION_DATA: MutationRecord[] = [
+    {
+        id: 'MUT-001',
+        noPolisi: 'B 1234 ABC',
+        cabangAset: 'Jakarta',
+        tipeMutasi: 'Permanent',
+        tglPermintaan: '2024-02-20',
+        lokasiAsal: 'Jakarta',
+        lokasiTujuan: 'Bandung',
+        status: 'Approved',
+        statusApproval: 'Approved'
+    },
+    {
+        id: 'MUT-002',
+        noPolisi: 'B 5678 DEF',
+        cabangAset: 'Surabaya',
+        tipeMutasi: 'Temporary',
+        tglPermintaan: '2024-03-08',
+        lokasiAsal: 'Surabaya',
+        lokasiTujuan: 'Malang',
+        status: 'Pending',
+        statusApproval: 'Pending'
+    }
+];
+
+export const MOCK_SALES_DATA: SalesRecord[] = [
+    {
+        id: 'SALE-001',
+        noPolisi: 'B 9999 OLD',
+        tglRequest: '2024-01-10',
+        channel: 'HCO',
+        cabang: 'Jakarta',
+        hargaTertinggi: '120.000.000',
+        status: 'Open Bid',
+        statusApproval: 'Approved'
+    },
+    {
+        id: 'SALE-002',
+        noPolisi: 'L 4321 XY',
+        tglRequest: '2024-02-15',
+        channel: 'Operation',
+        cabang: 'Surabaya',
+        hargaTertinggi: '0',
+        status: 'Draft',
+        statusApproval: 'Pending'
+    },
+    // New
+    {
+        id: 'SALE-003',
+        noPolisi: 'D 1234 GHI',
+        tglRequest: '2024-03-01',
+        channel: 'Sales',
+        cabang: 'Bandung',
+        hargaTertinggi: '85.500.000',
+        status: 'Open Bid',
+        statusApproval: 'Approved'
+    },
+    {
+        id: 'SALE-004',
+        noPolisi: 'BK 8888 JJ',
+        tglRequest: '2024-03-05',
+        channel: 'Marketing',
+        cabang: 'Medan',
+        hargaTertinggi: '210.000.000',
+        status: 'Open Bid',
+        statusApproval: 'Approved'
+    }
+];

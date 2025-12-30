@@ -94,7 +94,10 @@ import {
   MOCK_BRAND_TYPE_DATA,
   MOCK_OPERATOR_DATA,
   MOCK_VENDOR_DATA,
-  MOCK_TIMESHEET_DATA
+  MOCK_TIMESHEET_DATA,
+  MOCK_SERVICE_DATA,
+  MOCK_MUTATION_DATA,
+  MOCK_SALES_DATA
 } from './constants';
 import { 
   VehicleRecord, 
@@ -107,7 +110,7 @@ import {
   UtilityRecord,
   ReminderRecord, 
   GeneralMasterItem,
-  AssetRecord,
+  AssetRecord, 
   LogBookRecord,
   MasterItem,
   DeliveryLocationRecord,
@@ -169,6 +172,23 @@ const MOCK_MASTER_APPROVAL_DATA: MasterApprovalRecord[] = [
     }
 ];
 
+// Mapping Internal Module Codes to Master Data Names
+const MODULE_MAPPING: Record<string, string> = {
+    'VEHICLE': 'Vehicle Request (Pengajuan Baru)',
+    'SERVICE': 'Vehicle Service Request (Servis)',
+    'TAX': 'Vehicle Tax & KIR Renewal',
+    'MUTATION': 'Vehicle Mutation (Mutasi)',
+    'SALES': 'Vehicle Disposal (Penjualan)',
+    'CONTRACT': 'Vehicle Contract (Sewa)',
+    'BLD_MAINT': 'Building Maintenance Request',
+    'BRANCH_IMP': 'New Building Request (Sewa/Beli)',
+    'ASSET_HC': 'General Asset Request (Furniture/etc)',
+    'ASSET_IT': 'IT Asset Request (Laptop/Devices)',
+    'ASSET_CS': 'General Asset Request (Furniture/etc)',
+    'ATK_REQ': 'Stationery Request (Permintaan ATK)',
+    'ARK_REQ': 'Household Request (Permintaan ARK)'
+};
+
 const App: React.FC = () => {
   const { t } = useLanguage();
   const [activeModule, setActiveModule] = useState('Dashboard'); 
@@ -191,7 +211,7 @@ const App: React.FC = () => {
   const [buildingMaintenanceData, setBuildingMaintenanceData] = useState<BuildingMaintenanceRecord[]>(() => getInitialData('buildingMaintenanceData', MOCK_BUILDING_MAINTENANCE_DATA));
   const [utilityData, setUtilityData] = useState<UtilityRecord[]>(() => getInitialData('utilityData', MOCK_UTILITY_DATA));
   const [branchImprovementData, setBranchImprovementData] = useState<BuildingRecord[]>(() => getInitialData('branchImprovementData', MOCK_BRANCH_IMPROVEMENT_DATA));
-  const [serviceData, setServiceData] = useState<ServiceRecord[]>(() => getInitialData('serviceData', []));
+  const [serviceData, setServiceData] = useState<ServiceRecord[]>(() => getInitialData('serviceData', MOCK_SERVICE_DATA));
   const [taxKirData, setTaxKirData] = useState<TaxKirRecord[]>(() => getInitialData('taxKirData', MOCK_TAX_KIR_DATA));
   const [vehicleContractData, setVehicleContractData] = useState<VehicleContractRecord[]>(() => getInitialData('vehicleContractData', MOCK_VEHICLE_CONTRACT_DATA));
   const [masterVendorData, setMasterVendorData] = useState<MasterVendorRecord[]>(() => getInitialData('masterVendorData', MOCK_MASTER_VENDOR_DATA));
@@ -200,8 +220,8 @@ const App: React.FC = () => {
   const [userData, setUserData] = useState<UserRecord[]>(() => getInitialData('userData', MOCK_USER_DATA));
   const [timesheetData, setTimesheetData] = useState<TimesheetRecord[]>(() => getInitialData('timesheetData', MOCK_TIMESHEET_DATA));
   const [generalAssetData, setGeneralAssetData] = useState<GeneralAssetRecord[]>(() => getInitialData('generalAssetData', MOCK_GENERAL_ASSET_DATA));
-  const [mutationData, setMutationData] = useState<MutationRecord[]>(() => getInitialData('mutationData', []));
-  const [salesData, setSalesData] = useState<SalesRecord[]>(() => getInitialData('salesData', []));
+  const [mutationData, setMutationData] = useState<MutationRecord[]>(() => getInitialData('mutationData', MOCK_MUTATION_DATA));
+  const [salesData, setSalesData] = useState<SalesRecord[]>(() => getInitialData('salesData', MOCK_SALES_DATA));
   const [masterApprovalData, setMasterApprovalData] = useState<MasterApprovalRecord[]>(() => getInitialData('masterApprovalData', MOCK_MASTER_APPROVAL_DATA));
   const [complianceData, setComplianceData] = useState<ReminderRecord[]>(() => getInitialData('complianceData', MOCK_REMINDER_DATA));
   
@@ -255,7 +275,27 @@ const App: React.FC = () => {
   // Sync Data on Change
   useEffect(() => { localStorage.setItem('atkData', JSON.stringify(atkData)); }, [atkData]);
   useEffect(() => { localStorage.setItem('arkData', JSON.stringify(arkData)); }, [arkData]);
-  // ... (Other standard syncs remain)
+  useEffect(() => { localStorage.setItem('vehicleData', JSON.stringify(vehicleData)); }, [vehicleData]);
+  useEffect(() => { localStorage.setItem('buildingData', JSON.stringify(buildingData)); }, [buildingData]);
+  useEffect(() => { localStorage.setItem('buildingAssetData', JSON.stringify(buildingAssetData)); }, [buildingAssetData]);
+  useEffect(() => { localStorage.setItem('itBuildingData', JSON.stringify(itBuildingData)); }, [itBuildingData]);
+  useEffect(() => { localStorage.setItem('csBuildingData', JSON.stringify(csBuildingData)); }, [csBuildingData]);
+  useEffect(() => { localStorage.setItem('buildingMaintenanceData', JSON.stringify(buildingMaintenanceData)); }, [buildingMaintenanceData]);
+  useEffect(() => { localStorage.setItem('utilityData', JSON.stringify(utilityData)); }, [utilityData]);
+  useEffect(() => { localStorage.setItem('branchImprovementData', JSON.stringify(branchImprovementData)); }, [branchImprovementData]);
+  useEffect(() => { localStorage.setItem('serviceData', JSON.stringify(serviceData)); }, [serviceData]);
+  useEffect(() => { localStorage.setItem('taxKirData', JSON.stringify(taxKirData)); }, [taxKirData]);
+  useEffect(() => { localStorage.setItem('vehicleContractData', JSON.stringify(vehicleContractData)); }, [vehicleContractData]);
+  useEffect(() => { localStorage.setItem('masterVendorData', JSON.stringify(masterVendorData)); }, [masterVendorData]);
+  useEffect(() => { localStorage.setItem('vendorData', JSON.stringify(vendorData)); }, [vendorData]);
+  useEffect(() => { localStorage.setItem('logBookData', JSON.stringify(logBookData)); }, [logBookData]);
+  useEffect(() => { localStorage.setItem('userData', JSON.stringify(userData)); }, [userData]);
+  useEffect(() => { localStorage.setItem('timesheetData', JSON.stringify(timesheetData)); }, [timesheetData]);
+  useEffect(() => { localStorage.setItem('generalAssetData', JSON.stringify(generalAssetData)); }, [generalAssetData]);
+  useEffect(() => { localStorage.setItem('mutationData', JSON.stringify(mutationData)); }, [mutationData]);
+  useEffect(() => { localStorage.setItem('salesData', JSON.stringify(salesData)); }, [salesData]);
+  useEffect(() => { localStorage.setItem('masterApprovalData', JSON.stringify(masterApprovalData)); }, [masterApprovalData]);
+  useEffect(() => { localStorage.setItem('complianceData', JSON.stringify(complianceData)); }, [complianceData]);
   
   // Master Syncs
   useEffect(() => { localStorage.setItem('masterPPN', JSON.stringify(masterPPN)); }, [masterPPN]);
@@ -335,27 +375,83 @@ const App: React.FC = () => {
         else if (activeModule === 'Tipe Vendor') updateState(setMasterTipeVendor, masterTipeVendor);
         else if (activeModule === 'Role') updateState(setMasterRole, masterRole);
         else if (activeModule === 'Jenis Kendaraan') updateState(setMasterVehicleType, masterVehicleType);
-        
         break;
       
-      // ... (Re-implement existing ones from previous response if needed, but for brevity assume they are handled)
+      case 'SERVICE':
+        if (modalMode === 'create') setServiceData([...serviceData, { ...data, id: `REQ-${Date.now()}` }]);
+        else setServiceData(serviceData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      case 'TAX':
+        if (modalMode === 'create') setTaxKirData([...taxKirData, { ...data, id: `TAX-${Date.now()}` }]);
+        else setTaxKirData(taxKirData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      case 'CONTRACT':
+        if (modalMode === 'create') setVehicleContractData([...vehicleContractData, { ...data, id: `CTR-${Date.now()}` }]);
+        else setVehicleContractData(vehicleContractData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      case 'UTILITY':
+        if (modalMode === 'create') setUtilityData([...utilityData, { ...data, id: `UTIL-${Date.now()}` }]);
+        else setUtilityData(utilityData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      case 'BLD_MAINT':
+        if (modalMode === 'create') setBuildingMaintenanceData([...buildingMaintenanceData, { ...data, id: `MNT-${Date.now()}` }]);
+        else setBuildingMaintenanceData(buildingMaintenanceData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      case 'BRANCH_IMP':
+        if (modalMode === 'create') setBranchImprovementData([...branchImprovementData, { ...data, id: `REQ-BI-${Date.now()}` }]);
+        else setBranchImprovementData(branchImprovementData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      case 'USER':
+        if (modalMode === 'create') setUserData([...userData, { ...data, id: `USR-${Date.now()}` }]);
+        else setUserData(userData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      case 'VENDOR':
+        if (modalMode === 'create') setVendorData([...vendorData, { ...data, id: Date.now() }]);
+        else setVendorData(vendorData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      case 'MUTATION':
+        if (modalMode === 'create') setMutationData([...mutationData, { ...data, id: `MUT-${Date.now()}` }]);
+        else setMutationData(mutationData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      case 'SALES':
+        if (modalMode === 'create') setSalesData([...salesData, { ...data, id: `SALE-${Date.now()}` }]);
+        else setSalesData(salesData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      case 'GEN_ASSET':
+        if (modalMode === 'create') setGeneralAssetData([...generalAssetData, { ...data, id: `AST-${Date.now()}` }]);
+        else setGeneralAssetData(generalAssetData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      // Asset HC Case (Building Asset Structure)
+      case 'ASSET_HC':
+        if (modalMode === 'create') setBuildingAssetData([...buildingAssetData, { ...data, id: `AST-HC-${Date.now()}` }]);
+        else setBuildingAssetData(buildingAssetData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      // Asset IT Case (Migrated to Building Asset Structure)
+      case 'ASSET_IT':
+        if (modalMode === 'create') setItBuildingData([...itBuildingData, { ...data, id: `AST-IT-${Date.now()}` }]);
+        else setItBuildingData(itBuildingData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      // Asset CS Case
+      case 'ASSET_CS':
+        if (modalMode === 'create') setCsBuildingData([...csBuildingData, { ...data, id: `AST-CS-${Date.now()}` }]);
+        else setCsBuildingData(csBuildingData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
+      case 'MST_APPROVAL':
+        if (modalMode === 'create') setMasterApprovalData([...masterApprovalData, { ...data, id: `${Date.now()}` }]);
+        else setMasterApprovalData(masterApprovalData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
+        break;
       case 'COMPLIANCE':
         if (modalMode === 'create') setComplianceData([...complianceData, { ...data, id: `DOC-${Date.now()}` }]);
         else setComplianceData(complianceData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
         break;
         
       default:
-        // Fallback for cases not explicitly handled (like standard updates)
-        if (modalType === 'SERVICE') {
-             if (modalMode === 'create') setServiceData([...serviceData, { ...data, id: `REQ-${Date.now()}` }]);
-             else setServiceData(serviceData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
-        }
         break;
     }
     closeModal();
   };
 
-  // --- NEW WORKFLOW LOGIC ---
+  // --- NEW WORKFLOW LOGIC INTEGRATION ---
   const handleInitiateWorkflow = (item: any, action: 'Approve' | 'Reject' | 'Revise', module: string) => {
       setPendingWorkflow({ item, action, module });
       setWorkflowModalOpen(true);
@@ -364,16 +460,81 @@ const App: React.FC = () => {
   const handleConfirmWorkflow = (comment: string) => {
       if (!pendingWorkflow) return;
       const { item, action, module } = pendingWorkflow;
-      // ... (Same implementation as previous) ...
-      const statusMap: Record<string, string> = { 'Approve': 'Approved', 'Reject': 'Rejected', 'Revise': 'Revised' };
-      const newStatus = statusMap[action];
-      const newLog = { step: action, status: newStatus, actor: 'Current User', date: new Date().toISOString().split('T')[0], comment: comment };
-      const updateItemWithWorkflow = (prevItem: any) => ({ ...prevItem, approvalStatus: newStatus, statusApproval: newStatus, workflow: [...(prevItem.workflow || []), newLog] });
+      
+      // 1. Find the Approval Config for this Module
+      const targetModuleName = MODULE_MAPPING[module];
+      const workflowConfig = masterApprovalData.find(m => m.module === targetModuleName);
 
+      // Default Logic (Immediate)
+      let newStatus = action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Revised';
+      let currentTier = (item as any).currentTier || 0; // Default 0 if new
+
+      // 2. Logic for Approval with Tiers
+      if (action === 'Approve' && workflowConfig && workflowConfig.tiers.length > 0) {
+          const sortedTiers = [...workflowConfig.tiers].sort((a, b) => a.level - b.level);
+          const totalTiers = sortedTiers.length;
+          
+          if (currentTier < totalTiers) {
+              const nextTierLevel = currentTier + 1;
+              const nextTierConfig = sortedTiers.find(t => t.level === nextTierLevel);
+              
+              if (nextTierConfig) {
+                  // Move to next tier
+                  currentTier = nextTierLevel;
+                  newStatus = `Pending Approval - ${nextTierConfig.value}`; // e.g. "Pending Approval - Manager"
+              } else {
+                  // Should not happen if logic is correct, but safe fallback
+                  newStatus = 'Approved';
+              }
+          } else {
+              // Already at max tier
+              newStatus = 'Approved';
+          }
+      } else if (action === 'Approve' && !workflowConfig) {
+          // Fallback if no workflow configured
+          newStatus = 'Approved';
+      }
+
+      // 3. Create Log Entry
+      const newLog = {
+          step: action,
+          status: newStatus,
+          actor: 'Current User', // In real app, get from auth context
+          date: new Date().toISOString().split('T')[0],
+          comment: comment
+      };
+
+      // 4. Update the Specific Item State
+      const updateItemWithWorkflow = (prevItem: any) => ({
+          ...prevItem,
+          approvalStatus: newStatus, // Standard field
+          statusApproval: newStatus, // Alternative field name used in some types
+          currentTier: currentTier,  // Store current progress
+          workflow: [...(prevItem.workflow || []), newLog]
+      });
+
+      // Update State based on Module
       switch(module) {
           case 'VEHICLE': setVehicleData(prev => prev.map(i => i.id === item.id ? updateItemWithWorkflow(i) : i)); break;
-          // ... Add other cases ...
+          case 'ASSET_HC': setBuildingAssetData(prev => prev.map(i => i.id === item.id ? updateItemWithWorkflow(i) : i)); break;
+          case 'ASSET_IT': setItBuildingData(prev => prev.map(i => i.id === item.id ? updateItemWithWorkflow(i) : i)); break;
+          case 'ASSET_CS': setCsBuildingData(prev => prev.map(i => i.id === item.id ? updateItemWithWorkflow(i) : i)); break;
+          case 'TAX': setTaxKirData(prev => prev.map(i => i.id === item.id ? updateItemWithWorkflow(i) : i)); break;
+          case 'CONTRACT': setVehicleContractData(prev => prev.map(i => i.id === item.id ? updateItemWithWorkflow(i) : i)); break;
+          case 'MUTATION': setMutationData(prev => prev.map(i => i.id === item.id ? updateItemWithWorkflow(i) : i)); break;
+          case 'SALES': setSalesData(prev => prev.map(i => i.id === item.id ? updateItemWithWorkflow(i) : i)); break;
+          case 'BLD_MAINT': setBuildingMaintenanceData(prev => prev.map(i => i.id === item.id ? updateItemWithWorkflow(i) : i)); break;
+          case 'SERVICE': setServiceData(prev => prev.map(i => i.id === item.id ? updateItemWithWorkflow(i) : i)); break;
+          case 'BRANCH_IMP': 
+              setBranchImprovementData(prev => prev.map(i => i.id === item.id ? { 
+                  ...i, 
+                  status: newStatus, // Branch Imp uses 'status' not approvalStatus usually
+                  currentTier: currentTier,
+                  workflow: [...(i.workflow || []), { role: 'Management', status: newStatus, comment, date: new Date().toISOString().split('T')[0] }] 
+              } : i)); 
+              break;
       }
+
       setWorkflowModalOpen(false);
       setPendingWorkflow(null);
   };
@@ -514,6 +675,25 @@ const App: React.FC = () => {
                 <>
                     <FilterBar tabs={['SEMUA', 'OPEN BID', 'SOLD']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('SALES', 'create')} />
                     <SalesTable data={salesData} onEdit={(item) => openModal('SALES', 'edit', item)} onView={(item) => openModal('SALES', 'view', item)} onAction={(item, action) => handleInitiateWorkflow(item, action, 'SALES')} />
+                </>
+            );
+        case 'Open Bid':
+            const openBidData = salesData.filter(item => item.status === 'Open Bid');
+            return (
+                <>
+                    <FilterBar 
+                        tabs={['LIVE', 'ENDING SOON']} 
+                        activeTab={activeTab} 
+                        onTabChange={setActiveTab} 
+                        onAddClick={() => openModal('SALES', 'create')} 
+                        customAddLabel="New Auction"
+                    />
+                    <SalesTable 
+                        data={openBidData} 
+                        onEdit={(item) => openModal('SALES', 'edit', item)} 
+                        onView={(item) => openModal('SALES', 'view', item)} 
+                        onAction={(item, action) => handleInitiateWorkflow(item, action, 'SALES')} 
+                    />
                 </>
             );
 

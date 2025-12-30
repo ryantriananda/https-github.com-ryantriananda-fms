@@ -192,6 +192,10 @@ export interface BuildingAssetRecord {
   capacity?: string;
   pic?: string; // Person In Charge
   
+  // Financial
+  purchasePrice?: string; // New Field
+  purchaseDate?: string; // New Field
+
   // Placement
   buildingName: string;
   floor: string;
@@ -743,6 +747,8 @@ export interface GeneralAssetRecord {
   subLocation: string;
   address: string;
   approvalStatus?: 'Pending' | 'Approved' | 'Rejected'; // Added approval status
+  purchasePrice?: string; // New
+  purchaseDate?: string; // New
 }
 
 export interface ApprovalTier {

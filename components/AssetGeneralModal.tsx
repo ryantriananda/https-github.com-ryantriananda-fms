@@ -35,7 +35,9 @@ export const AssetGeneralModal: React.FC<Props> = ({
     channel: '',
     department: '',
     subLocation: '',
-    address: ''
+    address: '',
+    purchasePrice: '',
+    purchaseDate: ''
   });
 
   useEffect(() => {
@@ -52,7 +54,9 @@ export const AssetGeneralModal: React.FC<Props> = ({
           channel: '',
           department: '',
           subLocation: '',
-          address: ''
+          address: '',
+          purchasePrice: '',
+          purchaseDate: ''
         });
       }
     }
@@ -160,6 +164,16 @@ export const AssetGeneralModal: React.FC<Props> = ({
                   {departmentList.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
                 </Select>
               </div>
+
+              {/* Purchase Date */}
+              <div>
+                <Label>Purchase Date</Label>
+                <Input 
+                  type="date"
+                  value={form.purchaseDate} 
+                  onChange={(e) => setForm({...form, purchaseDate: e.target.value})} 
+                />
+              </div>
             </div>
 
             {/* Right Column Fields */}
@@ -203,6 +217,21 @@ export const AssetGeneralModal: React.FC<Props> = ({
                   onChange={(e) => setForm({...form, subLocation: e.target.value})} 
                   placeholder="Input Sub-Location (e.g. Floor)..."
                 />
+              </div>
+
+              {/* Purchase Price */}
+              <div className="relative">
+                <Label>Purchase Price (IDR)</Label>
+                <div className="relative">
+                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400">Rp</span>
+                    <Input 
+                      type="number"
+                      className="pl-10"
+                      value={form.purchasePrice} 
+                      onChange={(e) => setForm({...form, purchasePrice: e.target.value})} 
+                      placeholder="0"
+                    />
+                </div>
               </div>
             </div>
 

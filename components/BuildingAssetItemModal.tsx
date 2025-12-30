@@ -45,7 +45,9 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
     ownership: 'Own',
     buildingName: '',
     proposals: [],
-    pic: ''
+    pic: '',
+    purchasePrice: '',
+    purchaseDate: ''
   });
 
   // Document States (Global Tab)
@@ -90,7 +92,9 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
             ownership: 'Own',
             buildingName: '',
             proposals: [],
-            pic: ''
+            pic: '',
+            purchasePrice: '',
+            purchaseDate: ''
         });
         setDocPreviews({ photo: null, proposal: null });
       }
@@ -305,6 +309,23 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
                                 
                                 <InputField label="Merek / Brand" value={form.brand} field="brand" placeholder="Daikin, Toto, dll" />
                                 
+                                {/* New Fields: Price & Date */}
+                                <div className="relative">
+                                    <Label>Harga Pembelian (IDR)</Label>
+                                    <div className="relative">
+                                        <span className="absolute left-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400">Rp</span>
+                                        <input 
+                                            type="number"
+                                            disabled={isView}
+                                            className="w-full bg-white border border-gray-200 rounded-2xl pl-10 pr-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 transition-all placeholder:text-gray-300 shadow-sm"
+                                            value={form.purchasePrice}
+                                            onChange={(e) => setForm({...form, purchasePrice: e.target.value})}
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                </div>
+                                <InputField label="Tanggal Pembelian" value={form.purchaseDate} field="purchaseDate" type="date" />
+
                                 {/* New PIC Field */}
                                 <div className="md:col-span-2">
                                     <InputField 
@@ -419,10 +440,10 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
                 </div>
             )}
 
-            {/* TAB: PROPOSAL & VENDOR */}
+            {/* ... Other Tabs (PROPOSAL, WORKFLOW, DOKUMEN) remain the same ... */}
             {activeTab === 'PROPOSAL & VENDOR' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    
+                    {/* ... (Previous content for Proposal tab) ... */}
                     {/* PERSISTENT ASSET CONTEXT BANNER */}
                     <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                         <div className="flex items-center gap-6">
@@ -713,7 +734,7 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
                 </div>
             )}
 
-            {/* TAB: WORKFLOW */}
+            {/* TAB: WORKFLOW - Same as before */}
             {activeTab === 'WORKFLOW' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <div className="bg-white p-12 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden">
@@ -765,7 +786,7 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
                 </div>
             )}
 
-            {/* TAB: DOKUMEN - UPDATED UI */}
+            {/* TAB: DOKUMEN - Same as before */}
             {activeTab === 'DOKUMEN' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <input type="file" ref={photoInputRef} className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'photo')} />

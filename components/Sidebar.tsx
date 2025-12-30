@@ -42,7 +42,8 @@ import {
   RefreshCw,
   Sliders,
   CheckCircle2,
-  Headset
+  Headset,
+  Gavel
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -134,6 +135,7 @@ export const Sidebar: React.FC<Props> = ({
             { label: 'Pajak & KIR', icon: <FileText size={16} /> },
             { label: 'Mutasi', icon: <Send size={16} /> },
             { label: 'Penjualan', icon: <DollarSign size={16} /> },
+            { label: 'Open Bid', icon: <Gavel size={16} /> },
         ]
     },
     { 
