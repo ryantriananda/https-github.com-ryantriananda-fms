@@ -97,9 +97,19 @@ export const MOCK_MAINTENANCE_SCHEDULE_DATA: MaintenanceScheduleRecord[] = [
 ];
 
 export const MOCK_VENDOR_DATA: VendorRecord[] = [
-    { id: 'V-001', vendorName: 'PT. Service Maju', vendorCode: 'VND-001', type: 'Service', category: 'AC Maintenance', email: 'service@maju.com', phone: '021-1234567', address: 'Jakarta', status: 'Active' }
+    { id: 'V-001', vendorName: 'PT. Service Maju', vendorCode: 'VND-001', type: 'Service', category: 'AC Maintenance', email: 'service@maju.com', phone: '021-1234567', address: 'Jl. Fatmawati No. 10, Jakarta Selatan', status: 'Active', picName: 'Budi Santoso' },
+    { id: 'V-002', vendorName: 'CV. Berkah Abadi', vendorCode: 'VND-002', type: 'Goods', category: 'Stationery Supply', email: 'sales@berkahabadi.com', phone: '021-9876543', address: 'Jl. Pangeran Jayakarta, Jakarta Pusat', status: 'Active', picName: 'Ani Wijaya' },
+    { id: 'V-003', vendorName: 'PT. Mitra Teknindo', vendorCode: 'VND-003', type: 'Service', category: 'IT Support', email: 'support@mitrateknindo.id', phone: '021-5556667', address: 'Ruko Mangga Dua, Jakarta Utara', status: 'Inactive', picName: 'Doni Pratama' },
+    { id: 'V-004', vendorName: 'UD. Sumber Air', vendorCode: 'VND-004', type: 'Goods', category: 'Pantry Supply', email: 'order@sumberair.com', phone: '081234567890', address: 'Jl. Raya Bogor KM 30', status: 'Active', picName: 'Siti Aminah' },
+    { id: 'V-005', vendorName: 'Bengkel Mobil Sejahtera', vendorCode: 'VND-005', type: 'Service', category: 'Vehicle Maintenance', email: 'bengkel@sejahtera.com', phone: '021-7778889', address: 'Jl. TB Simatupang, Jakarta Selatan', status: 'Active', picName: 'Rudi Hartono' }
 ];
-export const MOCK_MASTER_VENDOR_DATA: MasterVendorRecord[] = []; // Can be same as VendorRecord
+
+export const MOCK_MASTER_VENDOR_DATA: MasterVendorRecord[] = [
+    { id: 'MV-001', nama: 'PT. Astra International', merek: 'Toyota, Daihatsu', alamat: 'Jl. Gaya Motor Raya No. 8', noTelp: '021-6522555', tipe: 'Service', cabang: 'Jakarta', aktif: true, vendorName: 'PT. Astra International', vendorCode: 'MV-001', type: 'Service', category: 'Automotive', email: '-', phone: '021-6522555', address: 'Jl. Gaya Motor Raya No. 8', status: 'Active' },
+    { id: 'MV-002', nama: 'PT. Honda Prospect Motor', merek: 'Honda', alamat: 'Jl. Mitra Utara II', noTelp: '021-99988877', tipe: 'Service', cabang: 'Surabaya', aktif: true, vendorName: 'PT. Honda Prospect Motor', vendorCode: 'MV-002', type: 'Service', category: 'Automotive', email: '-', phone: '021-99988877', address: 'Jl. Mitra Utara II', status: 'Active' },
+    { id: 'MV-003', nama: 'CV. Sinar Dunia', merek: 'Sinar Dunia', alamat: 'Kawasan Industri Pulogadung', noTelp: '021-4610000', tipe: 'Goods', cabang: 'Jakarta', aktif: true, vendorName: 'CV. Sinar Dunia', vendorCode: 'MV-003', type: 'Goods', category: 'Office Supply', email: '-', phone: '021-4610000', address: 'Kawasan Industri Pulogadung', status: 'Active' },
+    { id: 'MV-004', nama: 'PT. Datascrip', merek: 'Canon, Asus', alamat: 'Jl. Selaparang Blok B-15', noTelp: '021-6544515', tipe: 'Both', cabang: 'All Branches', aktif: true, vendorName: 'PT. Datascrip', vendorCode: 'MV-004', type: 'Both', category: 'Office Equipment', email: '-', phone: '021-6544515', address: 'Jl. Selaparang Blok B-15', status: 'Active' }
+];
 
 export const MOCK_LOGBOOK_DATA: LogBookRecord[] = [];
 export const MOCK_TIMESHEET_DATA: TimesheetRecord[] = [];

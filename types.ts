@@ -269,7 +269,15 @@ export interface VendorRecord {
 }
 
 // Re-using VendorRecord for MasterVendorRecord as they seem identical in purpose
-export type MasterVendorRecord = VendorRecord & { nama?: string; aktif?: boolean; noTelp?: string; merek?: string; };
+export type MasterVendorRecord = VendorRecord & { 
+  nama?: string; 
+  aktif?: boolean; 
+  noTelp?: string; 
+  merek?: string; 
+  alamat?: string;
+  tipe?: string;
+  cabang?: string;
+};
 
 export interface DeliveryLocationRecord {
   id: number;
