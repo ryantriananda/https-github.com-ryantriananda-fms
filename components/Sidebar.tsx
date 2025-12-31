@@ -43,23 +43,27 @@ import {
   Sliders,
   CheckCircle2,
   Headset,
-  Gavel
+  Gavel,
+  FileBadge,
+  Hammer,
+  Shield,
+  FileSpreadsheet
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface Props {
   activeItem: string;
-  onNavigate: (label: string) => void;
+  onNavigate: (item: string) => void;
   isCollapsed: boolean;
   onToggle: () => void;
-  isMobileOpen?: boolean;
-  onCloseMobile?: () => void;
+  isMobileOpen: boolean;
+  onCloseMobile: () => void;
 }
 
 interface MenuItem {
-    label: string;
-    icon: React.ReactNode;
-    subItems?: MenuItem[];
+  label: string;
+  icon: React.ReactNode;
+  subItems?: MenuItem[];
 }
 
 export const Sidebar: React.FC<Props> = ({ 
@@ -97,6 +101,48 @@ export const Sidebar: React.FC<Props> = ({
 
   const menuItems: MenuItem[] = [
     { label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
+    
+    // --- GROUP 1: HARD ASSETS (HIGH PRIORITY) ---
+    { 
+        label: 'Gedung', 
+        icon: <Building size={20} />,
+        subItems: [
+             { label: 'Daftar Gedung', icon: <List size={16} /> }, 
+             { label: 'Utility Monitoring', icon: <Zap size={16} /> },
+             { label: 'Branch Improvement', icon: <FileText size={16} /> },
+             { label: 'Asuransi Gedung', icon: <Shield size={16} /> },
+             { label: 'Compliance & Legal', icon: <ShieldCheck size={16} /> },
+        ]
+    },
+    { 
+        label: 'Kendaraan', 
+        icon: <Car size={20} />,
+        subItems: [
+            { label: 'Daftar Aset', icon: <Database size={16} /> },
+            { label: 'Kontrak Kendaraan', icon: <Briefcase size={16} /> },
+            { label: 'Servis', icon: <Wrench size={16} /> },
+            { label: 'Pajak & KIR', icon: <FileText size={16} /> },
+            { label: 'Reminder Pajak & KIR', icon: <Bell size={16} /> },
+            { label: 'Asuransi Kendaraan', icon: <Shield size={16} /> },
+            { label: 'Mutasi', icon: <Send size={16} /> },
+            { label: 'Penjualan', icon: <DollarSign size={16} /> },
+        ]
+    },
+    { 
+        label: 'General Asset', 
+        icon: <Package size={20} />,
+        subItems: [
+            { label: 'Asset HC', icon: <Database size={16} /> },
+            { label: 'Asset IT', icon: <Monitor size={16} /> },
+            { label: 'Customer Service', icon: <Headset size={16} /> },
+            { label: 'Pemeliharaan Asset', icon: <Wrench size={16} /> },
+            { label: 'Reminder Pemeliharaan', icon: <Bell size={16} /> },
+            { label: 'Mutasi Aset', icon: <Send size={16} /> },
+            { label: 'Penjualan Aset', icon: <DollarSign size={16} /> }, 
+        ]
+    },
+
+    // --- GROUP 2: CONSUMABLES & REQUESTS ---
     { 
         label: 'ATK', 
         icon: <Box size={20} />,
@@ -115,48 +161,18 @@ export const Sidebar: React.FC<Props> = ({
             { label: 'Master ARK', icon: <Settings size={16} /> },
         ]
     },
-    { 
-        label: 'General Asset', 
-        icon: <Package size={20} />,
-        subItems: [
-            { label: 'Asset HC', icon: <Database size={16} /> },
-            { label: 'Asset IT', icon: <Monitor size={16} /> },
-            { label: 'Customer Service', icon: <Headset size={16} /> },
-            { label: 'Mutasi Aset', icon: <Send size={16} /> }, // New Menu
-            { label: 'Penjualan Aset', icon: <DollarSign size={16} /> }, 
-        ]
-    },
-    { label: 'Log Book', icon: <BookOpen size={20} /> },
-    { 
-        label: 'Kendaraan', 
-        icon: <Car size={20} />,
-        subItems: [
-            { label: 'Daftar Aset', icon: <Database size={16} /> },
-            { label: 'Kontrak Kendaraan', icon: <Briefcase size={16} /> },
-            { label: 'Servis', icon: <Wrench size={16} /> },
-            { label: 'Pajak & KIR', icon: <FileText size={16} /> },
-            { label: 'Mutasi', icon: <Send size={16} /> },
-            { label: 'Penjualan', icon: <DollarSign size={16} /> },
-        ]
-    },
-    { 
-        label: 'Gedung', 
-        icon: <Building size={20} />,
-        subItems: [
-             { label: 'Pemeliharaan Asset', icon: <Wrench size={16} /> },
-             { label: 'Utility Monitoring', icon: <Zap size={16} /> },
-             { label: 'Branch Improvement', icon: <FileText size={16} /> },
-             { label: 'Compliance & Legal', icon: <ShieldCheck size={16} /> },
-        ]
-    },
+
+    // --- GROUP 3: DAILY OPERATIONS ---
     { label: 'Timesheet', icon: <Clock size={20} /> },
+    { label: 'Log Book', icon: <BookOpen size={20} /> },
+
+    // --- GROUP 4: ADMINISTRATION ---
     { label: 'Vendor', icon: <Users size={20} /> },
     { label: 'Manajemen User', icon: <UserCog size={20} /> },
     { 
       label: 'Master Data', 
       icon: <Home size={20} />,
       subItems: [
-        // Moved Master Approval to top for better visibility
         { label: 'Master Approval', icon: <CheckCircle2 size={16} /> },
         
         // Group 1: General Masters
@@ -164,6 +180,10 @@ export const Sidebar: React.FC<Props> = ({
         { label: 'Master PPN', icon: <Percent size={16} /> },
         { label: 'Master Brand Type', icon: <Stamp size={16} /> },
         { label: 'Master Brand', icon: <Tag size={16} /> },
+        { label: 'Master Model Kendaraan', icon: <Car size={16} /> },
+        { label: 'Master Komponen Bangunan', icon: <Hammer size={16} /> },
+        { label: 'Master Tipe Dokumen', icon: <FileBadge size={16} /> },
+        { label: 'Master Tipe Utilitas', icon: <Zap size={16} /> },
         { label: 'Master Operator', icon: <Radio size={16} /> },
         { label: 'Master Asset Type', icon: <Component size={16} /> },
         { label: 'Master Department', icon: <Layers size={16} /> },
@@ -174,7 +194,7 @@ export const Sidebar: React.FC<Props> = ({
         { label: 'Master Cost Center', icon: <CreditCard size={16} /> },
         { label: 'Asset Category', icon: <Box size={16} /> },
         
-        // Group 2: Configuration Masters (From Request)
+        // Group 2: Configuration Masters
         { label: 'Jenis Pajak', icon: <Sliders size={16} /> },
         { label: 'Jenis Pembayaran', icon: <Sliders size={16} /> },
         { label: 'Jenis Servis', icon: <Sliders size={16} /> },

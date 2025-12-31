@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Save, List, Calendar, CheckCircle, FileText, User, Package, MapPin, History, Check, XCircle } from 'lucide-react';
+import { X, Save, List, Calendar, CheckCircle, FileText, User, Package, MapPin, History, Check, XCircle, Clock, Users, MessageSquare } from 'lucide-react';
 import { VehicleRecord, LogBookRecord, AssetRecord, StationeryRequestRecord, StationeryRequestItem } from '../types';
 import { MOCK_MASTER_DATA, MOCK_MASTER_ARK_DATA, MOCK_ATK_CATEGORY, MOCK_ARK_CATEGORY, MOCK_UOM_DATA } from '../constants';
 
@@ -33,35 +33,67 @@ export const AddStockModal: React.FC<Props> = ({
   });
   const [requestItems, setRequestItems] = useState<StationeryRequestItem[]>([{ itemId: '', qty: '', categoryId: '', uom: '' }]);
 
+  // LogBook State
+  const [logBookForm, setLogBookForm] = useState<Partial<LogBookRecord>>({
+      tanggalKunjungan: new Date().toISOString().split('T')[0],
+      jamDatang: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+      lokasiModena: 'Jakarta Head Office',
+      kategoriTamu: 'Visitor',
+      wanita: 0,
+      lakiLaki: 0,
+      anakAnak: 0
+  });
+
   const isArkModule = moduleName.includes('ARK') || moduleName.includes('Household');
+  const isLogBook = moduleName === 'Log Book';
   const isViewMode = mode === 'view';
 
   useEffect(() => {
     if (isOpen) {
-        if (mode === 'view' && initialAssetData) {
-            setStationeryRequestForm({
-                type: 'DAILY REQUEST',
-                date: initialAssetData.date,
-                remarks: initialAssetData.itemDescription || '',
-                deliveryType: 'Dikirim',
-                location: 'MODENA Head Office'
-            });
-            setRequestItems([{ itemId: '', qty: initialAssetData.qty.toString(), categoryId: initialAssetData.category, uom: 'PCS' }]);
+        if (isLogBook) {
+            if (initialLogBookData && mode !== 'create') {
+                setLogBookForm(initialLogBookData);
+            } else {
+                setLogBookForm({
+                    tanggalKunjungan: new Date().toISOString().split('T')[0],
+                    jamDatang: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                    lokasiModena: 'Jakarta Head Office',
+                    kategoriTamu: 'Visitor',
+                    wanita: 0,
+                    lakiLaki: 0,
+                    anakAnak: 0
+                });
+            }
         } else {
-            setStationeryRequestForm({ 
-                type: 'DAILY REQUEST', 
-                deliveryType: 'Dikirim', 
-                location: 'MODENA Head Office', 
-                date: new Date().toISOString().split('T')[0],
-                remarks: ''
-            });
-            setRequestItems([{ itemId: '', qty: '', categoryId: '', uom: '' }]);
+            if (mode === 'view' && initialAssetData) {
+                setStationeryRequestForm({
+                    type: 'DAILY REQUEST',
+                    date: initialAssetData.date,
+                    remarks: initialAssetData.itemDescription || '',
+                    deliveryType: 'Dikirim',
+                    location: 'MODENA Head Office'
+                });
+                setRequestItems([{ itemId: '', qty: initialAssetData.qty.toString(), categoryId: initialAssetData.category, uom: 'PCS' }]);
+            } else {
+                setStationeryRequestForm({ 
+                    type: 'DAILY REQUEST', 
+                    deliveryType: 'Dikirim', 
+                    location: 'MODENA Head Office', 
+                    date: new Date().toISOString().split('T')[0],
+                    remarks: ''
+                });
+                setRequestItems([{ itemId: '', qty: '', categoryId: '', uom: '' }]);
+            }
         }
     }
-  }, [isOpen, initialAssetData, mode]);
+  }, [isOpen, initialAssetData, initialLogBookData, mode, isLogBook, moduleName]);
 
   const handleSave = () => {
-      if (onSaveStationeryRequest) onSaveStationeryRequest({ ...stationeryRequestForm, items: requestItems });
+      if (isLogBook && onSaveLogBook) {
+          onSaveLogBook(logBookForm);
+      } else if (onSaveStationeryRequest) {
+          onSaveStationeryRequest({ ...stationeryRequestForm, items: requestItems });
+      }
   }
 
   const handleStationeryRequestChange = (field: keyof StationeryRequestRecord, value: any) => setStationeryRequestForm(prev => ({ ...prev, [field]: value }));
@@ -88,7 +120,126 @@ export const AddStockModal: React.FC<Props> = ({
     </div>
   );
 
+  const renderLogBookForm = () => (
+      <div className="space-y-8">
+          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+              <SectionHeader icon={User} title="GUEST INFORMATION" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">NAMA TAMU</label>
+                      <input 
+                          type="text" 
+                          className="w-full border border-gray-200 rounded-xl px-5 py-4 text-[12px] font-black bg-white shadow-sm focus:border-black outline-none" 
+                          value={logBookForm.namaTamu || ''} 
+                          onChange={(e) => setLogBookForm({...logBookForm, namaTamu: e.target.value})}
+                          placeholder="Nama Lengkap Tamu"
+                          disabled={isViewMode}
+                      />
+                  </div>
+                  <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">KATEGORI</label>
+                      <select 
+                          className="w-full border border-gray-200 rounded-xl px-5 py-4 text-[12px] font-black bg-white shadow-sm focus:border-black outline-none appearance-none cursor-pointer" 
+                          value={logBookForm.kategoriTamu || ''} 
+                          onChange={(e) => setLogBookForm({...logBookForm, kategoriTamu: e.target.value})}
+                          disabled={isViewMode}
+                      >
+                          <option value="Visitor">Visitor (Umum)</option>
+                          <option value="Supplier">Supplier / Vendor</option>
+                          <option value="Customer">Customer</option>
+                          <option value="Interviewee">Kandidat Interview</option>
+                          <option value="Contractor">Kontraktor</option>
+                      </select>
+                  </div>
+              </div>
+          </div>
+
+          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+              <SectionHeader icon={MapPin} title="VISIT DETAILS" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">LOKASI MODENA</label>
+                      <select 
+                          className="w-full border border-gray-200 rounded-xl px-5 py-4 text-[12px] font-black bg-white shadow-sm focus:border-black outline-none appearance-none cursor-pointer" 
+                          value={logBookForm.lokasiModena || ''} 
+                          onChange={(e) => setLogBookForm({...logBookForm, lokasiModena: e.target.value})}
+                          disabled={isViewMode}
+                      >
+                          <option value="Jakarta Head Office">Jakarta Head Office</option>
+                          <option value="MEC Suryo">MEC Suryo</option>
+                          <option value="MHC Bintaro">MHC Bintaro</option>
+                          <option value="Warehouse Cakung">Warehouse Cakung</option>
+                      </select>
+                  </div>
+                  <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">TANGGAL</label>
+                      <input 
+                          type="date" 
+                          className="w-full border border-gray-200 rounded-xl px-5 py-4 text-[12px] font-black bg-white shadow-sm focus:border-black outline-none" 
+                          value={logBookForm.tanggalKunjungan || ''} 
+                          onChange={(e) => setLogBookForm({...logBookForm, tanggalKunjungan: e.target.value})}
+                          disabled={isViewMode}
+                      />
+                  </div>
+                  <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">JAM DATANG</label>
+                      <input 
+                          type="time" 
+                          className="w-full border border-gray-200 rounded-xl px-5 py-4 text-[12px] font-black bg-white shadow-sm focus:border-black outline-none text-center" 
+                          value={logBookForm.jamDatang || ''} 
+                          onChange={(e) => setLogBookForm({...logBookForm, jamDatang: e.target.value})}
+                          disabled={isViewMode}
+                      />
+                  </div>
+                  <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">JAM PULANG</label>
+                      <input 
+                          type="time" 
+                          className="w-full border border-gray-200 rounded-xl px-5 py-4 text-[12px] font-black bg-white shadow-sm focus:border-black outline-none text-center" 
+                          value={logBookForm.jamPulang || ''} 
+                          onChange={(e) => setLogBookForm({...logBookForm, jamPulang: e.target.value})}
+                          disabled={isViewMode}
+                      />
+                  </div>
+              </div>
+          </div>
+
+          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+              <SectionHeader icon={Users} title="VISITOR COUNT & NOTES" />
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                  <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 text-center tracking-widest">LAKI-LAKI</label>
+                      <input type="number" min="0" className="w-full border border-gray-200 rounded-xl px-2 py-3 text-center font-black" value={logBookForm.lakiLaki} onChange={e => setLogBookForm({...logBookForm, lakiLaki: parseInt(e.target.value)})} disabled={isViewMode} />
+                  </div>
+                  <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 text-center tracking-widest">WANITA</label>
+                      <input type="number" min="0" className="w-full border border-gray-200 rounded-xl px-2 py-3 text-center font-black" value={logBookForm.wanita} onChange={e => setLogBookForm({...logBookForm, wanita: parseInt(e.target.value)})} disabled={isViewMode} />
+                  </div>
+                  <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 text-center tracking-widest">ANAK-ANAK</label>
+                      <input type="number" min="0" className="w-full border border-gray-200 rounded-xl px-2 py-3 text-center font-black" value={logBookForm.anakAnak} onChange={e => setLogBookForm({...logBookForm, anakAnak: parseInt(e.target.value)})} disabled={isViewMode} />
+                  </div>
+              </div>
+              <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">KEPERLUAN / NOTES</label>
+                  <textarea 
+                      className="w-full border border-gray-200 rounded-xl px-5 py-4 text-[12px] font-medium bg-gray-50/50 shadow-inner focus:border-black outline-none min-h-[100px] resize-none" 
+                      placeholder="Tuliskan tujuan kunjungan..."
+                      value={logBookForm.note || ''}
+                      onChange={e => setLogBookForm({...logBookForm, note: e.target.value})}
+                      disabled={isViewMode}
+                  />
+              </div>
+          </div>
+      </div>
+  );
+
   if (!isOpen) return null;
+
+  let modalTitle = '';
+  if (isLogBook) modalTitle = isViewMode ? 'Detail Buku Tamu' : 'Input Tamu Baru';
+  else if (isArkModule) modalTitle = isViewMode ? 'View Request Details' : 'Create Household Request';
+  else modalTitle = isViewMode ? 'View Request Details' : 'Create Stationery Request';
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-[2px] p-4 transition-opacity duration-300">
@@ -97,7 +248,7 @@ export const AddStockModal: React.FC<Props> = ({
         <div className="px-8 py-5 bg-white border-b border-gray-100 flex items-center justify-between shrink-0">
           <div>
               <h2 className="text-[14px] font-black text-black uppercase tracking-widest">
-                {isViewMode ? 'View Request Details' : (isArkModule ? 'CREATE HOUSEHOLD REQUEST' : 'CREATE STATIONERY REQUEST')}
+                {modalTitle}
               </h2>
           </div>
           <button className="text-gray-300 hover:text-red-500 transition-colors p-1" onClick={onClose}>
@@ -107,6 +258,7 @@ export const AddStockModal: React.FC<Props> = ({
         
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+            {isLogBook ? renderLogBookForm() : (
             <div className="space-y-6">
                  {/* ORDER SETUP Section */}
                  <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
@@ -253,6 +405,7 @@ export const AddStockModal: React.FC<Props> = ({
                     </div>
                  </div>
             </div>
+            )}
         </div>
 
         {/* Footer */}

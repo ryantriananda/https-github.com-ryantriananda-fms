@@ -1,34 +1,571 @@
 
-import React from 'react';
-
 export interface Employee {
+  id: string;
   name: string;
-  phone: string;
   role: string;
   avatar: string;
+  phone?: string;
 }
 
-export interface UserRecord {
-  id: string;
-  employeeId?: string; // NIK
-  name: string;
-  email: string;
-  role: string;
-  department: string;
-  location?: string; // Branch Location
-  phone: string;
+export interface UserRecord extends Employee {
+  email?: string;
+  department?: string;
+  location?: string;
   joinDate?: string;
-  status: 'Active' | 'Inactive';
-  lastActive: string;
-  avatar: string;
-  permissions?: string[]; // Array of allowed module IDs
+  status?: string;
+  lastActive?: string;
+  permissions?: string[];
+  employeeId?: string;
+}
+
+export interface MasterItem {
+  id: number;
+  category: string;
+  itemName: string;
+  itemCode: string;
+  uom: string;
+  remainingStock: number;
+  minimumStock: number;
+  maximumStock: number;
+  requestedStock: number;
+  lastPurchasePrice: string;
+  averagePrice: string;
+  purchaseDate: string;
+  imageUrl?: string;
+}
+
+export interface GeneralMasterItem {
+  id: number;
+  name: string;
+}
+
+export interface AssetRecord {
+  id: string;
+  transactionNumber: string;
+  employee: Employee;
+  category: string;
+  itemName: string;
+  itemDescription?: string;
+  qty: number;
+  date: string;
+  remainingStock: number;
+  itemCode: string;
+  status: string;
+}
+
+export interface StationeryRequestItem {
+  itemId: string;
+  qty: string;
+  categoryId: string;
+  uom: string;
+}
+
+export interface StationeryRequestRecord {
+  id?: string;
+  type: string;
+  deliveryType: string;
+  location: string;
+  date: string;
+  remarks?: string;
+  items?: StationeryRequestItem[];
+}
+
+export interface VehicleRecord {
+  id: number;
+  noPolisi: string;
+  nama: string;
+  merek: string;
+  tipeKendaraan: string;
+  model: string;
+  tahunPembuatan: string;
+  warna: string;
+  isiSilinder: string;
+  noRangka: string;
+  noMesin: string;
+  noBpkb: string;
+  masaBerlaku1: string; // STNK 1 Tahun
+  masaBerlaku5: string; // STNK 5 Tahun
+  masaBerlakuKir: string;
+  tglBeli: string;
+  hargaBeli: string;
+  noPolisAsuransi: string;
+  jangkaPertanggungan: string;
+  channel: string;
+  cabang: string;
+  pengguna: string;
+  status: string;
+  ownership: 'Milik Modena' | 'Sewa';
+  approvalStatus: string;
+  photoFront?: string;
+  photoRear?: string;
+  photoRight?: string;
+  photoLeft?: string;
+  stnkUrl?: string;
+  kirUrl?: string;
+  depreciationMethod?: string;
+  usefulLife?: number;
+  residualValue?: string;
+  keteranganBpkb?: string;
+  penggunaUtama?: string;
+  address?: string; // For compatibility
+  subLocation?: string; // For compatibility
+  location?: string; // For compatibility
+}
+
+export interface VehicleReminderRecord {
+  id: string;
+  noPolisi: string;
+  vehicleName: string;
+  type: 'STNK 1 Tahunan' | 'STNK 5 Tahunan' | 'KIR';
+  expiryDate: string;
+  branch: string;
+  status: 'Safe' | 'Warning' | 'Critical' | 'Expired';
+}
+
+export interface TaxKirRecord {
+  id: string;
+  noPolisi: string;
+  aset?: string; // nama kendaraan
+  tglRequest: string;
+  jenis: string; // Pajak STNK or KIR
+  channel: string;
+  cabang: string;
+  status: string;
+  statusApproval: string;
+  jatuhTempo?: string;
+  estimasiBiaya?: string;
+  targetSelesai?: string;
+  jenisPembayaran?: string;
+  attachmentUrl?: string;
+}
+
+export interface ServiceRecord {
+  id: string;
+  noPolisi: string;
+  aset?: string;
+  tglRequest: string;
+  channel: string;
+  cabang: string;
+  status: string;
+  statusApproval: string;
+  vendor?: string;
+  kmKendaraan?: string;
+  masalah?: string;
+  jenisServis?: string;
+  spareParts?: SparePart[];
+  estimasiBiaya?: string;
+  technician?: string; // For building maintenance compatibility or vehicle
 }
 
 export interface SparePart {
   name: string;
   qty: number;
   price: string;
-  imageUrl?: string; // Added image URL for spare parts
+  imageUrl?: string;
+}
+
+export interface MutationRecord {
+  id: string;
+  noPolisi?: string;
+  assetNumber?: string;
+  assetName?: string;
+  cabangAset: string;
+  tipeMutasi: string;
+  tglPermintaan: string;
+  lokasiAsal: string;
+  lokasiTujuan: string;
+  status: string;
+  statusApproval: string;
+  picBefore?: string;
+  picAfter?: string;
+  assetType?: 'VEHICLE' | 'GENERAL_ASSET';
+  biayaMutasi?: string;
+  checklistCondition?: string[];
+  photoFront?: string;
+  photoRear?: string;
+  photoRight?: string;
+  photoLeft?: string;
+  photoInterior?: string;
+  documentStnk?: string;
+}
+
+export interface SalesRecord {
+  id: string;
+  noPolisi?: string;
+  assetNumber?: string;
+  assetName?: string;
+  tglRequest: string;
+  channel: string;
+  cabang: string;
+  hargaTertinggi: string;
+  hargaPembuka?: string;
+  status: string;
+  statusApproval: string;
+  assetType?: 'VEHICLE' | 'GENERAL_ASSET';
+  bids?: BidRecord[];
+}
+
+export interface BidRecord {
+  id: string;
+  amount: string;
+  bidderName: string;
+  bidderRole: string;
+  bidderEmail: string;
+  bidderPhone: string;
+  bidderKtp: string;
+  bidderAvatar: string;
+  timestamp: string;
+}
+
+export interface BidderRegistration {
+  name: string;
+  ktp: string;
+  phone: string;
+  email: string;
+  agreedToTerms: boolean;
+}
+
+export interface VehicleContractRecord {
+  id: string;
+  noKontrak: string;
+  noPolisi: string;
+  aset: string; // Deskripsi unit
+  vendor: string;
+  tglMulai: string;
+  tglBerakhir: string;
+  biayaSewa: string;
+  approvalStatus: string;
+  status: string;
+  channel?: string;
+  cabang?: string;
+  penggunaUtama?: string;
+  attachmentUrl?: string; // Contract doc
+  stnkUrl?: string;
+  kirUrl?: string;
+  photoFront?: string;
+  photoRear?: string;
+  photoRight?: string;
+  photoLeft?: string;
+  merek?: string;
+  tipeKendaraan?: string;
+  model?: string;
+  tahunPembuatan?: string;
+  warna?: string;
+  isiSilinder?: string;
+  ownership?: string;
+}
+
+export interface VendorRecord {
+  id: string;
+  vendorName: string;
+  vendorCode: string;
+  type: 'Goods' | 'Service' | 'Both';
+  category: string;
+  email: string;
+  phone: string;
+  address: string;
+  status: 'Active' | 'Inactive' | 'Blacklist';
+  picName?: string;
+}
+
+// Re-using VendorRecord for MasterVendorRecord as they seem identical in purpose
+export type MasterVendorRecord = VendorRecord & { nama?: string; aktif?: boolean; noTelp?: string; merek?: string; };
+
+export interface DeliveryLocationRecord {
+  id: number;
+  name: string;
+  address: string;
+  type: string;
+}
+
+export interface LogBookRecord {
+  id: string;
+  lokasiModena: string;
+  kategoriTamu: string;
+  namaTamu: string;
+  tanggalKunjungan: string;
+  jamDatang: string;
+  jamPulang?: string;
+  wanita: number;
+  lakiLaki: number;
+  anakAnak: number;
+  note?: string;
+}
+
+export interface TimesheetRecord {
+  id: string;
+  employee: Employee;
+  location: string;
+  area: string;
+  date: string;
+  shift: string;
+  clockIn?: string;
+  clockOut?: string;
+  status: string;
+  tasks?: string[];
+  photos?: string[];
+}
+
+export interface BuildingRecord {
+  id: string;
+  name: string;
+  assetNo: string;
+  type: string;
+  location: string; // City/Branch Name
+  address: string;
+  city?: string;
+  district?: string;
+  province?: string;
+  distanceToDealer?: string;
+  roadCondition?: string;
+  electricityPower?: string;
+  waterSource?: string;
+  phoneLineCount?: string;
+  landArea?: string;
+  buildingArea?: string;
+  frontYardArea?: string;
+  totalFloors?: string;
+  parkingCapacity?: string;
+  buildingAge?: string;
+  fenceCondition?: string;
+  gateCondition?: string;
+  structureChecklist?: { [key: string]: string[] };
+  environmentConditions?: string[];
+  renovationNeeded?: boolean;
+  renovationCostEstimate?: string;
+  renovationTimeEstimate?: string;
+  renovationDetailsObj?: { costSharing: string; gracePeriod: string; items: any };
+  locationContext?: { right: string; left: string; front: string; back: string; nearIndustry: boolean; operationalHours: string };
+  rentCost?: string;
+  startDate?: string;
+  endDate?: string;
+  taxPPH?: string;
+  notaryFee?: string;
+  purchasePrice?: string;
+  ownerName?: string;
+  ownerPhone?: string;
+  ownerAddress?: string;
+  documentsAvailable?: string[];
+  businessNotes?: { deliveryTime: string; dealersCount: string; staffComposition: string; margin: string; competitorPareto: string };
+  status: string;
+  ownership: 'Rent' | 'Own';
+  proposals?: BuildingProposal[];
+  workflow?: WorkflowStep[];
+  totalMaintenanceCost?: string;
+  utilityCost?: string;
+  floorPlanImage?: string;
+}
+
+export interface BuildingProposal {
+  id: string;
+  name: string;
+  address: { jl: string; kota: string; kabupaten: string; propinsi: string };
+  floors?: any;
+  owner?: { name: string; address: string; phone: string };
+  surveySummary?: any;
+  securityFeatures?: string[];
+  structureChecklist?: any;
+  renovationDetailsObj?: any;
+  locationContext?: any;
+  businessNotes?: any;
+  documents?: string[];
+  environmentConditions?: string[];
+  rentPrice?: string;
+  leaseNature?: string; // e.g. "Sewa"
+  leasePeriod?: string;
+  taxPPH?: string;
+  notaryFee?: string;
+  previousRentPrice?: string;
+  electricity?: string;
+  water?: string;
+  phoneLines?: string;
+  telephoneDetails?: any;
+  landArea?: string;
+  buildingArea?: string;
+  frontYardArea?: string;
+  totalFloors?: string;
+  parkingCapacity?: string;
+  buildingAge?: string;
+  fenceCondition?: string;
+  gateCondition?: string;
+  renovationNeeded?: boolean;
+  renovationCostEstimate?: string;
+  renovationTimeEstimate?: string;
+}
+
+export interface WorkflowStep {
+  role: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  date?: string;
+  approver?: string;
+  comment?: string;
+}
+
+export interface ReminderRecord {
+  id: string;
+  documentName: string;
+  buildingName: string;
+  assetNo: string;
+  expiryDate: string;
+  daysRemaining?: number;
+  status: 'Safe' | 'Warning' | 'Urgent' | 'Expired';
+}
+
+export interface MaintenanceScheduleRecord {
+  id: string;
+  assetId: string;
+  assetName: string;
+  assetCode: string;
+  location: string;
+  category: string; // AC, Genset, etc.
+  frequency: 'Monthly' | 'Quarterly' | 'Yearly';
+  lastMaintenanceDate: string;
+  nextMaintenanceDate: string;
+  status: 'Safe' | 'Warning' | 'Overdue';
+  vendor?: string;
+}
+
+export interface BuildingAssetRecord {
+  id: string;
+  assetName: string;
+  assetCode: string;
+  assetType: string;
+  buildingName: string;
+  floor: string;
+  roomName: string;
+  status: string;
+  approvalStatus: 'Draft' | 'Pending Approval' | 'Approved' | 'Rejected' | 'Revised';
+  maintenanceFrequency?: string;
+  ownership?: string;
+  purchasePrice?: string;
+  purchaseDate?: string;
+  pic?: string;
+  brand?: string;
+  attachmentUrl?: string; // photo
+  proposals?: MaintenanceProposal[];
+}
+
+export interface MaintenanceProposal {
+  id: string;
+  vendorName: string;
+  proposalName: string;
+  estimatedCost: string;
+  status: 'Pending' | 'Reviewing' | 'Approved' | 'Rejected';
+  submissionDate: string;
+  unitPhoto?: string;
+  proposalDoc?: string;
+}
+
+export interface BuildingMaintenanceRecord {
+  id: string;
+  assetId: string;
+  assetName: string;
+  buildingLocation: string;
+  requestDate: string;
+  completionDate?: string;
+  maintenanceType: 'Preventive' | 'Corrective' | 'Emergency';
+  description?: string;
+  cost: string;
+  vendor?: string;
+  technician?: string;
+  status: 'Scheduled' | 'In Progress' | 'Completed' | 'Pending';
+  approvalStatus: 'Draft' | 'Pending Approval' | 'Approved' | 'Rejected' | 'Revised';
+  evidenceBefore?: string;
+  evidenceAfter?: string;
+  rating?: number;
+}
+
+export interface UtilityRecord {
+  id: string;
+  period: string;
+  date: string;
+  location: string;
+  type: string;
+  meterStart: number;
+  meterEnd: number;
+  usage: number;
+  unit: string;
+  cost: string;
+  status: 'Paid' | 'Unpaid' | 'Pending' | 'Pending Review';
+  attachmentUrl?: string;
+}
+
+export interface GeneralAssetRecord {
+  id: string;
+  assetNumber: string;
+  assetCategory: string;
+  type: string; // e.g. Laptop, Chair
+  assetName?: string;
+  ownership: string;
+  assetLocation: string;
+  subLocation: string;
+  department: string;
+  channel: string;
+  status: string;
+  approvalStatus: string;
+  address?: string;
+  purchasePrice?: string;
+  purchaseDate?: string;
+  brand?: string;
+  modelNumber?: string;
+  pic?: string;
+  sourceCategory?: string; // e.g. 'Asset HC', 'Asset IT'
+}
+
+export interface MasterApprovalRecord {
+  id: string;
+  module: string;
+  branch: string;
+  tiers: ApprovalTier[];
+  updatedAt: string;
+}
+
+export interface ApprovalTier {
+  level: number;
+  type: 'Role' | 'User';
+  value: string;
+  sla: number;
+}
+
+export interface ContractRecord {
+    id: string;
+    assetCategory: string;
+    assetNumber: string;
+    address: string;
+    type: string;
+    location: string;
+    channel: string;
+    subLocation: string;
+    status: string;
+}
+
+export interface InsuranceClaim {
+  id: string;
+  incidentDate: string;
+  description: string;
+  claimAmount: string; // Estimasi biaya klaim
+  coveredAmount: string; // Yang dibayar asuransi
+  status: 'Submitted' | 'Survey' | 'Approved' | 'Paid' | 'Rejected';
+  evidencePhotos?: string[];
+  remarks?: string;
+}
+
+export interface InsuranceRecord {
+  id: string;
+  policyNumber: string;
+  assetId: string; // Relation to Vehicle or Building
+  assetName: string; // Display Name (No Polisi or Building Name)
+  category: 'Vehicle' | 'Building';
+  provider: string; // Insurance Vendor
+  type: 'All Risk' | 'TLO' | 'Property All Risk' | 'Earthquake' | string;
+  startDate: string;
+  endDate: string;
+  premium: string; // Biaya Premi
+  sumInsured: string; // Nilai Pertanggungan
+  status: 'Active' | 'Expiring' | 'Expired';
+  deductible?: string; // Biaya resiko sendiri (OR)
+  claims?: InsuranceClaim[];
+  attachmentUrl?: string; // Softcopy Polis
 }
 
 export interface PurchaseRecord {
@@ -38,770 +575,6 @@ export interface PurchaseRecord {
   qty: number;
   unitPrice: string;
   totalPrice: string;
-  status: 'Completed' | 'Pending' | 'Cancelled';
+  status: string;
   attachmentUrl?: string;
-}
-
-export interface AssetRecord {
-  id: number;
-  transactionNumber?: string;
-  employee: Employee;
-  category: string;
-  itemName: string;
-  itemDescription: string;
-  qty: number;
-  date: string;
-  remainingStock: number;
-  itemCode: string;
-  status: 'Approved' | 'Pending' | 'Rejected' | 'Closed' | 'Draft' | 'On Progress';
-}
-
-export interface WorkflowLog {
-  step: string;
-  status: 'Pending' | 'Approved' | 'Rejected' | 'Revised';
-  actor: string;
-  date: string;
-  comment?: string;
-}
-
-export interface VehicleRecord {
-  id: number;
-  noRegistrasi: string;
-  nama: string;
-  noPolisi: string;
-  channel: string;
-  cabang: string;
-  status: 'Aktif' | 'Tidak Aktif';
-  approvalStatus?: 'Pending' | 'Approved' | 'Rejected' | 'Revised'; 
-  workflow?: WorkflowLog[];
-  ownership?: 'Milik Modena' | 'Sewa';
-  merek?: string;
-  tipeKendaraan?: string;
-  jenis?: string;
-  model?: string;
-  tahunPembuatan?: string;
-  warna?: string;
-  isiSilinder?: string;
-  noRangka?: string;
-  noMesin?: string;
-  pengguna?: string;
-  noBpkb?: string;
-  keteranganBpkb?: string;
-  masaBerlaku1?: string;
-  masaBerlaku5?: string;
-  masaBerlakuKir?: string;
-  tglBeli?: string;
-  hargaBeli?: string;
-  noPolisAsuransi?: string;
-  jangkaPertanggungan?: string;
-  
-  // Depreciation Fields
-  depreciationMethod?: string;
-  usefulLife?: number;
-  residualValue?: string;
-
-  // Documents & Photos
-  stnkUrl?: string;
-  kirUrl?: string;
-  photoFront?: string;
-  photoRear?: string;
-  photoRight?: string;
-  photoLeft?: string;
-}
-
-export interface VehicleContractRecord {
-  id: string;
-  noPolisi: string;
-  aset: string;
-  noKontrak: string;
-  vendor: string;
-  tglMulai: string;
-  tglBerakhir: string;
-  biayaSewa: string;
-  status: 'Aktif' | 'Selesai';
-  approvalStatus?: 'Pending' | 'Approved' | 'Rejected' | 'Revised';
-  workflow?: WorkflowLog[];
-  keterangan?: string;
-  ownership?: 'Milik Modena' | 'Sewa';
-  
-  // Fields from Image
-  merek?: string;
-  tipeKendaraan?: string;
-  model?: string;
-  tahunPembuatan?: string;
-  warna?: string;
-  isiSilinder?: string;
-  channel?: string;
-  cabang?: string;
-  penggunaUtama?: string;
-  noBpkb?: string;
-  keteranganBpkb?: string;
-  masaBerlaku1?: string;
-  masaBerlaku5?: string;
-  masaBerlakuKir?: string;
-  tglBeli?: string;
-  noPolisAsuransi?: string;
-  jangkaPertanggungan?: string;
-  
-  // Documents
-  attachmentUrl?: string; // Main Contract Doc
-  stnkUrl?: string;
-  kirUrl?: string;
-  photoFront?: string;
-  photoRear?: string;
-  photoRight?: string;
-  photoLeft?: string;
-}
-
-export interface MaintenanceSchedule {
-  id: string;
-  taskName: string;
-  plannedDate: string;
-  technician: string;
-  status: 'Scheduled' | 'Completed' | 'Missed';
-}
-
-export interface MaintenanceProposal {
-  id: string;
-  vendorName: string;
-  proposalName: string;
-  submissionDate: string;
-  estimatedCost: string;
-  status: 'Pending' | 'Reviewing' | 'Approved' | 'Rejected';
-  attachmentUrl?: string;
-}
-
-export interface CooperationDetail {
-  activeVendor?: string;
-  contractStartDate?: string;
-  contractEndDate?: string;
-  serviceLevelAgreement?: string;
-  monthlyMaintenanceFee?: string;
-}
-
-export type BuildingWorkflowStatus = 'Draft' | 'Pending Approval' | 'Revised' | 'Approved' | 'Rejected';
-
-export interface BuildingAssetRecord {
-  id: string;
-  assetCode: string;
-  assetType: 'AC' | 'APAR' | 'CCTV' | 'Genset' | 'Lift' | 'Pompa' | 'Panel Listrik' | 'Fire Alarm' | string;
-  assetName: string;
-  brand?: string;
-  modelNumber?: string;
-  serialNumber?: string;
-  capacity?: string;
-  pic?: string; // Person In Charge
-  
-  // Financial
-  purchasePrice?: string; // New Field
-  purchaseDate?: string; // New Field
-
-  // Placement
-  buildingName: string;
-  floor: string;
-  roomName: string;
-  
-  // Maintenance
-  maintenanceFrequency: 'Monthly' | 'Quarterly' | 'Yearly' | 'None';
-  lastMaintenanceDate?: string;
-  nextMaintenanceDate?: string;
-  schedules?: MaintenanceSchedule[];
-  
-  // Proposals & Cooperation
-  proposals?: MaintenanceProposal[];
-  cooperation?: CooperationDetail;
-
-  status: 'Good' | 'Fair' | 'Critical' | 'Maintenance';
-  approvalStatus?: BuildingWorkflowStatus;
-  ownership: 'Own' | 'Leased';
-  vendorMaintenance?: string;
-  attachmentUrl?: string;
-  qrCodeUrl?: string; // New Field for QR
-}
-
-export interface BuildingMaintenanceRecord {
-  id: string;
-  requestDate: string;
-  completionDate?: string;
-  assetId: string;
-  assetName: string;
-  buildingLocation: string; // derived from asset
-  maintenanceType: 'Preventive' | 'Corrective' | 'Emergency';
-  description: string;
-  vendor: string;
-  technician?: string;
-  cost: string;
-  status: 'Scheduled' | 'In Progress' | 'Completed' | 'Pending';
-  approvalStatus?: 'Draft' | 'Pending Approval' | 'Approved' | 'Rejected' | 'Revised';
-  attachmentUrl?: string;
-  
-  // New Fields for Suggestions
-  rating?: number; // 1-5 stars
-  evidenceBefore?: string; // URL image
-  evidenceAfter?: string; // URL image
-  slaStatus?: 'On Track' | 'Overdue' | 'Warning';
-}
-
-export interface WorkflowStep {
-  role: 'BM' | 'Regional Branches' | 'AVP Dealership' | 'Owner' | string;
-  status: 'Pending' | 'Approved' | 'Rejected' | 'Skipped' | 'Revised' | string;
-  date?: string;
-  approver?: string;
-  comment?: string;
-}
-
-export interface FloorPlanPin {
-    id: string;
-    x: number; // Percentage
-    y: number; // Percentage
-    label: string;
-    type: 'Asset' | 'Room';
-}
-
-export interface BuildingRecord {
-  id: string;
-  name: string;
-  assetNo: string;
-  assetCategory?: string;
-  type: string;
-  ownership: 'Own' | 'Rent';
-  location: string;
-  subLocation?: string;
-  address: string;
-  status: string;
-  startDate?: string;
-  endDate?: string;
-  proposals?: BuildingProposal[];
-  channel?: string;
-  department?: string;
-  
-  // Financials
-  assetValue?: string;
-  rentCost?: string;
-  purchasePrice?: string; // For Own
-
-  // Workflow
-  workflow?: WorkflowStep[];
-  currentWorkflowStep?: number; // 0 to 3
-  isLeaseProposalFilled?: boolean;
-
-  // New Fields
-  floorPlanImage?: string;
-  floorPlanPins?: FloorPlanPin[];
-  
-  // Cost Analysis Data (Mocked)
-  totalMaintenanceCost?: string;
-  utilityCost?: string; // Electricity, Water
-
-  // PDF Proposal Fields (Expanded)
-  city?: string;
-  district?: string; // Kabupaten
-  province?: string;
-  distanceToDealer?: string; // Added field
-  
-  // Utilities
-  electricityPower?: string; // Ampere
-  electricitySource?: string; // PLN/Swasta
-  waterSource?: string; // PAM/Sumur
-  phoneLineCount?: string;
-  telephoneDetails?: {
-    canAdd: boolean;
-    costPerLine: string;
-    borneBy: string;
-  };
-  
-  // Physical
-  landArea?: string; // Luas Tanah
-  buildingArea?: string; // Luas Bangunan
-  frontYardArea?: string;
-  parkingCapacity?: string;
-  buildingAge?: string; // Lama Bangunan Berdiri
-  
-  // Physical Condition
-  fenceCondition?: string;
-  gateCondition?: string;
-  roadCondition?: string;
-  
-  // Structure & Materials
-  floors?: { ground: string; f1: string; f2: string; f3: string; f4: string; };
-  totalFloors?: string;
-  structureChecklist?: {
-    tiang?: string[]; 
-    atap?: string[]; 
-    dinding?: string[]; 
-    lantai?: string[]; 
-    pintu?: string[]; 
-    jendela?: string[]; 
-    others?: string[]; 
-  };
-
-  // Renovation
-  renovationNeeded?: boolean;
-  renovationCostEstimate?: string;
-  renovationTimeEstimate?: string;
-  renovationDetailsObj?: {
-    costSharing: string;
-    gracePeriod: string;
-    items: {
-      partition: boolean;
-      paint: boolean; 
-      roof: string;
-      lights: boolean; 
-      other: string;
-    }
-  };
-
-  // Environment & Context
-  locationContext?: {
-    right: string;
-    left: string;
-    front: string;
-    back: string;
-    nearIndustry: boolean;
-    operationalHours: string;
-  };
-  environmentConditions?: string[];
-
-  // Security Features (Checkboxes)
-  securityFeatures?: string[];
-  
-  // Owner
-  ownerName?: string;
-  ownerPhone?: string;
-  ownerAddress?: string;
-  
-  // Documents (Checkboxes)
-  documentsAvailable?: string[];
-  
-  // Financial extras
-  taxPPH?: string;
-  notaryFee?: string;
-  
-  // Business Analysis
-  businessNotes?: {
-    deliveryTime: string;
-    dealersCount: string;
-    staffComposition: string;
-    margin: string;
-    competitorPareto: string;
-  };
-}
-
-// Updated based on PDF F.50/MI-HCO/R00/2021
-export interface BuildingProposal {
-  id: string;
-  name: string; // Used for "Kandidat X"
-  
-  // 1. Alamat Lokasi
-  address: {
-    jl: string;
-    kota: string;
-    kabupaten: string;
-    propinsi: string;
-  };
-
-  // 2. Telephone Details
-  phoneLines: string; // Jumlah & No Line Tlp
-  telephoneDetails?: {
-    canAdd: boolean; // Dapat ditambah segera?
-    costPerLine: string; // Biaya per line
-    borneBy: string; // Pemilik / Penyewa
-  };
-
-  // 3-4. Utilities
-  electricity: string; // Daya Listrik (Ampere/Watt)
-  water: string; // PAM/Pompa/Sumur
-
-  // 5. Dimensions & Conditions
-  landArea: string; // Luas Tanah (m2)
-  buildingArea: string; // Luas Bangunan (m2)
-  frontYardArea: string; // Luas Halaman Depan (m2)
-  
-  fenceCondition: string; // Tembok/Duri/Besi etc.
-  fenceHeight: string;
-  gateCondition: string; // Pintu Pagar
-  gateHeight: string;
-  
-  parkingCapacity: string; // Parkir Malam (Unit)
-
-  // Security Checkbox
-  securityFeatures: string[]; // Security Area Gedung, Security Area Wilayah, CCTV, Alarm, Free Area Assembly Point, Pos Polisi <500m
-
-  // 6. Structure / Floors
-  floors: {
-    ground: string;
-    f1: string;
-    f2: string;
-    f3: string;
-    f4: string;
-  };
-  totalFloors: string;
-
-  // 7. Material Checklist (Detailed from PDF Page 1 & 2)
-  structureChecklist?: {
-    tiang?: string[]; // Baja, Kayu
-    atap?: string[]; // Alumunium, Tanah Liat, Beton Cor, Genting Beton
-    dinding?: string[]; // Batako, Bata, Seng, Triplek
-    lantai?: string[]; // Keramik, Tanpa Keramik
-    pintu?: string[]; // Kayu, Triplek, Baja, Alumunium, Seng
-    jendela?: string[]; // Kayu, Alumunium, Besi
-    others?: string[]; // Anti Petir
-  };
-  
-  buildingAge: string; // <5, 5-10, 10-15, >15 tahun
-
-  // 8. Lease Nature
-  leaseNature: string; // Baru / Perpanjang
-  leasePurpose: string; // Showroom, Kantor, Gudang, Mess, Service
-
-  // 9. Documents
-  documents: string[]; // SHM, SHGB, IMB
-  shgbExpiryYear?: string; // masa berakhir hak Guna
-
-  // 10. Renovation (Detailed)
-  renovationNeeded: boolean;
-  renovationCostEstimate: string;
-  renovationTimeEstimate: string;
-  renovationDetails: string; // Free text
-  
-  renovationDetailsObj?: {
-    costSharing: string; // Pemilik / Penyewa / Kedua Pihak %
-    gracePeriod: string; // Hari
-    items: {
-      partition: boolean;
-      paint: boolean; 
-      roof: string;
-      lights: boolean; 
-      other: string;
-    }
-  };
-
-  // 12. Environment
-  environmentConditions: string[]; // Cluster, Padat Penduduk, Rumah Penduduk, Pergudangan, Perkantoran, Lapangan, Terawat/Tidak
-  
-  // Posisi Lokasi (Page 3)
-  locationContext?: {
-    right: string;
-    left: string;
-    front: string;
-    back: string;
-    nearIndustry: boolean;
-    operationalHours: string;
-  };
-
-  // 13-15. Logistics
-  distanceToDealer: string;
-  roadWidth: string;
-  roadCondition: string;
-  loadingDock: string; // Jenis Truk
-
-  // 16-19. Financials
-  rentPrice: string; // Per tahun
-  previousRentPrice?: string; // Bila perpanjang
-  leasePeriod: string; // Min - Max tahun
-  isNegotiable?: boolean;
-  taxPPH: string; // Ditanggung oleh...
-  notaryFee: string; // Ditanggung oleh...
-
-  // 20. Owner Data
-  owner: {
-    name: string;
-    address: string;
-    phone: string;
-    representative?: string; // Wakil Pemilik
-  };
-
-  // 21. Survey
-  surveySummary: {
-    pros: string;
-    cons: string;
-  };
-
-  // 25. Business Notes (Page 5)
-  businessNotes?: {
-    deliveryTime: string;
-    dealersCount: string;
-    staffComposition: string;
-    margin: string;
-    competitorPareto: string;
-  };
-}
-
-export interface UtilityRecord {
-  id: string;
-  period: string; // e.g. "January 2024" or specific date
-  date: string;
-  location: string; // Branch/Building name
-  type: 'Listrik (PLN)' | 'Air (PDAM)' | 'Internet' | 'Gas';
-  meterStart?: number;
-  meterEnd?: number;
-  usage: number; // calculated
-  unit: 'kWh' | 'm3' | 'Mbps' | 'L';
-  cost: string; // IDR
-  status: 'Paid' | 'Unpaid' | 'Pending Review';
-  attachmentUrl?: string; // Bill or Meter Photo
-  recordedBy: string; // Technician Name
-}
-
-export interface ServiceRecord {
-  id: string;
-  noPolisi: string;
-  tglRequest: string;
-  channel: string;
-  cabang: string;
-  status: string;
-  statusApproval: string;
-  workflow?: WorkflowLog[];
-  aset?: string;
-  tglStnk?: string;
-  jenisServis?: string;
-  vendor?: string;
-  targetSelesai?: string;
-  kmKendaraan?: string;
-  masalah?: string;
-  penyebab?: string;
-  estimasiBiaya?: string;
-  jenisPembayaran?: string;
-  namaBank?: string;
-  nomorRekening?: string;
-  spareParts?: SparePart[];
-}
-
-export interface TaxKirRecord {
-  id: string;
-  noPolisi: string;
-  tglRequest: string;
-  jenis: string;
-  channel: string;
-  cabang: string;
-  status: string;
-  statusApproval: string;
-  workflow?: WorkflowLog[];
-  aset?: string;
-  tahunPembuatan?: string;
-  vendor?: string;
-  estimasiBiaya?: string;
-  jenisPembayaran?: string;
-  targetSelesai?: string;
-  attachmentUrl?: string;
-  jatuhTempo?: string; // New Field for Editable Due Date
-}
-
-export interface MutationRecord {
-  id: string;
-  assetType?: 'VEHICLE' | 'GENERAL_ASSET'; // New Field
-  noPolisi?: string;
-  assetNumber?: string; // New Field
-  assetName?: string; // New Field
-  cabangAset: string;
-  tipeMutasi: string;
-  tglPermintaan: string;
-  lokasiAsal: string;
-  lokasiTujuan: string;
-  picBefore?: string; // New Field: PIC Asal
-  picAfter?: string; // New Field: PIC Tujuan
-  biayaMutasi?: string; // New field for Vehicle Mutation Cost
-  status: string;
-  statusApproval: string;
-  workflow?: WorkflowLog[];
-  
-  // New Fields for Checklist Unit
-  photoFront?: string;
-  photoRear?: string;
-  photoRight?: string;
-  photoLeft?: string;
-  photoInterior?: string;
-  documentStnk?: string;
-  checklistCondition?: string[]; // Array of strings for checklist items
-}
-
-export interface BidRecord {
-    id: string;
-    amount: string; // IDR value
-    bidderName: string;
-    bidderRole?: string;
-    bidderAvatar?: string; // Added avatar
-    bidderEmail?: string; // Added email
-    bidderPhone?: string; // Added Phone
-    bidderKtp?: string; // Added KTP/NIK
-    timestamp: string; // ISO Date
-}
-
-export interface BidderRegistration {
-    name: string;
-    ktp: string;
-    phone: string;
-    email: string;
-    agreedToTerms: boolean;
-}
-
-export interface SalesRecord {
-  id: string;
-  assetType?: 'VEHICLE' | 'GENERAL_ASSET'; // New Field: Differentiate between vehicle and general asset
-  noPolisi?: string; // Used for Vehicles
-  assetNumber?: string; // Used for General Assets
-  assetName?: string; // Used for General Assets display
-  tglRequest: string;
-  channel: string;
-  cabang: string;
-  hargaTertinggi: string;
-  hargaPembuka?: string;
-  status: string;
-  statusApproval: string;
-  workflow?: WorkflowLog[];
-  bids?: BidRecord[]; // History of bids
-}
-
-export interface MasterVendorRecord {
-  id: number;
-  nama: string;
-  merek: string;
-  alamat: string;
-  noTelp: string;
-  tipe: string;
-  cabang: string;
-  aktif: boolean;
-}
-
-export interface LogBookRecord {
-  id: number;
-  lokasiModena: string;
-  kategoriTamu: string;
-  namaTamu: string;
-  tanggalKunjungan: string;
-  jamDatang: string;
-  jamPulang: string;
-  wanita: number;
-  lakiLaki: number;
-  anakAnak: number;
-  note: string;
-}
-
-export interface MasterItem {
-  id: string | number;
-  category: string;
-  itemName: string;
-  itemCode: string;
-  uom: string;
-  remainingStock: number;
-  minimumStock: number;
-  maximumStock: number;
-  requestedStock: number;
-  purchaseDate: string;
-  lastPurchasePrice: string;
-  averagePrice: string;
-  imageUrl?: string;
-  purchaseHistory?: PurchaseRecord[];
-}
-
-export interface StationeryRequestItem {
-  itemId: string;
-  qty: string;
-  categoryId?: string;
-  uom?: string;
-}
-
-export interface StationeryRequestRecord {
-  type: string;
-  date: string;
-  remarks?: string;
-  deliveryType: string;
-  location: string;
-  items: StationeryRequestItem[];
-}
-
-export interface ContractRecord {
-  id: number;
-  assetCategory: string;
-  assetNumber: string;
-  address: string;
-  type: string;
-  location: string;
-  channel: string;
-  subLocation: string;
-  status: string;
-  ownership?: string;
-  department?: string;
-}
-
-export interface TimesheetRecord {
-  id: string | number;
-  employee: Employee;
-  date: string;
-  location?: string; // New: Building/Branch
-  area?: string; // New: Lobby, Toilet, etc.
-  shift: 'Pagi' | 'Siang' | 'Malam' | string;
-  clockIn: string;
-  clockOut: string;
-  status: 'Tepat Waktu' | 'Terlambat' | 'Absen' | string;
-  tasks?: string[]; // List of completed tasks
-  photos: string[]; // Evidence
-  note?: string;
-}
-
-export interface VendorRecord {
-  id: string | number;
-  vendorName: string;
-  vendorCode: string;
-  status: 'Active' | 'Inactive' | 'Blacklist';
-  type: string;
-  category: string;
-  email: string;
-  phone: string;
-  address: string;
-  picName?: string;
-}
-
-export interface GeneralMasterItem {
-  id: number;
-  name: string;
-  }
-
-export interface DeliveryLocationRecord {
-  id: number;
-  name: string;
-  address: string;
-  type: string;
-  }
-
-export interface ReminderRecord {
-  id: string | number;
-  documentName: string;
-  buildingName: string;
-  assetNo: string;
-  expiryDate: string;
-  daysRemaining: number;
-  status: 'Urgent' | 'Warning' | 'Safe' | string;
-}
-
-export interface GeneralAssetRecord {
-  id: string; // Added ID for data management
-  assetNumber: string;
-  assetCategory: string;
-  ownership: 'Own' | 'Rent' | string;
-  type: string;
-  assetLocation: string;
-  channel: string;
-  department: string;
-  subLocation: string;
-  address: string;
-  approvalStatus?: 'Pending' | 'Approved' | 'Rejected'; // Added approval status
-  purchasePrice?: string; // New
-  purchaseDate?: string; // New
-  pic?: string; // New: PIC for Mutation logic
-}
-
-export interface ApprovalTier {
-    level: number;
-    type: 'Role' | 'User'; // Added to distinguish between Role and Specific User
-    value: string; // Was 'role', now holds Role Name or User Name
-    sla: number; // Days
-}
-
-export interface MasterApprovalRecord {
-    id: string;
-    module: string; // e.g. 'Vehicle Request', 'Service', 'Tax', 'Mutation', 'Sales'
-    branch: string; // 'All' or specific branch name
-    tiers: ApprovalTier[];
-    updatedAt: string;
 }
