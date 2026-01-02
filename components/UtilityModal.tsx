@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, Zap, Droplets, Wifi, UploadCloud, Trash2, Calendar, FileText, DollarSign, Building } from 'lucide-react';
 import { UtilityRecord, BuildingRecord } from '../types';
+import { SearchableSelect, SelectOption } from './SearchableSelect';
 
 interface Props {
   isOpen: boolean;
@@ -159,20 +160,15 @@ export const UtilityModal: React.FC<Props> = ({
 
                     <div>
                         <Label required>Lokasi Gedung / Cabang</Label>
-                        <div className="relative">
-                            <select 
-                                disabled={isView}
-                                className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm cursor-pointer appearance-none"
-                                value={form.location || ''}
-                                onChange={(e) => setForm({...form, location: e.target.value})}
-                            >
-                                <option value="">-- Pilih Lokasi --</option>
-                                {buildingList.map(b => (
-                                    <option key={b.id} value={b.name}>{b.name}</option>
-                                ))}
-                            </select>
-                            <Building size={16} className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                        </div>
+                        <SearchableSelect
+                            options={buildingList.map(b => ({ value: b.name, label: b.name, subLabel: b.address }))}
+                            value={form.location || ''}
+                            onChange={(val) => setForm({...form, location: val})}
+                            placeholder="-- Pilih Lokasi --"
+                            disabled={isView}
+                            icon={Building}
+                            emptyMessage="Tidak ada data gedung"
+                        />
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">

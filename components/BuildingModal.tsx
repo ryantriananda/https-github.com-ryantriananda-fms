@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, Building, MapPin, Phone, FileText, CheckCircle2, Clock, AlertCircle, Trash2, Plus, ChevronDown, User, Home, DollarSign, Ruler, Zap, Key, UploadCloud, MousePointer2, TrendingUp, PieChart, ShieldCheck, ChevronLeft, Edit3, Flag } from 'lucide-react';
 import { BuildingRecord, GeneralMasterItem, BuildingProposal, WorkflowStep } from '../types';
+import { SearchableSelect, SelectOption } from './SearchableSelect';
 
 interface Props {
   isOpen: boolean;
@@ -213,7 +214,7 @@ export const BuildingModal: React.FC<Props> = ({
       }
   };
 
-  const toggleStructureCheckboxForm = (category: keyof typeof currentProposal.structureChecklist, value: string) => {
+  const toggleStructureCheckboxForm = (category: 'tiang' | 'atap' | 'dinding' | 'lantai' | 'pintu' | 'jendela' | 'others', value: string) => {
       if(isView) return;
       const list = form.structureChecklist?.[category] || [];
       const updatedList = list.includes(value) ? list.filter(i => i !== value) : [...list, value];
@@ -386,21 +387,42 @@ export const BuildingModal: React.FC<Props> = ({
                                         disabled={isView}
                                     />
                                 ) : (
-                                    <div className="relative">
-                                        <select 
-                                            disabled={isView}
-                                            className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 text-[14px] font-black text-black outline-none appearance-none shadow-sm cursor-pointer"
-                                            value={existingBuildings.find(b => b.name === form.name) ? form.name : ''}
-                                            onChange={handleBuildingSelect}
-                                        >
-                                            <option value="">-- Pilih Gedung untuk Perbaikan --</option>
-                                            {existingBuildings.map(b => (
-                                                <option key={b.id} value={b.name}>{b.name}</option>
-                                            ))}
-                                            <option value="NEW_ENTRY">-- Input Gedung Baru --</option>
-                                        </select>
-                                        <ChevronDown size={18} className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                                    </div>
+                                    <SearchableSelect
+                                        options={[
+                                            ...existingBuildings.map(b => ({
+                                                value: b.name,
+                                                label: b.name,
+                                                subLabel: b.address
+                                            })),
+                                            { value: 'NEW_ENTRY', label: '-- Input Gedung Baru --' }
+                                        ]}
+                                        value={existingBuildings.find(b => b.name === form.name) ? form.name || '' : ''}
+                                        onChange={(val) => {
+                                            if (val === 'NEW_ENTRY') {
+                                                setIsManualInput(true);
+                                                setForm(prev => ({...prev, name: ''}));
+                                            } else {
+                                                const selectedBuilding = existingBuildings.find(b => b.name === val);
+                                                if (selectedBuilding) {
+                                                    setForm(prev => ({
+                                                        ...prev,
+                                                        name: selectedBuilding.name,
+                                                        assetNo: selectedBuilding.assetNo,
+                                                        type: selectedBuilding.type,
+                                                        location: selectedBuilding.location,
+                                                        address: selectedBuilding.address,
+                                                        city: selectedBuilding.city,
+                                                        district: selectedBuilding.district,
+                                                        province: selectedBuilding.province,
+                                                    }));
+                                                }
+                                            }
+                                        }}
+                                        placeholder="-- Pilih Gedung untuk Perbaikan --"
+                                        disabled={isView}
+                                        icon={Building}
+                                        emptyMessage="Tidak ada data gedung"
+                                    />
                                 )}
                             </div>
                             
@@ -413,18 +435,17 @@ export const BuildingModal: React.FC<Props> = ({
 
                             <div>
                                 <Label>TIPE GEDUNG <span className="text-red-500">*</span></Label>
-                                <div className="relative">
-                                    <select 
-                                        disabled={isView}
-                                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 text-[14px] font-black text-black outline-none appearance-none shadow-sm cursor-pointer"
-                                        value={form.type || ''}
-                                        onChange={(e) => setForm({...form, type: e.target.value})}
-                                    >
-                                        <option value="">(PILIH TIPE)</option>
-                                        {buildingTypeList.map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
-                                    </select>
-                                    <ChevronDown size={18} className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                                </div>
+                                <SearchableSelect
+                                    options={buildingTypeList.map(t => ({
+                                        value: t.name,
+                                        label: t.name
+                                    }))}
+                                    value={form.type || ''}
+                                    onChange={(val) => setForm({...form, type: val})}
+                                    placeholder="(PILIH TIPE)"
+                                    disabled={isView}
+                                    emptyMessage="Tidak ada data tipe gedung"
+                                />
                             </div>
                         </div>
 

@@ -19,7 +19,7 @@ export const routeMap: Record<string, string> = {
   'Mutasi': '/kendaraan/mutasi',
   'Penjualan': '/kendaraan/penjualan',
   
-  // General Asset
+  // Aset Umum (General Asset)
   'Asset HC': '/general-asset/hc',
   'Asset IT': '/general-asset/it',
   'Customer Service': '/general-asset/customer-service',
@@ -27,6 +27,17 @@ export const routeMap: Record<string, string> = {
   'Reminder Pemeliharaan': '/general-asset/reminder',
   'Mutasi Aset': '/general-asset/mutasi',
   'Penjualan Aset': '/general-asset/penjualan',
+  
+  // Modena POD
+  'Permintaan POD': '/pod/permintaan',
+  'Penghuni POD': '/pod/penghuni',
+  
+  // Loker
+  'Daftar Loker': '/loker/daftar',
+  'Permintaan Loker': '/loker/permintaan',
+  
+  // Stock Opname
+  'Stock Opname': '/stock-opname',
   
   // ATK
   'Request ATK': '/atk/request',
@@ -38,15 +49,15 @@ export const routeMap: Record<string, string> = {
   'Household Request Approval': '/ark/approval',
   'Master ARK': '/ark/master',
   
-  // Daily Operations
-  'Timesheet': '/timesheet',
+  // Operasional Harian
   'Log Book': '/logbook',
+  'Absensi': '/absensi',
   
-  // Administration
+  // Administrasi
   'Vendor': '/vendor',
   'Manajemen User': '/user-management',
   
-  // Master Data
+  // Data Master
   'Master Approval': '/master/approval',
   'Master Vendor': '/master/vendor',
   'Master PPN': '/master/ppn',

@@ -84,6 +84,7 @@ const getInitialData = <T,>(key: string, fallback: T): T => {
 };
 
 const MOCK_MASTER_APPROVAL_DATA: MasterApprovalRecord[] = [
+  // Vehicle Management
   {
     id: '1',
     module: 'Vehicle Request (Pengajuan Baru)',
@@ -91,19 +92,176 @@ const MOCK_MASTER_APPROVAL_DATA: MasterApprovalRecord[] = [
     tiers: [
       { level: 1, type: 'Role', value: 'Branch Manager', sla: 2 },
       { level: 2, type: 'Role', value: 'Regional Head', sla: 3 },
-      { level: 3, type: 'User', value: 'Budi Santoso', sla: 5 },
+      { level: 3, type: 'Role', value: 'Head of GA', sla: 5 },
     ],
     updatedAt: '2024-03-01',
   },
   {
     id: '2',
+    module: 'Vehicle Service Request (Servis)',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+      { level: 2, type: 'Role', value: 'Branch Manager', sla: 2 },
+    ],
+    updatedAt: '2024-03-01',
+  },
+  {
+    id: '3',
+    module: 'Vehicle Mutation (Mutasi)',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+      { level: 2, type: 'Role', value: 'Head of GA', sla: 3 },
+    ],
+    updatedAt: '2024-03-01',
+  },
+  {
+    id: '4',
+    module: 'Vehicle Disposal (Penjualan)',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+      { level: 2, type: 'Role', value: 'Head of GA', sla: 2 },
+      { level: 3, type: 'Role', value: 'Director', sla: 5 },
+    ],
+    updatedAt: '2024-03-01',
+  },
+  {
+    id: '5',
+    module: 'Vehicle Contract (Sewa)',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+      { level: 2, type: 'Role', value: 'Finance Manager', sla: 2 },
+    ],
+    updatedAt: '2024-03-01',
+  },
+  // ATK/ARK
+  {
+    id: '6',
     module: 'Stationery Request (Permintaan ATK)',
-    branch: 'Jakarta Head Office',
+    branch: 'All Branches',
     tiers: [
       { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
       { level: 2, type: 'Role', value: 'Head of GA', sla: 2 },
     ],
     updatedAt: '2024-03-05',
+  },
+  {
+    id: '7',
+    module: 'Household Request (Permintaan ARK)',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+      { level: 2, type: 'Role', value: 'Head of GA', sla: 2 },
+    ],
+    updatedAt: '2024-03-05',
+  },
+  // Building & Facility
+  {
+    id: '8',
+    module: 'New Building Request (Sewa/Beli)',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+      { level: 2, type: 'Role', value: 'Head of GA', sla: 3 },
+      { level: 3, type: 'Role', value: 'Director', sla: 5 },
+    ],
+    updatedAt: '2024-03-10',
+  },
+  {
+    id: '9',
+    module: 'Building Maintenance Request',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+      { level: 2, type: 'Role', value: 'Branch Manager', sla: 2 },
+    ],
+    updatedAt: '2024-03-10',
+  },
+  {
+    id: '10',
+    module: 'Branch Improvement Request',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+      { level: 2, type: 'Role', value: 'Head of GA', sla: 3 },
+      { level: 3, type: 'Role', value: 'Director', sla: 5 },
+    ],
+    updatedAt: '2024-03-10',
+  },
+  {
+    id: '11',
+    module: 'Utility Payment Approval',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+      { level: 2, type: 'Role', value: 'Finance Manager', sla: 2 },
+    ],
+    updatedAt: '2024-03-10',
+  },
+  // General Assets
+  {
+    id: '12',
+    module: 'General Asset Request (Furniture/etc)',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+      { level: 2, type: 'Role', value: 'Head of GA', sla: 2 },
+    ],
+    updatedAt: '2024-03-10',
+  },
+  {
+    id: '13',
+    module: 'IT Asset Request (Laptop/Devices)',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin IT', sla: 1 },
+      { level: 2, type: 'Role', value: 'IT Manager', sla: 2 },
+    ],
+    updatedAt: '2024-03-10',
+  },
+  // Employee Facilities
+  {
+    id: '14',
+    module: 'Permintaan POD (Sewa Kos)',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+      { level: 2, type: 'Role', value: 'HR Manager', sla: 2 },
+    ],
+    updatedAt: '2024-03-10',
+  },
+  {
+    id: '15',
+    module: 'Permintaan Loker',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+    ],
+    updatedAt: '2024-03-10',
+  },
+  // Administrative
+  {
+    id: '16',
+    module: 'Vendor Registration Approval',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'Admin GA', sla: 1 },
+      { level: 2, type: 'Role', value: 'Finance Manager', sla: 2 },
+    ],
+    updatedAt: '2024-03-10',
+  },
+  {
+    id: '17',
+    module: 'New User Registration',
+    branch: 'All Branches',
+    tiers: [
+      { level: 1, type: 'Role', value: 'HR Manager', sla: 1 },
+      { level: 2, type: 'Role', value: 'IT Manager', sla: 2 },
+    ],
+    updatedAt: '2024-03-10',
   },
 ];
 

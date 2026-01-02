@@ -3,9 +3,11 @@ import { FilterBar } from '../../components/FilterBar';
 import { MutationTable } from '../../components/MutationTable';
 import { MutationModal } from '../../components/MutationModal';
 import { useAppContext } from '../../contexts/AppContext';
+import { useApprovalWorkflow, APPROVAL_MODULES } from '../../hooks/useApprovalWorkflow';
 
 const MutasiAset: React.FC = () => {
   const { gaMutationData, setGaMutationData, buildingAssetData, itBuildingData, csBuildingData } = useAppContext();
+  const { workflow, getApproverName, isLastTier } = useApprovalWorkflow(APPROVAL_MODULES.GENERAL_ASSET);
   
   // Combine all general assets with source category for filtering
   const combinedAssetList = useMemo(() => {
@@ -28,11 +30,56 @@ const MutasiAset: React.FC = () => {
 
   const handleSave = (data: any) => {
     if (modalMode === 'create') {
-      setGaMutationData([...gaMutationData, { ...data, id: `MUT-GA-${Date.now()}`, assetType: 'GENERAL_ASSET' }]);
+      setGaMutationData([...gaMutationData, { 
+        ...data, 
+        id: `MUT-GA-${Date.now()}`, 
+        assetType: 'GENERAL_ASSET',
+        currentApprovalLevel: 1,
+        approvalHistory: []
+      }]);
     } else {
       setGaMutationData(gaMutationData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
     }
     setIsModalOpen(false);
+  };
+
+  const handleAction = (item: any, action: 'Approve' | 'Reject' | 'Revise') => {
+    const currentLevel = item.currentApprovalLevel || 1;
+    const approverName = getApproverName(currentLevel);
+    const isLast = isLastTier(currentLevel);
+    const today = new Date().toISOString().split('T')[0];
+
+    const newHistory = [...(item.approvalHistory || []), {
+      level: currentLevel,
+      approver: approverName,
+      status: action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Revised',
+      date: today,
+      notes: ''
+    }];
+
+    if (action === 'Reject') {
+      setGaMutationData(gaMutationData.map(d => d.id === item.id ? { 
+        ...d, 
+        status: 'Rejected',
+        statusApproval: 'Rejected',
+        currentApprovalLevel: 0,
+        approvalHistory: newHistory
+      } : d));
+    } else if (action === 'Approve' && isLast) {
+      setGaMutationData(gaMutationData.map(d => d.id === item.id ? { 
+        ...d, 
+        status: 'Approved',
+        statusApproval: 'Approved',
+        currentApprovalLevel: 0,
+        approvalHistory: newHistory
+      } : d));
+    } else if (action === 'Approve') {
+      setGaMutationData(gaMutationData.map(d => d.id === item.id ? { 
+        ...d, 
+        currentApprovalLevel: currentLevel + 1,
+        approvalHistory: newHistory
+      } : d));
+    }
   };
 
   return (
@@ -49,7 +96,7 @@ const MutasiAset: React.FC = () => {
         onEdit={(item) => openModal('edit', item)}
         onView={(item) => openModal('view', item)}
         onDelete={(id) => setGaMutationData(prev => prev.filter(i => i.id !== id))}
-        onAction={() => {}}
+        onAction={handleAction}
       />
       {isModalOpen && (
         <MutationModal

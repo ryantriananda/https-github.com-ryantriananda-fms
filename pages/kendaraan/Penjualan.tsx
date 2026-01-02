@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FilterBar } from '../../components/FilterBar';
 import { SalesTable } from '../../components/SalesTable';
 import { SalesModal } from '../../components/SalesModal';
 import { useAppContext } from '../../contexts/AppContext';
+import { useApprovalWorkflow, APPROVAL_MODULES } from '../../hooks/useApprovalWorkflow';
 
 const Penjualan: React.FC = () => {
   const { salesData, setSalesData, vehicleData } = useAppContext();
+  const { workflow, getApproverName, isLastTier, getTotalTiers } = useApprovalWorkflow(APPROVAL_MODULES.VEHICLE_DISPOSAL);
+  
   const [activeTab, setActiveTab] = useState('SEMUA');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
@@ -19,7 +22,13 @@ const Penjualan: React.FC = () => {
 
   const handleSave = (data: any) => {
     if (modalMode === 'create') {
-      setSalesData([...salesData, { ...data, id: `SALE-${Date.now()}`, assetType: 'VEHICLE' }]);
+      setSalesData([...salesData, { 
+        ...data, 
+        id: `SALE-${Date.now()}`, 
+        assetType: 'VEHICLE',
+        currentApprovalLevel: 1,
+        approvalHistory: []
+      }]);
     } else {
       setSalesData(salesData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
     }
@@ -27,8 +36,40 @@ const Penjualan: React.FC = () => {
   };
 
   const handleAction = (item: any, action: 'Approve' | 'Reject' | 'Revise') => {
-    const statusMap = { 'Approve': 'Approved', 'Reject': 'Rejected', 'Revise': 'Revised' };
-    setSalesData(salesData.map(d => d.id === item.id ? { ...d, statusApproval: statusMap[action] } : d));
+    const currentLevel = item.currentApprovalLevel || 1;
+    const approverName = getApproverName(currentLevel);
+    const isLast = isLastTier(currentLevel);
+    const today = new Date().toISOString().split('T')[0];
+
+    const newHistory = [...(item.approvalHistory || []), {
+      level: currentLevel,
+      approver: approverName,
+      status: action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Revised',
+      date: today,
+      notes: ''
+    }];
+
+    if (action === 'Reject') {
+      setSalesData(salesData.map(d => d.id === item.id ? { 
+        ...d, 
+        statusApproval: 'Rejected',
+        currentApprovalLevel: 0,
+        approvalHistory: newHistory
+      } : d));
+    } else if (action === 'Approve' && isLast) {
+      setSalesData(salesData.map(d => d.id === item.id ? { 
+        ...d, 
+        statusApproval: 'Approved',
+        currentApprovalLevel: 0,
+        approvalHistory: newHistory
+      } : d));
+    } else if (action === 'Approve') {
+      setSalesData(salesData.map(d => d.id === item.id ? { 
+        ...d, 
+        currentApprovalLevel: currentLevel + 1,
+        approvalHistory: newHistory
+      } : d));
+    }
   };
 
   // Filter vehicle sales only

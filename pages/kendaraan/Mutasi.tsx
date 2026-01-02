@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FilterBar } from '../../components/FilterBar';
 import { MutationTable } from '../../components/MutationTable';
 import { MutationModal } from '../../components/MutationModal';
 import { useAppContext } from '../../contexts/AppContext';
+import { useApprovalWorkflow, APPROVAL_MODULES } from '../../hooks/useApprovalWorkflow';
 
 const Mutasi: React.FC = () => {
-  const { mutationData, setMutationData, vehicleData } = useAppContext();
+  const { mutationData, setMutationData, vehicleData, masterApprovalData } = useAppContext();
+  const { workflow, getApproverName, isLastTier, getTotalTiers } = useApprovalWorkflow(APPROVAL_MODULES.VEHICLE_MUTATION);
+  
   const [activeTab, setActiveTab] = useState('SEMUA');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
@@ -19,7 +22,13 @@ const Mutasi: React.FC = () => {
 
   const handleSave = (data: any) => {
     if (modalMode === 'create') {
-      setMutationData([...mutationData, { ...data, id: `MUT-${Date.now()}`, assetType: 'VEHICLE' }]);
+      setMutationData([...mutationData, { 
+        ...data, 
+        id: `MUT-${Date.now()}`, 
+        assetType: 'VEHICLE',
+        currentApprovalLevel: 1,
+        approvalHistory: []
+      }]);
     } else {
       setMutationData(mutationData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
     }
@@ -27,8 +36,43 @@ const Mutasi: React.FC = () => {
   };
 
   const handleAction = (item: any, action: 'Approve' | 'Reject' | 'Revise') => {
-    const statusMap = { 'Approve': 'Approved', 'Reject': 'Rejected', 'Revise': 'Revised' };
-    setMutationData(mutationData.map(d => d.id === item.id ? { ...d, statusApproval: statusMap[action] } : d));
+    const currentLevel = item.currentApprovalLevel || 1;
+    const approverName = getApproverName(currentLevel);
+    const totalTiers = getTotalTiers();
+    const isLast = isLastTier(currentLevel);
+    const today = new Date().toISOString().split('T')[0];
+
+    const newHistory = [...(item.approvalHistory || []), {
+      level: currentLevel,
+      approver: approverName,
+      status: action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Revised',
+      date: today,
+      notes: ''
+    }];
+
+    if (action === 'Reject') {
+      setMutationData(mutationData.map(d => d.id === item.id ? { 
+        ...d, 
+        status: 'Rejected',
+        statusApproval: 'Rejected',
+        currentApprovalLevel: 0,
+        approvalHistory: newHistory
+      } : d));
+    } else if (action === 'Approve' && isLast) {
+      setMutationData(mutationData.map(d => d.id === item.id ? { 
+        ...d, 
+        status: 'Approved',
+        statusApproval: 'Approved',
+        currentApprovalLevel: 0,
+        approvalHistory: newHistory
+      } : d));
+    } else if (action === 'Approve') {
+      setMutationData(mutationData.map(d => d.id === item.id ? { 
+        ...d, 
+        currentApprovalLevel: currentLevel + 1,
+        approvalHistory: newHistory
+      } : d));
+    }
   };
 
   // Filter vehicle mutations only

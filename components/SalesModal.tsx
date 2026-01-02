@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, DollarSign, Car, Tag, TrendingUp, User, Clock, AlertCircle, Mail, Link, Copy, Check, ShieldCheck, ChevronRight, Trophy, Users, Phone, CreditCard, Info, Hash, Calendar as CalendarIcon, FileText, Package, Filter } from 'lucide-react';
 import { SalesRecord, VehicleRecord, BidRecord, BidderRegistration, GeneralAssetRecord } from '../types';
+import { SearchableSelect, SelectOption } from './SearchableSelect';
 
 interface Props {
   isOpen: boolean;
@@ -295,37 +296,67 @@ export const SalesModal: React.FC<Props> = ({
                                     </div>
                                     
                                     {assetType === 'VEHICLE' ? (
-                                        <select 
-                                            disabled={isView || mode === 'edit'}
-                                            className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none shadow-sm focus:ring-2 focus:ring-black/5 disabled:text-gray-400 appearance-none cursor-pointer"
+                                        <SearchableSelect
+                                            options={vehicleList.filter(v => v.ownership === 'Milik Modena').map(v => ({
+                                                value: v.noPolisi,
+                                                label: `${v.noPolisi} - ${v.nama}`,
+                                                subLabel: `${v.merek} ${v.model} (${v.tahunPembuatan})`
+                                            }))}
                                             value={form.noPolisi || ''}
-                                            onChange={handleVehicleChange}
-                                        >
-                                            <option value="">-- Pilih Kendaraan (Hanya Milik Sendiri) --</option>
-                                            {vehicleList.filter(v => v.ownership === 'Milik Modena').map(v => (
-                                                <option key={v.id} value={v.noPolisi}>{v.noPolisi} - {v.nama} ({v.tahunPembuatan})</option>
-                                            ))}
-                                        </select>
-                                    ) : (
-                                        <select 
+                                            onChange={(val) => {
+                                                const vehicle = vehicleList.find(v => v.noPolisi === val);
+                                                if (vehicle) {
+                                                    setForm(prev => ({
+                                                        ...prev,
+                                                        noPolisi: vehicle.noPolisi,
+                                                        channel: vehicle.channel,
+                                                        cabang: vehicle.cabang
+                                                    }));
+                                                } else {
+                                                    setForm(prev => ({ ...prev, noPolisi: val, channel: '', cabang: '' }));
+                                                }
+                                            }}
+                                            placeholder="-- Pilih Kendaraan (Hanya Milik Sendiri) --"
                                             disabled={isView || mode === 'edit'}
-                                            className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none shadow-sm focus:ring-2 focus:ring-black/5 disabled:text-gray-400 appearance-none cursor-pointer"
-                                            value={form.assetNumber || ''}
-                                            onChange={handleGeneralAssetChange}
-                                        >
-                                            <option value="">-- Pilih Aset {categoryFilter !== 'ALL' ? `(${categoryFilter})` : ''} --</option>
-                                            {filteredGeneralAssets.filter(a => a.ownership === 'Own').map(a => {
+                                            icon={Car}
+                                            emptyMessage="Tidak ada data kendaraan"
+                                        />
+                                    ) : (
+                                        <SearchableSelect
+                                            options={filteredGeneralAssets.filter(a => a.ownership === 'Own').map(a => {
                                                 const code = a.assetNumber || a.assetCode;
                                                 const name = a.assetName || a.type;
                                                 const loc = a.assetLocation || a.buildingName;
                                                 const val = a.id || code;
-                                                return (
-                                                    <option key={a.id} value={val}>
-                                                        {code} - {name} ({loc}) {categoryFilter === 'ALL' && a.sourceCategory ? `[${a.sourceCategory}]` : ''}
-                                                    </option>
-                                                );
+                                                return {
+                                                    value: val,
+                                                    label: `${code} - ${name}`,
+                                                    subLabel: `${loc} ${categoryFilter === 'ALL' && a.sourceCategory ? `[${a.sourceCategory}]` : ''}`
+                                                };
                                             })}
-                                        </select>
+                                            value={form.assetNumber || ''}
+                                            onChange={(val) => {
+                                                const asset = generalAssetList.find(a => a.id === val || a.assetNumber === val || a.assetCode === val);
+                                                if (asset) {
+                                                    const assetNumber = asset.assetNumber || asset.assetCode;
+                                                    const assetName = asset.assetName || asset.type;
+                                                    const location = asset.assetLocation || asset.buildingName;
+                                                    setForm(prev => ({
+                                                        ...prev,
+                                                        assetNumber: assetNumber,
+                                                        assetName: assetName,
+                                                        channel: asset.channel || 'Direct',
+                                                        cabang: location,
+                                                    }));
+                                                } else {
+                                                    setForm(prev => ({ ...prev, assetNumber: val, channel: '', cabang: '' }));
+                                                }
+                                            }}
+                                            placeholder={`-- Pilih Aset ${categoryFilter !== 'ALL' ? `(${categoryFilter})` : ''} --`}
+                                            disabled={isView || mode === 'edit'}
+                                            icon={Package}
+                                            emptyMessage="Tidak ada data aset"
+                                        />
                                     )}
                                 </div>
 

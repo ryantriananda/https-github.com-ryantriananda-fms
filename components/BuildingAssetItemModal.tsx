@@ -8,6 +8,7 @@ import {
     Image as ImageIcon, Paperclip, User
 } from 'lucide-react';
 import { BuildingAssetRecord, MaintenanceProposal, BuildingRecord, GeneralMasterItem, VendorRecord } from '../types';
+import { SearchableSelect, SelectOption } from './SearchableSelect';
 
 interface Props {
   isOpen: boolean;
@@ -368,26 +369,24 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
                                 {/* Linked Data Dropdown */}
                                 <div>
                                     <Label required>Lokasi Gedung / Cabang</Label>
-                                    <div className="relative">
-                                        <select 
-                                            disabled={isView}
-                                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm cursor-pointer appearance-none"
-                                            value={form.buildingName || ''}
-                                            onChange={(e) => setForm({...form, buildingName: e.target.value})}
-                                        >
-                                            <option value="">-- Pilih Lokasi Gedung --</option>
-                                            {buildingList.length > 0 ? (
-                                                buildingList.map((building) => (
-                                                    <option key={building.id} value={building.name}>{building.name}</option>
-                                                ))
-                                            ) : (
-                                                <option value={form.buildingName} disabled>{form.buildingName || "Tidak ada data gedung"}</option>
-                                            )}
-                                        </select>
-                                        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                                            <Building size={16} />
-                                        </div>
-                                    </div>
+                                    <SearchableSelect
+                                        options={buildingList.length > 0 
+                                            ? buildingList.map(building => ({
+                                                value: building.name,
+                                                label: building.name,
+                                                subLabel: building.address
+                                            }))
+                                            : form.buildingName 
+                                                ? [{ value: form.buildingName, label: form.buildingName }]
+                                                : []
+                                        }
+                                        value={form.buildingName || ''}
+                                        onChange={(val) => setForm({...form, buildingName: val})}
+                                        placeholder="-- Pilih Lokasi Gedung --"
+                                        disabled={isView}
+                                        icon={Building}
+                                        emptyMessage="Tidak ada data gedung"
+                                    />
                                     <p className="text-[9px] text-gray-400 mt-2 font-medium ml-1">
                                         *Data gedung diambil dari modul Branch Improvement / Master Gedung
                                     </p>

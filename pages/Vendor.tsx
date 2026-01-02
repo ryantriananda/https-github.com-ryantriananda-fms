@@ -3,9 +3,12 @@ import { FilterBar } from '../components/FilterBar';
 import { VendorTable } from '../components/VendorTable';
 import { VendorModal } from '../components/VendorModal';
 import { useAppContext } from '../contexts/AppContext';
+import { useApprovalWorkflow, APPROVAL_MODULES } from '../hooks/useApprovalWorkflow';
 
 const Vendor: React.FC = () => {
   const { vendorData, setVendorData } = useAppContext();
+  const { workflow, getApproverName, isLastTier } = useApprovalWorkflow(APPROVAL_MODULES.VENDOR_REGISTRATION);
+  
   const [activeTab, setActiveTab] = useState('SEMUA');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
@@ -19,7 +22,12 @@ const Vendor: React.FC = () => {
 
   const handleSave = (data: any) => {
     if (modalMode === 'create') {
-      setVendorData([...vendorData, { ...data, id: `VND-${Date.now()}` }]);
+      setVendorData([...vendorData, { 
+        ...data, 
+        id: `VND-${Date.now()}`,
+        currentApprovalLevel: 1,
+        approvalHistory: []
+      }]);
     } else {
       setVendorData(vendorData.map(d => d.id === selectedItem.id ? { ...d, ...data } : d));
     }

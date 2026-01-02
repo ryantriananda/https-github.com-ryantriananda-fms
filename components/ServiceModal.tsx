@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { X, Save, Wrench, Plus, Trash2, Calendar, Clock, User, CheckCircle2, AlertCircle, FileText, PlayCircle, Info, Hash, MapPin, Tag, ShieldCheck, Camera, Image as ImageIcon } from 'lucide-react';
+import { X, Save, Wrench, Plus, Trash2, Calendar, Clock, User, CheckCircle2, AlertCircle, FileText, PlayCircle, Info, Hash, MapPin, Tag, ShieldCheck, Camera, Image as ImageIcon, Car } from 'lucide-react';
 import { ServiceRecord, VehicleRecord, SparePart, GeneralMasterItem, VendorRecord } from '../types';
+import { SearchableSelect, SelectOption } from './SearchableSelect';
 
 interface Props {
   isOpen: boolean;
@@ -213,20 +214,21 @@ export const ServiceModal: React.FC<Props> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
                         <Label>Pilih Unit</Label>
-                        <div className="relative">
-                            <select 
-                            className="w-full border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black bg-white focus:border-black outline-none appearance-none shadow-sm cursor-pointer"
-                            value={form.noPolisi}
-                            onChange={(e) => {
-                                const v = vehicleList.find(x => x.noPolisi === e.target.value);
-                                setForm({...form, noPolisi: e.target.value, aset: v?.nama});
+                        <SearchableSelect
+                            options={vehicleList.map(v => ({
+                                value: v.noPolisi,
+                                label: `${v.noPolisi} - ${v.nama}`,
+                                subLabel: `${v.merek} ${v.model} (${v.tahunPembuatan})`
+                            }))}
+                            value={form.noPolisi || ''}
+                            onChange={(val) => {
+                                const v = vehicleList.find(x => x.noPolisi === val);
+                                setForm({...form, noPolisi: val, aset: v?.nama});
                             }}
                             disabled={isView}
-                            >
-                            <option value="">(Pilih Unit)</option>
-                            {vehicleList.map(v => <option key={v.id} value={v.noPolisi}>{v.noPolisi} - {v.nama}</option>)}
-                            </select>
-                        </div>
+                            placeholder="(Pilih Unit)"
+                            icon={Car}
+                        />
 
                         {/* Display Detailed Vehicle Info if Selected */}
                         {selectedVehicle && (

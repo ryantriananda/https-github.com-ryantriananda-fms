@@ -18,8 +18,17 @@ export const MOCK_MASTER_ARK_DATA: MasterItem[] = [
     { id: 105, category: 'Pantry', itemName: 'Teh Celup Sariwangi', itemCode: 'K-003', uom: 'Box', remainingStock: 20, minimumStock: 5, maximumStock: 40, requestedStock: 0, lastPurchasePrice: '10.000', averagePrice: '10.000', purchaseDate: '2024-02-10' }
 ];
 
-export const MOCK_DATA: AssetRecord[] = []; // ATK Request Mock
-export const MOCK_ARK_DATA: AssetRecord[] = []; // ARK Request Mock
+export const MOCK_DATA: AssetRecord[] = [
+    { id: 'REQ-ATK-001', transactionNumber: 'REQ-ATK-001', employee: { id: 'EMP001', name: 'John Doe', role: 'Staff IT', avatar: '' }, category: 'ATK', itemName: 'Kertas A4', itemCode: 'P-001', qty: 10, date: '2026-01-02', remainingStock: 50, status: 'Pending' },
+    { id: 'REQ-ATK-002', transactionNumber: 'REQ-ATK-002', employee: { id: 'EMP002', name: 'Jane Smith', role: 'Staff HR', avatar: '' }, category: 'ATK', itemName: 'Pulpen Hitam', itemCode: 'P-002', qty: 50, date: '2026-01-01', remainingStock: 120, status: 'Approved' },
+    { id: 'REQ-ATK-003', transactionNumber: 'REQ-ATK-003', employee: { id: 'EMP003', name: 'Bob Wilson', role: 'Staff Finance', avatar: '' }, category: 'ATK', itemName: 'Staples', itemCode: 'S-001', qty: 5, date: '2025-12-28', remainingStock: 30, status: 'Rejected' }
+]; // ATK Request Mock
+
+export const MOCK_ARK_DATA: AssetRecord[] = [
+    { id: 'REQ-ARK-001', transactionNumber: 'REQ-ARK-001', employee: { id: 'EMP004', name: 'Siti Aminah', role: 'Staff GA', avatar: '' }, category: 'ARK', itemName: 'Cairan Pembersih Lantai', itemCode: 'C-001', qty: 5, date: '2026-01-02', remainingStock: 5, status: 'Pending' },
+    { id: 'REQ-ARK-002', transactionNumber: 'REQ-ARK-002', employee: { id: 'EMP005', name: 'Budi Santoso', role: 'Staff GA', avatar: '' }, category: 'ARK', itemName: 'Kopi Kapal Api', itemCode: 'K-001', qty: 10, date: '2026-01-01', remainingStock: 8, status: 'Approved' },
+    { id: 'REQ-ARK-003', transactionNumber: 'REQ-ARK-003', employee: { id: 'EMP006', name: 'Ani Wijaya', role: 'Staff GA', avatar: '' }, category: 'ARK', itemName: 'Sabun Cuci Tangan', itemCode: 'C-002', qty: 20, date: '2025-12-28', remainingStock: 12, status: 'Approved' }
+]; // ARK Request Mock
 
 // --- VEHICLE (5 Records) ---
 export const MOCK_VEHICLE_DATA: VehicleRecord[] = [
@@ -48,9 +57,23 @@ export const MOCK_VEHICLE_CONTRACT_DATA: VehicleContractRecord[] = [
     { id: 'CTR-002', noKontrak: 'KTR/2024/002', noPolisi: 'DK 1234 BB', aset: 'Toyota Hiace', vendor: 'MPM Rent', tglMulai: '2024-01-01', tglBerakhir: '2026-01-01', biayaSewa: '18000000', approvalStatus: 'Approved', status: 'Active' }
 ];
 
-export const MOCK_SERVICE_DATA: ServiceRecord[] = [];
-export const MOCK_MUTATION_DATA: MutationRecord[] = [];
-export const MOCK_SALES_DATA: SalesRecord[] = [];
+export const MOCK_SERVICE_DATA: ServiceRecord[] = [
+    { id: 'SRV-001', noPolisi: 'B 1234 ABC', aset: 'Toyota Avanza', tglRequest: '2026-01-02', channel: 'Direct', cabang: 'Jakarta', status: 'Scheduled', statusApproval: 'Approved', vendor: 'Bengkel Mobil Sejahtera', jenisServis: 'Servis Rutin', estimasiBiaya: '500000', masalah: 'Servis berkala 10.000 km' },
+    { id: 'SRV-002', noPolisi: 'B 2233 XYZ', aset: 'Daihatsu Gran Max', tglRequest: '2026-01-01', channel: 'Direct', cabang: 'Surabaya', status: 'Completed', statusApproval: 'Approved', vendor: 'PT. Astra International', jenisServis: 'Ganti Oli', estimasiBiaya: '350000', masalah: 'Ganti oli mesin dan filter' },
+    { id: 'SRV-003', noPolisi: 'D 1778 KJ', aset: 'Honda HRV SE', tglRequest: '2025-12-28', channel: 'Direct', cabang: 'Bandung', status: 'In Progress', statusApproval: 'Approved', vendor: 'PT. Honda Prospect Motor', jenisServis: 'Ganti Ban', estimasiBiaya: '4000000', masalah: 'Ganti 4 ban baru' }
+];
+
+export const MOCK_MUTATION_DATA: MutationRecord[] = [
+    { id: 'MUT-001', assetType: 'VEHICLE', noPolisi: 'B 1234 ABC', assetName: 'Toyota Avanza', cabangAset: 'Jakarta', tipeMutasi: 'Permanent', tglPermintaan: '2026-01-02', lokasiAsal: 'Jakarta', lokasiTujuan: 'Surabaya', picBefore: 'Staff GA Jakarta', picAfter: 'Staff GA Surabaya', status: 'Pending', statusApproval: 'Pending' },
+    { id: 'MUT-002', assetType: 'VEHICLE', noPolisi: 'B 2233 XYZ', assetName: 'Daihatsu Gran Max', cabangAset: 'Surabaya', tipeMutasi: 'Temporary', tglPermintaan: '2026-01-01', lokasiAsal: 'Surabaya', lokasiTujuan: 'Bandung', picBefore: 'Logistik Surabaya', picAfter: 'Logistik Bandung', status: 'Approved', statusApproval: 'Approved' },
+    { id: 'MUT-003', assetType: 'VEHICLE', noPolisi: 'H 4556 FG', assetName: 'Mitsubishi L300 Box', cabangAset: 'Semarang', tipeMutasi: 'Permanent', tglPermintaan: '2025-12-28', lokasiAsal: 'Semarang', lokasiTujuan: 'Jakarta', picBefore: 'Logistik Semarang', picAfter: 'Logistik Jakarta', status: 'Rejected', statusApproval: 'Rejected' }
+];
+
+export const MOCK_SALES_DATA: SalesRecord[] = [
+    { id: 'SALE-001', assetType: 'VEHICLE', noPolisi: 'B 9999 OLD', assetName: 'Toyota Kijang Innova 2015', tglRequest: '2026-01-02', channel: 'Direct', cabang: 'Jakarta', hargaTertinggi: '120000000', hargaPembuka: '100000000', status: 'Open Bidding', statusApproval: 'Approved', bids: [] },
+    { id: 'SALE-002', assetType: 'VEHICLE', noPolisi: 'D 8888 OLD', assetName: 'Honda Jazz 2016', tglRequest: '2026-01-01', channel: 'Auction', cabang: 'Bandung', hargaTertinggi: '95000000', hargaPembuka: '80000000', status: 'Closed', statusApproval: 'Approved', bids: [] },
+    { id: 'SALE-003', assetType: 'VEHICLE', noPolisi: 'H 7777 OLD', assetName: 'Daihatsu Xenia 2014', tglRequest: '2025-12-28', channel: 'Direct', cabang: 'Semarang', hargaTertinggi: '75000000', hargaPembuka: '65000000', status: 'Sold', statusApproval: 'Approved', bids: [] }
+];
 
 // --- BUILDING (5 Records) ---
 export const MOCK_BUILDING_DATA: BuildingRecord[] = [
@@ -62,20 +85,33 @@ export const MOCK_BUILDING_DATA: BuildingRecord[] = [
 ];
 
 export const MOCK_BUILDING_ASSETS: BuildingAssetRecord[] = [
-    { id: 'BA-001', assetName: 'AC Split 2PK', assetCode: 'AC-L1-01', assetType: 'AC', buildingName: 'Head Office Satrio', floor: '1', roomName: 'Lobby', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Quarterly', brand: 'Daikin', purchaseDate: '2022-01-15' },
-    { id: 'BA-002', assetName: 'Genset 500KVA', assetCode: 'GEN-B1-01', assetType: 'Genset', buildingName: 'Head Office Satrio', floor: 'Basement', roomName: 'Utility Room', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Monthly', brand: 'Perkins', purchaseDate: '2020-05-20' },
-    { id: 'BA-003', assetName: 'CCTV Dome Camera', assetCode: 'CCTV-L2-05', assetType: 'CCTV', buildingName: 'MEC Suryo', floor: '2', roomName: 'Display Area', status: 'Fair', approvalStatus: 'Approved', maintenanceFrequency: 'Yearly', brand: 'Hikvision', purchaseDate: '2022-06-10' },
-    { id: 'BA-004', assetName: 'APAR Powder 6kg', assetCode: 'APAR-L1-02', assetType: 'APAR', buildingName: 'Branch Surabaya', floor: '1', roomName: 'Warehouse', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Yearly', brand: 'Yamato', purchaseDate: '2023-02-01' },
-    { id: 'BA-005', assetName: 'Fingerprint Machine', assetCode: 'FP-L1-01', assetType: 'Electronics', buildingName: 'Warehouse Cakung', floor: '1', roomName: 'Security Post', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Six-Monthly', brand: 'Solution', purchaseDate: '2021-11-15' }
+    { id: 'BA-001', assetName: 'AC Split 2PK', assetCode: 'AC-L1-01', assetType: 'AC', buildingName: 'Head Office Satrio', floor: '1', roomName: 'Lobby', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Quarterly', brand: 'Daikin', purchaseDate: '2022-01-15', ownership: 'Own' },
+    { id: 'BA-002', assetName: 'Genset 500KVA', assetCode: 'GEN-B1-01', assetType: 'Genset', buildingName: 'Head Office Satrio', floor: 'Basement', roomName: 'Utility Room', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Monthly', brand: 'Perkins', purchaseDate: '2020-05-20', ownership: 'Own' },
+    { id: 'BA-003', assetName: 'CCTV Dome Camera', assetCode: 'CCTV-L2-05', assetType: 'CCTV', buildingName: 'MEC Suryo', floor: '2', roomName: 'Display Area', status: 'Fair', approvalStatus: 'Approved', maintenanceFrequency: 'Yearly', brand: 'Hikvision', purchaseDate: '2022-06-10', ownership: 'Own' },
+    { id: 'BA-004', assetName: 'APAR Powder 6kg', assetCode: 'APAR-L1-02', assetType: 'APAR', buildingName: 'Branch Surabaya', floor: '1', roomName: 'Warehouse', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Yearly', brand: 'Yamato', purchaseDate: '2023-02-01', ownership: 'Own' },
+    { id: 'BA-005', assetName: 'Fingerprint Machine', assetCode: 'FP-L1-01', assetType: 'Electronics', buildingName: 'Warehouse Cakung', floor: '1', roomName: 'Security Post', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Six-Monthly', brand: 'Solution', purchaseDate: '2021-11-15', ownership: 'Own' }
 ];
-export const MOCK_IT_BUILDING_ASSETS: BuildingAssetRecord[] = [];
-export const MOCK_CS_BUILDING_ASSETS: BuildingAssetRecord[] = [];
+export const MOCK_IT_BUILDING_ASSETS: BuildingAssetRecord[] = [
+    { id: 'IT-BA-001', assetName: 'Server Dell PowerEdge', assetCode: 'SRV-DC-01', assetType: 'Server', buildingName: 'Head Office Satrio', floor: 'Basement', roomName: 'Data Center', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Monthly', brand: 'Dell', purchaseDate: '2022-06-15', ownership: 'Own' },
+    { id: 'IT-BA-002', assetName: 'UPS APC 10KVA', assetCode: 'UPS-DC-01', assetType: 'UPS', buildingName: 'Head Office Satrio', floor: 'Basement', roomName: 'Data Center', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Quarterly', brand: 'APC', purchaseDate: '2022-06-15', ownership: 'Own' },
+    { id: 'IT-BA-003', assetName: 'Network Switch Cisco', assetCode: 'NET-L2-01', assetType: 'Network', buildingName: 'MEC Suryo', floor: '2', roomName: 'IT Room', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Yearly', brand: 'Cisco', purchaseDate: '2023-01-10', ownership: 'Own' }
+];
+
+export const MOCK_CS_BUILDING_ASSETS: BuildingAssetRecord[] = [
+    { id: 'CS-BA-001', assetName: 'Display Counter', assetCode: 'DSP-L1-01', assetType: 'Display', buildingName: 'MEC Suryo', floor: '1', roomName: 'Showroom', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Yearly', brand: 'Custom', purchaseDate: '2022-05-01', ownership: 'Own' },
+    { id: 'CS-BA-002', assetName: 'Customer Waiting Sofa', assetCode: 'FRN-L1-01', assetType: 'Furniture', buildingName: 'MHC Bintaro', floor: '1', roomName: 'Waiting Area', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Yearly', brand: 'Informa', purchaseDate: '2021-08-15', ownership: 'Own' },
+    { id: 'CS-BA-003', assetName: 'LED TV 65 inch', assetCode: 'TV-L1-01', assetType: 'Electronics', buildingName: 'MEC Suryo', floor: '1', roomName: 'Showroom', status: 'Good', approvalStatus: 'Approved', maintenanceFrequency: 'Yearly', brand: 'Samsung', purchaseDate: '2022-05-01', ownership: 'Own' }
+];
 
 export const MOCK_BUILDING_MAINTENANCE_DATA: BuildingMaintenanceRecord[] = [
     { id: 'MT-001', assetId: 'BA-001', assetName: 'AC Split 2PK', buildingLocation: 'Head Office - Lt 1', requestDate: '2024-03-10', maintenanceType: 'Preventive', cost: '150000', status: 'Completed', approvalStatus: 'Approved', description: 'Cuci AC Rutin' }
 ];
 
-export const MOCK_BRANCH_IMPROVEMENT_DATA: BuildingRecord[] = [];
+export const MOCK_BRANCH_IMPROVEMENT_DATA: BuildingRecord[] = [
+    { id: 'IMP-001', name: 'Renovasi Lobby MEC Suryo', assetNo: 'IMP-2026-001', type: 'Improvement', location: 'Jakarta', address: 'Jl. Suryo No. 23', status: 'Pending', ownership: 'Rent', rentCost: '0', totalMaintenanceCost: '150000000', utilityCost: '0', startDate: '2026-02-01', endDate: '2026-04-01' },
+    { id: 'IMP-002', name: 'Upgrade AC System HO', assetNo: 'IMP-2026-002', type: 'Improvement', location: 'Jakarta', address: 'Jl. Prof Dr Satrio', status: 'Approved', ownership: 'Own', rentCost: '0', totalMaintenanceCost: '85000000', utilityCost: '0', startDate: '2026-01-15', endDate: '2026-02-15' },
+    { id: 'IMP-003', name: 'Perbaikan Atap Warehouse', assetNo: 'IMP-2026-003', type: 'Improvement', location: 'Jakarta Timur', address: 'Kawasan Industri Cakung', status: 'In Progress', ownership: 'Own', rentCost: '0', totalMaintenanceCost: '45000000', utilityCost: '0', startDate: '2026-01-01', endDate: '2026-01-31' }
+];
 export const MOCK_UTILITY_DATA: UtilityRecord[] = [
     { id: 'UTIL-001', period: 'Maret 2024', date: '2024-03-25', location: 'Head Office Satrio', type: 'Listrik (PLN)', meterStart: 1000, meterEnd: 1500, usage: 500, unit: 'kWh', cost: '750000', status: 'Paid' },
     { id: 'UTIL-002', period: 'Maret 2024', date: '2024-03-26', location: 'MEC Suryo', type: 'Air (PDAM)', meterStart: 500, meterEnd: 550, usage: 50, unit: 'm3', cost: '250000', status: 'Unpaid' }
@@ -86,7 +122,11 @@ export const MOCK_REMINDER_DATA: ReminderRecord[] = [
     { id: 'REM-001', documentName: 'SHGB Certificate', buildingName: 'Head Office Satrio', assetNo: 'AST-BLD-001', expiryDate: '2024-06-01', status: 'Warning', daysRemaining: 85, category: 'Legal', source: 'Manual' },
     { id: 'REM-002', documentName: 'Izin Reklame', buildingName: 'MEC Suryo', assetNo: 'AST-BLD-002', expiryDate: '2024-04-15', status: 'Urgent', daysRemaining: 20, category: 'Permit', source: 'Manual' }
 ];
-export const MOCK_MAINTENANCE_REMINDER: ReminderRecord[] = [];
+export const MOCK_MAINTENANCE_REMINDER: ReminderRecord[] = [
+    { id: 'MR-001', documentName: 'AC Maintenance - Lobby', buildingName: 'Head Office Satrio', assetNo: 'AC-L1-01', expiryDate: '2026-04-15', status: 'Safe', daysRemaining: 103, category: 'Permit', source: 'System' },
+    { id: 'MR-002', documentName: 'Genset Service', buildingName: 'Head Office Satrio', assetNo: 'GEN-B1-01', expiryDate: '2026-03-28', status: 'Warning', daysRemaining: 85, category: 'Permit', source: 'System' },
+    { id: 'MR-003', documentName: 'APAR Inspection', buildingName: 'Branch Surabaya', assetNo: 'APAR-L1-02', expiryDate: '2026-02-01', status: 'Urgent', daysRemaining: 30, category: 'Permit', source: 'System' }
+];
 
 export const MOCK_MAINTENANCE_SCHEDULE_DATA: MaintenanceScheduleRecord[] = [
     { id: 'SCH-001', assetId: 'BA-001', assetName: 'AC Split 2PK - Lobby', assetCode: 'AC-L1-01', location: 'HO Satrio', category: 'AC', frequency: 'Quarterly', lastMaintenanceDate: '2024-01-15', nextMaintenanceDate: '2024-04-15', status: 'Safe', vendor: 'PT. Sejuk Selalu' },
@@ -111,10 +151,21 @@ export const MOCK_MASTER_VENDOR_DATA: MasterVendorRecord[] = [
     { id: 'MV-004', nama: 'PT. Datascrip', merek: 'Canon, Asus', alamat: 'Jl. Selaparang Blok B-15', noTelp: '021-6544515', tipe: 'Both', cabang: 'All Branches', aktif: true, vendorName: 'PT. Datascrip', vendorCode: 'MV-004', type: 'Both', category: 'Office Equipment', email: '-', phone: '021-6544515', address: 'Jl. Selaparang Blok B-15', status: 'Active' }
 ];
 
-export const MOCK_LOGBOOK_DATA: LogBookRecord[] = [];
-export const MOCK_TIMESHEET_DATA: TimesheetRecord[] = [];
+export const MOCK_LOGBOOK_DATA: LogBookRecord[] = [
+    { id: 'LOG-001', lokasiModena: 'Head Office Satrio', kategoriTamu: 'Vendor', namaTamu: 'PT. Service Maju', tanggalKunjungan: '2026-01-02', jamDatang: '09:00', jamPulang: '11:30', wanita: 0, lakiLaki: 2, anakAnak: 0, note: 'Maintenance AC' },
+    { id: 'LOG-002', lokasiModena: 'MEC Suryo', kategoriTamu: 'Customer', namaTamu: 'Bapak Ahmad', tanggalKunjungan: '2026-01-02', jamDatang: '10:00', jamPulang: '12:00', wanita: 1, lakiLaki: 1, anakAnak: 0, note: 'Test drive' },
+    { id: 'LOG-003', lokasiModena: 'Head Office Satrio', kategoriTamu: 'Tamu Bisnis', namaTamu: 'PT. Mitra Teknindo', tanggalKunjungan: '2026-01-01', jamDatang: '14:00', jamPulang: '16:00', wanita: 1, lakiLaki: 2, anakAnak: 0, note: 'Meeting IT Support' }
+];
+
+export const MOCK_TIMESHEET_DATA: TimesheetRecord[] = [
+    { id: 'TS-001', employee: { id: 'EMP001', name: 'John Doe', role: 'Staff IT', avatar: '' }, location: 'Head Office', area: 'IT Room', date: '2026-01-02', shift: 'Pagi', clockIn: '08:00', clockOut: '17:00', status: 'Submitted', tasks: ['FMS Development'] },
+    { id: 'TS-002', employee: { id: 'EMP002', name: 'Jane Smith', role: 'Staff HR', avatar: '' }, location: 'Head Office', area: 'HR Area', date: '2026-01-02', shift: 'Pagi', clockIn: '08:00', clockOut: '17:00', status: 'Approved', tasks: ['Interview candidates'] },
+    { id: 'TS-003', employee: { id: 'EMP003', name: 'Bob Wilson', role: 'Staff Finance', avatar: '' }, location: 'Head Office', area: 'Finance Area', date: '2026-01-01', shift: 'Pagi', clockIn: '08:00', clockOut: '20:00', status: 'Approved', tasks: ['Year end closing'] }
+];
 export const MOCK_USER_DATA: UserRecord[] = [
-    { id: 'USR-001', name: 'Ibnu Faisal', role: 'Facility Manager', avatar: 'https://i.pravatar.cc/150?u=ibnu', phone: '08123456789', status: 'Active', department: 'GA', location: 'Head Office', joinDate: '2020-01-01' }
+    { id: 'USR-001', name: 'Ibnu Faisal', role: 'Facility Manager', avatar: 'https://i.pravatar.cc/150?u=ibnu', phone: '08123456789', status: 'Active', department: 'GA', location: 'Head Office', joinDate: '2020-01-01' },
+    { id: 'USR-002', name: 'Siti Aminah', role: 'Admin GA', avatar: 'https://i.pravatar.cc/150?u=siti', phone: '08234567890', status: 'Active', department: 'GA', location: 'Head Office', joinDate: '2021-03-15' },
+    { id: 'USR-003', name: 'Budi Santoso', role: 'Branch Manager', avatar: 'https://i.pravatar.cc/150?u=budi', phone: '08345678901', status: 'Active', department: 'Operations', location: 'Surabaya Branch', joinDate: '2019-06-01' }
 ];
 
 export const MOCK_GENERAL_ASSET_DATA: GeneralAssetRecord[] = [
@@ -124,7 +175,11 @@ export const MOCK_GENERAL_ASSET_DATA: GeneralAssetRecord[] = [
     { id: 'GA-004', assetNumber: 'GA-004', assetCategory: 'Equipment', type: 'Coffee Machine', ownership: 'Rent', assetLocation: 'MHC Bintaro', subLocation: 'Lounge Area', department: 'Marketing', channel: 'Rental', status: 'Good', approvalStatus: 'Approved', purchasePrice: '0', purchaseDate: '2023-11-01', brand: 'Nescafe' },
     { id: 'GA-005', assetNumber: 'GA-005', assetCategory: 'Furniture', type: 'Sofa Tamu 3 Seater', ownership: 'Own', assetLocation: 'Branch Surabaya', subLocation: 'Lobby', department: 'GA', channel: 'Direct', status: 'Critical', approvalStatus: 'Approved', purchasePrice: '5500000', purchaseDate: '2020-03-10', brand: 'Local' }
 ];
-export const MOCK_IT_ASSET_DATA: GeneralAssetRecord[] = [];
+export const MOCK_IT_ASSET_DATA: GeneralAssetRecord[] = [
+    { id: 'IT-001', assetNumber: 'IT-001', assetCategory: 'Elektronik', type: 'Laptop Dell Latitude', ownership: 'Own', assetLocation: 'Head Office', subLocation: 'Lt 2 - IT Room', department: 'IT', channel: 'Direct', status: 'Good', approvalStatus: 'Approved', purchasePrice: '14000000', purchaseDate: '2021-08-20', brand: 'Dell' },
+    { id: 'IT-002', assetNumber: 'IT-002', assetCategory: 'Elektronik', type: 'Printer HP LaserJet', ownership: 'Own', assetLocation: 'Head Office', subLocation: 'Lt 2 - Admin Area', department: 'Admin', channel: 'Direct', status: 'Good', approvalStatus: 'Approved', purchasePrice: '5500000', purchaseDate: '2022-03-10', brand: 'HP' },
+    { id: 'IT-003', assetNumber: 'IT-003', assetCategory: 'Elektronik', type: 'Monitor LG 27 inch', ownership: 'Own', assetLocation: 'MEC Suryo', subLocation: 'Lt 1 - Reception', department: 'Sales', channel: 'Direct', status: 'Good', approvalStatus: 'Approved', purchasePrice: '3500000', purchaseDate: '2022-05-15', brand: 'LG' }
+];
 
 export const MOCK_DELIVERY_LOCATIONS: DeliveryLocationRecord[] = [
     { id: 1, name: 'Head Office', address: 'Jl. Satrio', type: 'HO' }

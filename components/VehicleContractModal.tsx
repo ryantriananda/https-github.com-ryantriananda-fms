@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, Car, FileText, UploadCloud, Trash2, CheckCircle2, Clock, Image as ImageIcon } from 'lucide-react';
 import { VehicleContractRecord, VehicleRecord } from '../types';
+import { SearchableSelect, SelectOption } from './SearchableSelect';
 
 interface Props {
   isOpen: boolean;
@@ -266,24 +267,38 @@ export const VehicleContractModal: React.FC<Props> = ({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="md:col-span-2">
                         <Label required>Pilih Unit Kendaraan</Label>
-                        <div className="relative">
-                            <select 
-                                disabled={isView || mode === 'edit'}
-                                className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-[12px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 appearance-none shadow-sm transition-all cursor-pointer"
-                                value={form.noPolisi || ''}
-                                onChange={handleVehicleChange}
-                            >
-                                <option value="">-- Pilih Kendaraan dari Master Data --</option>
-                                {vehicleList.map((v) => (
-                                    <option key={v.id} value={v.noPolisi}>{v.noPolisi} - {v.nama}</option>
-                                ))}
-                            </select>
-                            {!isView && mode !== 'edit' && (
-                                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-300">
-                                    <Car size={16} />
-                                </div>
-                            )}
-                        </div>
+                        <SearchableSelect
+                            options={vehicleList.map(v => ({ 
+                                value: v.noPolisi, 
+                                label: `${v.noPolisi} - ${v.nama}`,
+                                subLabel: `${v.merek} ${v.model} (${v.tahunPembuatan})`
+                            }))}
+                            value={form.noPolisi || ''}
+                            onChange={(val) => {
+                                const vehicle = vehicleList.find(v => v.noPolisi === val);
+                                if (vehicle) {
+                                    setForm(prev => ({
+                                        ...prev,
+                                        noPolisi: vehicle.noPolisi,
+                                        aset: vehicle.nama,
+                                        merek: vehicle.merek,
+                                        tipeKendaraan: vehicle.tipeKendaraan,
+                                        model: vehicle.model,
+                                        tahunPembuatan: vehicle.tahunPembuatan,
+                                        warna: vehicle.warna,
+                                        isiSilinder: vehicle.isiSilinder,
+                                        channel: vehicle.channel,
+                                        cabang: vehicle.cabang
+                                    }));
+                                } else {
+                                    setForm(prev => ({ ...prev, noPolisi: val, aset: '' }));
+                                }
+                            }}
+                            placeholder="-- Pilih Kendaraan dari Master Data --"
+                            disabled={isView || mode === 'edit'}
+                            icon={Car}
+                            emptyMessage="Tidak ada data kendaraan"
+                        />
                     </div>
                     <InputField label="Deskripsi Unit" value={form.aset} field="aset" disabled={true} />
                     <InputField label="Merek" value={form.merek} field="merek" disabled={true} />

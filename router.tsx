@@ -44,6 +44,18 @@ const MasterARK = React.lazy(() => import('./pages/ark/MasterARK'));
 // Daily Operations
 const Timesheet = React.lazy(() => import('./pages/Timesheet'));
 const LogBook = React.lazy(() => import('./pages/LogBook'));
+const Absensi = React.lazy(() => import('./pages/Absensi'));
+
+// Modena POD
+const PermintaanPOD = React.lazy(() => import('./pages/pod/PermintaanPOD'));
+const PenghuniPOD = React.lazy(() => import('./pages/pod/PenghuniPOD'));
+
+// Loker
+const DaftarLoker = React.lazy(() => import('./pages/loker/DaftarLoker'));
+const PermintaanLoker = React.lazy(() => import('./pages/loker/PermintaanLoker'));
+
+// Stock Opname
+const StockOpname = React.lazy(() => import('./pages/StockOpname'));
 
 // Administration
 const Vendor = React.lazy(() => import('./pages/Vendor'));
@@ -106,6 +118,17 @@ export const router = createBrowserRouter([
       { path: 'general-asset/mutasi', element: <MutasiAset /> },
       { path: 'general-asset/penjualan', element: <PenjualanAset /> },
       
+      // Modena POD
+      { path: 'pod/permintaan', element: <PermintaanPOD /> },
+      { path: 'pod/penghuni', element: <PenghuniPOD /> },
+      
+      // Loker
+      { path: 'loker/daftar', element: <DaftarLoker /> },
+      { path: 'loker/permintaan', element: <PermintaanLoker /> },
+      
+      // Stock Opname
+      { path: 'stock-opname', element: <StockOpname /> },
+      
       // ATK
       { path: 'atk/request', element: <RequestATK /> },
       { path: 'atk/approval', element: <StationeryRequestApproval /> },
@@ -119,6 +142,7 @@ export const router = createBrowserRouter([
       // Daily Operations
       { path: 'timesheet', element: <Timesheet /> },
       { path: 'logbook', element: <LogBook /> },
+      { path: 'absensi', element: <Absensi /> },
       
       // Administration
       { path: 'vendor', element: <Vendor /> },

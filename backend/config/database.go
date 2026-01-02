@@ -1,13 +1,11 @@
 package config
 
 import (
+	"fms-backend/models"
 	"fmt"
 	"log"
 	"os"
 
-	"fms-backend/models"
-
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -15,49 +13,45 @@ import (
 var DB *gorm.DB
 
 func ConnectDatabase() {
-	godotenv.Load()
+	host := os.Getenv("DB_HOST")
+	if host == "" {
+		host = "localhost"
+	}
+	port := os.Getenv("DB_PORT")
+	if port == "" {
+		port = "5433"
+	}
+	user := os.Getenv("DB_USER")
+	if user == "" {
+		user = "postgres"
+	}
+	password := os.Getenv("DB_PASSWORD")
+	if password == "" {
+		password = "12345"
+	}
+	dbname := os.Getenv("DB_NAME")
+	if dbname == "" {
+		dbname = "fms_db"
+	}
 
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
-	)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta",
+		host, user, password, dbname, port)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	var err error
+	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
 
+	log.Println("Database connected successfully")
+
 	// Auto migrate models
-	db.AutoMigrate(
-		&models.User{},
-		&models.Vehicle{},
-		&models.Building{},
-		&models.GeneralAsset{},
-		&models.Vendor{},
-		&models.Insurance{},
-		&models.Service{},
-		&models.TaxKir{},
-		&models.Mutation{},
-		&models.Sale{},
-		&models.Utility{},
-		&models.Timesheet{},
-		&models.LogBook{},
-		&models.StationeryRequest{},
-		&models.MasterItem{},
-		&models.Purchase{},
-		&models.VehicleContract{},
-		&models.BuildingAsset{},
-		&models.BuildingMaintenance{},
-		&models.MasterApproval{},
-		&models.DeliveryLocation{},
+	DB.AutoMigrate(
 		&models.GeneralMaster{},
 		&models.MasterCategory{},
-		&models.Compliance{},
+		&models.ModenaPOD{},
+		&models.PODOccupant{},
+		&models.PODRequest{},
 	)
-
-	DB = db
-	log.Println("Database connected successfully")
+	log.Println("Database migrated successfully")
 }

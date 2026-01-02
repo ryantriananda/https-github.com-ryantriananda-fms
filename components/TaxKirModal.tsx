@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, FileText, Save, Calendar, ShieldCheck, DollarSign, Building, CheckCircle2, Clock, UploadCloud, Trash2, ChevronDown, MapPin, Briefcase, Info } from 'lucide-react';
+import { X, FileText, Save, Calendar, ShieldCheck, DollarSign, Building, CheckCircle2, Clock, UploadCloud, Trash2, ChevronDown, MapPin, Briefcase, Info, Car } from 'lucide-react';
 import { TaxKirRecord, VehicleRecord, GeneralMasterItem } from '../types';
+import { SearchableSelect } from './SearchableSelect';
 
 interface Props {
   isOpen: boolean;
@@ -56,8 +57,7 @@ export const TaxKirModal: React.FC<Props> = ({
   const isView = mode === 'view';
   const selectedVehicle = vehicleList.find(v => v.noPolisi === form.noPolisi);
 
-  const handleVehicleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const selectedNoPol = e.target.value;
+  const handleVehicleChange = (selectedNoPol: string) => {
       const v = vehicleList.find(x => x.noPolisi === selectedNoPol);
       
       if (v) {
@@ -148,18 +148,18 @@ export const TaxKirModal: React.FC<Props> = ({
               <div className="space-y-5">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Pilih Unit</label>
-                  <div className="relative">
-                    <select 
-                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-black focus:border-black focus:ring-2 focus:ring-gray-100 outline-none disabled:bg-gray-50 transition-all appearance-none cursor-pointer"
-                        value={form.noPolisi || ''}
-                        onChange={handleVehicleChange}
-                        disabled={isView}
-                    >
-                        <option value="">(Pilih Unit)</option>
-                        {vehicleList.map(v => <option key={v.id} value={v.noPolisi}>{v.noPolisi} - {v.nama}</option>)}
-                    </select>
-                    <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                  </div>
+                  <SearchableSelect
+                      options={vehicleList.map(v => ({
+                          value: v.noPolisi,
+                          label: `${v.noPolisi} - ${v.nama}`,
+                          subLabel: `${v.merek} ${v.model} (${v.tahunPembuatan})`
+                      }))}
+                      value={form.noPolisi || ''}
+                      onChange={handleVehicleChange}
+                      disabled={isView}
+                      placeholder="(Pilih Unit)"
+                      icon={Car}
+                  />
                 </div>
                 
                 <div>

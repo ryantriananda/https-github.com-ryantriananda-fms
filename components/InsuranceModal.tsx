@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, Shield, FileText, Calendar, DollarSign, AlertCircle, Plus, Trash2, CheckCircle2, UploadCloud, Receipt } from 'lucide-react';
 import { InsuranceRecord, InsuranceClaim, VehicleRecord, BuildingRecord } from '../types';
+import { SearchableSelect, SelectOption } from './SearchableSelect';
 
 interface Props {
   isOpen: boolean;
@@ -165,21 +166,27 @@ export const InsuranceModal: React.FC<Props> = ({
                             
                             <div>
                                 <Label required>Aset Diasuransikan</Label>
-                                <div className="relative">
-                                    <select 
-                                        disabled={isView}
-                                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm cursor-pointer appearance-none uppercase"
-                                        value={form.assetId || ''}
-                                        onChange={handleAssetChange}
-                                    >
-                                        <option value="">-- Pilih Aset --</option>
-                                        {assetList.map((asset: any) => {
-                                            const val = category === 'Vehicle' ? asset.noPolisi : asset.id;
-                                            const label = category === 'Vehicle' ? `${asset.noPolisi} - ${asset.nama}` : asset.name;
-                                            return <option key={val} value={val}>{label}</option>
-                                        })}
-                                    </select>
-                                </div>
+                                <SearchableSelect
+                                    options={assetList.map((asset: any) => {
+                                        const val = category === 'Vehicle' ? asset.noPolisi : asset.id;
+                                        const label = category === 'Vehicle' ? `${asset.noPolisi} - ${asset.nama}` : asset.name;
+                                        const subLabel = category === 'Vehicle' ? `${asset.merek} ${asset.model}` : asset.address;
+                                        return { value: val, label, subLabel };
+                                    })}
+                                    value={form.assetId || ''}
+                                    onChange={(val) => {
+                                        const asset = assetList.find((a: any) => (a.id?.toString() === val) || (a.noPolisi === val));
+                                        if (asset) {
+                                            const name = category === 'Vehicle' ? `${(asset as VehicleRecord).noPolisi} - ${(asset as VehicleRecord).nama}` : (asset as BuildingRecord).name;
+                                            setForm({ ...form, assetId: val, assetName: name });
+                                        } else {
+                                            setForm({ ...form, assetId: val, assetName: '' });
+                                        }
+                                    }}
+                                    placeholder="-- Pilih Aset --"
+                                    disabled={isView}
+                                    emptyMessage="Tidak ada data aset"
+                                />
                             </div>
 
                             <InputField label="Nama Provider / Broker" value={form.provider} field="provider" placeholder="Contoh: Asuransi Astra" />

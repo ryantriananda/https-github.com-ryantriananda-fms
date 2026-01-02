@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, User, Mail, Phone, Building, Shield, MapPin, Calendar, Camera, Lock, Activity, Key, CheckCircle2, History, Layers, ChevronDown, ChevronUp, CheckSquare, Square } from 'lucide-react';
 import { UserRecord, GeneralMasterItem } from '../types';
+import { SearchableSelect, SelectOption } from './SearchableSelect';
 
 interface Props {
   isOpen: boolean;
@@ -287,38 +288,34 @@ export const UserModal: React.FC<Props> = ({
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div>
                                     <Label>Department</Label>
-                                    <div className="relative">
-                                        <select 
-                                            disabled={isView}
-                                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 appearance-none shadow-sm cursor-pointer"
-                                            value={form.department || ''}
-                                            onChange={(e) => setForm({...form, department: e.target.value})}
-                                        >
-                                            <option value="">(Select Dept)</option>
-                                            {departmentList.map(dept => (
-                                                <option key={dept.id} value={dept.name}>{dept.name}</option>
-                                            ))}
-                                        </select>
-                                        <Building size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
-                                    </div>
+                                    <SearchableSelect
+                                        options={departmentList.map(dept => ({
+                                            value: dept.name,
+                                            label: dept.name
+                                        }))}
+                                        value={form.department || ''}
+                                        onChange={(val) => setForm({...form, department: val})}
+                                        placeholder="(Select Dept)"
+                                        disabled={isView}
+                                        icon={Building}
+                                        emptyMessage="Tidak ada data departemen"
+                                    />
                                 </div>
                                 
                                 <div>
                                     <Label>Office Location</Label>
-                                    <div className="relative">
-                                        <select 
-                                            disabled={isView}
-                                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 appearance-none shadow-sm cursor-pointer"
-                                            value={form.location || ''}
-                                            onChange={(e) => setForm({...form, location: e.target.value})}
-                                        >
-                                            <option value="">(Select Location)</option>
-                                            {locationList.map(loc => (
-                                                <option key={loc.id} value={loc.name}>{loc.name}</option>
-                                            ))}
-                                        </select>
-                                        <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
-                                    </div>
+                                    <SearchableSelect
+                                        options={locationList.map(loc => ({
+                                            value: loc.name,
+                                            label: loc.name
+                                        }))}
+                                        value={form.location || ''}
+                                        onChange={(val) => setForm({...form, location: val})}
+                                        placeholder="(Select Location)"
+                                        disabled={isView}
+                                        icon={MapPin}
+                                        emptyMessage="Tidak ada data lokasi"
+                                    />
                                 </div>
 
                                 <InputField label="Join Date" value={form.joinDate} field="joinDate" type="date" icon={Calendar} />

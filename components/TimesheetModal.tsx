@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, Clock, MapPin, User, CheckSquare, Calendar, Image as ImageIcon, Trash2, UploadCloud, Building } from 'lucide-react';
 import { TimesheetRecord, BuildingRecord, UserRecord } from '../types';
+import { SearchableSelect, SelectOption } from './SearchableSelect';
 
 interface Props {
   isOpen: boolean;
@@ -148,21 +149,22 @@ export const TimesheetModal: React.FC<Props> = ({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <Label required>Petugas Kebersihan</Label>
-                                <div className="relative">
-                                    <select 
-                                        disabled={isView}
-                                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm appearance-none cursor-pointer"
-                                        value={form.employee?.name || ''}
-                                        onChange={(e) => {
-                                            const cleaner = cleaners.find((c: any) => c.name === e.target.value);
-                                            if(cleaner) setForm({ ...form, employee: { name: cleaner.name, role: cleaner.role, phone: cleaner.phone, avatar: cleaner.avatar } as any });
-                                        }}
-                                    >
-                                        <option value="">-- Pilih Petugas --</option>
-                                        {cleaners.map((c: any) => <option key={c.id} value={c.name}>{c.name}</option>)}
-                                    </select>
-                                    <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
-                                </div>
+                                <SearchableSelect
+                                    options={cleaners.map((c: any) => ({
+                                        value: c.name,
+                                        label: c.name,
+                                        subLabel: c.role
+                                    }))}
+                                    value={form.employee?.name || ''}
+                                    onChange={(val) => {
+                                        const cleaner = cleaners.find((c: any) => c.name === val);
+                                        if(cleaner) setForm({ ...form, employee: { name: cleaner.name, role: cleaner.role, phone: cleaner.phone, avatar: cleaner.avatar } as any });
+                                    }}
+                                    placeholder="-- Pilih Petugas --"
+                                    disabled={isView}
+                                    icon={User}
+                                    emptyMessage="Tidak ada data petugas"
+                                />
                             </div>
 
                             <div>
@@ -247,20 +249,19 @@ export const TimesheetModal: React.FC<Props> = ({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <Label required>Gedung / Cabang</Label>
-                                <div className="relative">
-                                    <select 
-                                        disabled={isView}
-                                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm appearance-none cursor-pointer"
-                                        value={form.location || ''}
-                                        onChange={(e) => setForm({...form, location: e.target.value})}
-                                    >
-                                        <option value="">-- Pilih Lokasi --</option>
-                                        {buildingList.map(b => <option key={b.id} value={b.name}>{b.name}</option>)}
-                                        <option value="Jakarta Head Office">Jakarta Head Office</option>
-                                        <option value="Surabaya Branch">Surabaya Branch</option>
-                                    </select>
-                                    <Building size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
-                                </div>
+                                <SearchableSelect
+                                    options={[
+                                        ...buildingList.map(b => ({ value: b.name, label: b.name, subLabel: b.address })),
+                                        { value: 'Jakarta Head Office', label: 'Jakarta Head Office', subLabel: 'Kantor Pusat' },
+                                        { value: 'Surabaya Branch', label: 'Surabaya Branch', subLabel: 'Cabang Surabaya' }
+                                    ]}
+                                    value={form.location || ''}
+                                    onChange={(val) => setForm({...form, location: val})}
+                                    placeholder="-- Pilih Lokasi --"
+                                    disabled={isView}
+                                    icon={Building}
+                                    emptyMessage="Tidak ada data lokasi"
+                                />
                             </div>
                             
                             <div>

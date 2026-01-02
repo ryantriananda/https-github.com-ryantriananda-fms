@@ -70,6 +70,13 @@ export const MasterApprovalModal: React.FC<Props> = ({
           ]
       },
       {
+          category: 'Employee Facilities',
+          items: [
+              'Permintaan POD (Sewa Kos)',
+              'Permintaan Loker'
+          ]
+      },
+      {
           category: 'Administrative',
           items: [
               'Vendor Registration Approval',
