@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { LogBookRecord } from '../types';
-import { ChevronsUpDown, Eye, Pencil, User, Users, Baby, MapPin, Clock, Calendar, MessageSquare, MoreHorizontal, ChevronLeft, ChevronRight, Activity } from 'lucide-react';
+import { ChevronsUpDown, Eye, Pencil, User, Users, Baby, MapPin, Calendar, MessageSquare, Activity } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { Pagination, usePagination } from './Pagination';
 
 interface Props {
   data: LogBookRecord[];
@@ -12,6 +13,7 @@ interface Props {
 
 export const LogBookTable: React.FC<Props> = ({ data, onEdit, onView }) => {
   const { t } = useLanguage();
+  const pagination = usePagination(data, 10);
 
   return (
     <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden">
@@ -51,8 +53,8 @@ export const LogBookTable: React.FC<Props> = ({ data, onEdit, onView }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {data.length > 0 ? (
-                data.map((item, index) => {
+            {pagination.paginatedData.length > 0 ? (
+                pagination.paginatedData.map((item, index) => {
                 const isStillVisiting = !item.jamPulang;
                 return (
                 <tr 
@@ -61,7 +63,7 @@ export const LogBookTable: React.FC<Props> = ({ data, onEdit, onView }) => {
                     className="bg-white hover:bg-[#F8F9FA] transition-all group cursor-pointer"
                 >
                     <td className="p-5 text-center font-bold text-gray-300 text-[11px] pl-8">
-                        {isStillVisiting ? <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse mx-auto" /> : (index + 1)}
+                        {isStillVisiting ? <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse mx-auto" /> : ((pagination.currentPage - 1) * pagination.itemsPerPage + index + 1)}
                     </td>
                     <td className="p-5">
                         <div className="flex items-center gap-2">
@@ -155,22 +157,14 @@ export const LogBookTable: React.FC<Props> = ({ data, onEdit, onView }) => {
         </table>
       </div>
       
-      {/* Pagination Footer */}
-      <div className="px-8 py-6 bg-[#FAFAFA] border-t border-gray-100 flex items-center justify-between">
-            <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-                Displaying <span className="text-black ml-1">{data.length} guest records</span>
-            </div>
-            
-            <div className="flex items-center gap-2">
-                 <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
-                    <ChevronLeft size={16} />
-                 </button>
-                 <div className="bg-black text-white w-10 h-10 flex items-center justify-center rounded-xl font-black text-[11px] shadow-xl shadow-black/20">1</div>
-                 <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
-                    <ChevronRight size={16} />
-                 </button>
-            </div>
-      </div>
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        itemsPerPage={pagination.itemsPerPage}
+        onPageChange={pagination.onPageChange}
+        onItemsPerPageChange={pagination.onItemsPerPageChange}
+      />
     </div>
   );
 };

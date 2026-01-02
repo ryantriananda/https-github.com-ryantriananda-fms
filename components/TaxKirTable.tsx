@@ -3,6 +3,7 @@ import React from 'react';
 import { TaxKirRecord } from '../types';
 import { ChevronsUpDown, Eye, Pencil, Trash2, CheckCircle, XCircle, RotateCcw } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { Pagination, usePagination } from './Pagination';
 
 interface Props {
   data: TaxKirRecord[];
@@ -14,6 +15,7 @@ interface Props {
 
 export const TaxKirTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, onAction }) => {
   const { t } = useLanguage();
+  const pagination = usePagination(data, 10);
 
   const TableHeader = ({ label, className = "" }: { label: string, className?: string }) => (
     <th className={`p-4 group cursor-pointer hover:bg-gray-300/30 transition-colors border-b border-gray-200 ${className}`}>
@@ -63,7 +65,7 @@ export const TaxKirTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, o
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 text-sm">
-            {data.map((item) => (
+            {pagination.paginatedData.map((item) => (
               <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                 <td className="p-4 font-bold text-gray-900">{item.id}</td>
                 <td className="p-4 font-black text-gray-900">{item.noPolisi}</td>
@@ -100,6 +102,15 @@ export const TaxKirTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, o
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        itemsPerPage={pagination.itemsPerPage}
+        onPageChange={pagination.onPageChange}
+        onItemsPerPageChange={pagination.onItemsPerPageChange}
+      />
     </div>
   );
 };

@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { VehicleRecord } from '../types';
-import { ChevronsUpDown, Eye, Pencil, Trash2, ChevronLeft, ChevronRight, Car, Settings, Key, ShieldCheck, CheckCircle, XCircle, RotateCcw } from 'lucide-react';
+import { ChevronsUpDown, Eye, Pencil, Trash2, Car, Settings, Key, ShieldCheck, CheckCircle, XCircle, RotateCcw } from 'lucide-react';
+import { Pagination, usePagination } from './Pagination';
 
 interface Props {
   data: VehicleRecord[];
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export const VehicleTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, onAction }) => {
+  const pagination = usePagination(data, 10);
+
   const getApprovalBadge = (status: string) => {
       const s = (status || 'Approved').toLowerCase();
       if(s.includes('pending')) return <span className="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.1em] bg-orange-50 text-orange-600 border border-orange-200">Pending Approval</span>;
@@ -83,13 +86,13 @@ export const VehicleTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, 
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {data.map((item, index) => (
+            {pagination.paginatedData.map((item, index) => (
               <tr 
                 key={item.id} 
                 className="bg-white hover:bg-[#FDFDFD] transition-all group cursor-pointer"
                 onClick={() => onView?.(item)}
               >
-                <td className="p-6 text-center font-bold text-gray-300 text-[11px] pl-8">{index + 1}</td>
+                <td className="p-6 text-center font-bold text-gray-300 text-[11px] pl-8">{(pagination.currentPage - 1) * pagination.itemsPerPage + index + 1}</td>
                 <td className="p-6">
                     <span className={`font-mono font-black text-[10px] px-2.5 py-1.5 rounded-lg border ${
                         item.ownership === 'Milik Modena' 
@@ -152,22 +155,14 @@ export const VehicleTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, 
         </table>
       </div>
       
-      {/* Footer */}
-      <div className="px-8 py-6 bg-[#FAFAFA] border-t border-gray-100 flex items-center justify-between">
-            <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-                Total <span className="text-black ml-1">{data.length} Vehicles</span>
-            </div>
-            
-            <div className="flex items-center gap-2">
-                 <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
-                    <ChevronLeft size={16} />
-                 </button>
-                 <div className="bg-black text-white w-10 h-10 flex items-center justify-center rounded-xl font-black text-[11px] shadow-xl shadow-black/20">1</div>
-                 <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
-                    <ChevronRight size={16} />
-                 </button>
-            </div>
-      </div>
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        itemsPerPage={pagination.itemsPerPage}
+        onPageChange={pagination.onPageChange}
+        onItemsPerPageChange={pagination.onItemsPerPageChange}
+      />
     </div>
   );
 };

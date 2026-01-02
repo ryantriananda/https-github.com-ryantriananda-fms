@@ -2,6 +2,7 @@
 import React from 'react';
 import { VendorRecord } from '../types';
 import { ChevronsUpDown, Eye, Pencil, Trash2, Mail, Phone, MapPin, User, Tag } from 'lucide-react';
+import { Pagination, usePagination } from './Pagination';
 
 interface Props {
   data: VendorRecord[];
@@ -11,6 +12,8 @@ interface Props {
 }
 
 export const VendorTable: React.FC<Props> = ({ data, onEdit, onView, onDelete }) => {
+  const pagination = usePagination(data, 10);
+
   return (
     <div className="bg-white rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden transition-all duration-500">
       <div className="overflow-x-auto custom-scrollbar">
@@ -42,13 +45,13 @@ export const VendorTable: React.FC<Props> = ({ data, onEdit, onView, onDelete })
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {data.map((item, index) => (
+            {pagination.paginatedData.map((item, index) => (
               <tr 
                 key={item.id} 
                 className="bg-white hover:bg-[#FDFDFD] transition-all group cursor-pointer"
                 onClick={() => onView?.(item)}
               >
-                <td className="p-6 text-center font-bold text-gray-300 text-[11px] pl-8">{index + 1}</td>
+                <td className="p-6 text-center font-bold text-gray-300 text-[11px] pl-8">{(pagination.currentPage - 1) * pagination.itemsPerPage + index + 1}</td>
                 <td className="p-6">
                     <div className="flex flex-col">
                         <span className="font-black text-black text-[13px] uppercase tracking-tight">{item.vendorName}</span>
@@ -126,6 +129,15 @@ export const VendorTable: React.FC<Props> = ({ data, onEdit, onView, onDelete })
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        itemsPerPage={pagination.itemsPerPage}
+        onPageChange={pagination.onPageChange}
+        onItemsPerPageChange={pagination.onItemsPerPageChange}
+      />
     </div>
   );
 };

@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { GeneralAssetRecord } from '../types';
-import { ChevronsUpDown, Eye, Pencil, Trash2, Package, MapPin, Building, ChevronLeft, ChevronRight, ChevronsRight, ChevronsLeft } from 'lucide-react';
+import { ChevronsUpDown, Eye, Pencil, Trash2, Package, MapPin, Building } from 'lucide-react';
+import { Pagination, usePagination } from './Pagination';
 
 interface Props {
   data: GeneralAssetRecord[];
@@ -11,6 +12,8 @@ interface Props {
 }
 
 export const GeneralAssetTable: React.FC<Props> = ({ data, onEdit, onView, onDelete }) => {
+  const pagination = usePagination(data, 10);
+
   const getApprovalBadge = (status: string) => {
       const s = (status || 'Approved').toLowerCase();
       if(s === 'pending') return <span className="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.1em] bg-orange-50 text-orange-600 border border-orange-200">Pending</span>;
@@ -63,7 +66,7 @@ export const GeneralAssetTable: React.FC<Props> = ({ data, onEdit, onView, onDel
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {data.map((item) => (
+            {pagination.paginatedData.map((item) => (
               <tr key={item.id} className="bg-white hover:bg-[#FDFDFD] transition-all group cursor-pointer" onClick={() => onView?.(item)}>
                 <td className="p-6 pl-8">
                     <span className="text-[11px] font-mono font-bold text-black bg-gray-50 px-2 py-1 rounded border border-gray-100">
@@ -126,7 +129,7 @@ export const GeneralAssetTable: React.FC<Props> = ({ data, onEdit, onView, onDel
                 </td>
               </tr>
             ))}
-            {data.length === 0 && (
+            {pagination.paginatedData.length === 0 && (
                 <tr>
                     <td colSpan={7} className="p-24 text-center">
                         <div className="flex flex-col items-center opacity-30">
@@ -140,43 +143,14 @@ export const GeneralAssetTable: React.FC<Props> = ({ data, onEdit, onView, onDel
         </table>
       </div>
       
-      {/* Footer Pagination */}
-      <div className="px-8 py-5 bg-white border-t border-gray-100 flex items-center justify-between">
-        <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-          SHOWING 1 - {data.length} OF <span className="text-black">{data.length}</span> ROW(S)
-        </div>
-        
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-            ROW PER PAGE
-            <select className="bg-transparent border-0 text-[11px] font-black text-black focus:ring-0 cursor-pointer p-0">
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <button className="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-black transition-all">
-              <ChevronsLeft size={16} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-black transition-all">
-              <ChevronLeft size={16} />
-            </button>
-            
-            <div className="px-4 py-1.5 bg-white border border-gray-100 rounded-lg text-[11px] font-black shadow-sm mx-2">
-              1 / 1
-            </div>
-
-            <button className="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-black transition-all">
-              <ChevronRight size={16} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-black transition-all">
-              <ChevronsRight size={16} />
-            </button>
-          </div>
-        </div>
-      </div>
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        itemsPerPage={pagination.itemsPerPage}
+        onPageChange={pagination.onPageChange}
+        onItemsPerPageChange={pagination.onItemsPerPageChange}
+      />
     </div>
   );
 };

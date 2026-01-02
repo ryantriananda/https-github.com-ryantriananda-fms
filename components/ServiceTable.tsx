@@ -1,6 +1,7 @@
 import React from 'react';
 import { ServiceRecord } from '../types';
-import { ChevronsUpDown, Eye, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Pencil } from 'lucide-react';
+import { ChevronsUpDown, Eye, Pencil } from 'lucide-react';
+import { Pagination, usePagination } from './Pagination';
 
 interface Props {
   data: ServiceRecord[];
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export const ServiceTable: React.FC<Props> = ({ data, onEdit, onView }) => {
+  const pagination = usePagination(data, 10);
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       <div className="overflow-x-auto">
@@ -63,7 +66,7 @@ export const ServiceTable: React.FC<Props> = ({ data, onEdit, onView }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 text-sm text-gray-700">
-            {data.map((item) => (
+            {pagination.paginatedData.map((item) => (
               <tr key={item.id} className="bg-white hover:bg-gray-50 transition-colors cursor-pointer group">
                 <td className="p-4 font-medium text-gray-900">{item.id}</td>
                 <td className="p-4 font-medium text-gray-900">{item.noPolisi}</td>
@@ -102,41 +105,14 @@ export const ServiceTable: React.FC<Props> = ({ data, onEdit, onView }) => {
         </table>
       </div>
       
-      {/* Pagination Footer */}
-      <div className="px-6 py-4 border-t border-gray-200 bg-white flex items-center justify-between">
-            <div className="text-sm text-gray-900">
-                Showing 1 - {data.length} of <span className="text-green-500 font-semibold">{data.length}</span> Row(s)
-            </div>
-            
-            <div className="flex items-center gap-8">
-                <div className="flex items-center gap-2 text-sm text-gray-900">
-                    Row per page
-                    <select className="border border-gray-300 rounded px-2 py-1 text-sm bg-white focus:outline-none focus:border-gray-400 text-gray-900 cursor-pointer">
-                        <option>10</option>
-                        <option>20</option>
-                        <option>50</option>
-                    </select>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                     <button className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded hover:bg-gray-50 text-gray-600 transition-colors">
-                        <ChevronsLeft size={16} />
-                     </button>
-                     <button className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded hover:bg-gray-50 text-gray-600 transition-colors">
-                        <ChevronLeft size={16} />
-                     </button>
-                     
-                     <span className="text-sm text-gray-900 mx-3 font-medium">1 / 1</span>
-                     
-                     <button className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded hover:bg-gray-50 text-gray-600 transition-colors">
-                        <ChevronRight size={16} />
-                     </button>
-                     <button className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded hover:bg-gray-50 text-gray-600 transition-colors">
-                        <ChevronsRight size={16} />
-                     </button>
-                </div>
-            </div>
-      </div>
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        itemsPerPage={pagination.itemsPerPage}
+        onPageChange={pagination.onPageChange}
+        onItemsPerPageChange={pagination.onItemsPerPageChange}
+      />
     </div>
   );
 };

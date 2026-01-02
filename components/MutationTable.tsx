@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { MutationRecord } from '../types';
-import { ChevronsUpDown, Eye, List, Pencil, Trash2, CheckCircle, XCircle, RotateCcw } from 'lucide-react';
+import { ChevronsUpDown, Eye, Pencil, Trash2, CheckCircle, XCircle, RotateCcw } from 'lucide-react';
+import { Pagination, usePagination } from './Pagination';
 
 interface Props {
   data: MutationRecord[];
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export const MutationTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, onAction }) => {
+  const pagination = usePagination(data, 10);
+
   const renderWorkflowActions = (item: MutationRecord) => {
       const s = (item.statusApproval || 'Approved').toLowerCase();
       if (s.includes('pending') && onAction) {
@@ -99,7 +102,7 @@ export const MutationTable: React.FC<Props> = ({ data, onEdit, onView, onDelete,
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 text-sm text-gray-700">
-            {data.map((item) => (
+            {pagination.paginatedData.map((item) => (
               <tr key={item.id} className="bg-white hover:bg-gray-50 transition-colors cursor-pointer group">
                 <td className="p-4 font-medium text-gray-900">{item.id}</td>
                 <td className="p-4">
@@ -147,12 +150,14 @@ export const MutationTable: React.FC<Props> = ({ data, onEdit, onView, onDelete,
         </table>
       </div>
       
-      {/* Pagination Footer */}
-      <div className="px-6 py-4 border-t border-gray-200 bg-white flex items-center justify-between">
-            <div className="text-sm text-gray-900">
-                Showing 1 - {data.length} of <span className="text-green-500 font-semibold">{data.length}</span> items
-            </div>
-      </div>
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        itemsPerPage={pagination.itemsPerPage}
+        onPageChange={pagination.onPageChange}
+        onItemsPerPageChange={pagination.onItemsPerPageChange}
+      />
     </div>
   );
 };

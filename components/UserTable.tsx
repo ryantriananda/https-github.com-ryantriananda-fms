@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { UserRecord } from '../types';
-import { ChevronsUpDown, Eye, Pencil, Trash2, ChevronLeft, ChevronRight, Mail, Phone, Building } from 'lucide-react';
+import { ChevronsUpDown, Eye, Pencil, Trash2, Mail, Phone, Building } from 'lucide-react';
+import { Pagination, usePagination } from './Pagination';
 
 interface Props {
   data: UserRecord[];
@@ -11,6 +12,8 @@ interface Props {
 }
 
 export const UserTable: React.FC<Props> = ({ data, onEdit, onView, onDelete }) => {
+  const pagination = usePagination(data, 10);
+
   return (
     <div className="bg-white rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden transition-all duration-500">
       <div className="overflow-x-auto custom-scrollbar">
@@ -42,13 +45,13 @@ export const UserTable: React.FC<Props> = ({ data, onEdit, onView, onDelete }) =
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {data.map((item, index) => (
+            {pagination.paginatedData.map((item, index) => (
               <tr 
                 key={item.id} 
                 className="bg-white hover:bg-[#FDFDFD] transition-all group cursor-pointer"
                 onClick={() => onView?.(item)}
               >
-                <td className="p-6 text-center font-bold text-gray-300 text-[11px] pl-8">{index + 1}</td>
+                <td className="p-6 text-center font-bold text-gray-300 text-[11px] pl-8">{(pagination.currentPage - 1) * pagination.itemsPerPage + index + 1}</td>
                 <td className="p-6">
                     <div className="flex items-center gap-4">
                         <div className="relative">
@@ -125,22 +128,14 @@ export const UserTable: React.FC<Props> = ({ data, onEdit, onView, onDelete }) =
         </table>
       </div>
       
-      {/* Footer */}
-      <div className="px-8 py-6 bg-[#FAFAFA] border-t border-gray-100 flex items-center justify-between">
-            <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-                Total <span className="text-black ml-1">{data.length} Users</span>
-            </div>
-            
-            <div className="flex items-center gap-2">
-                 <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
-                    <ChevronLeft size={16} />
-                 </button>
-                 <div className="bg-black text-white w-10 h-10 flex items-center justify-center rounded-xl font-black text-[11px] shadow-xl shadow-black/20">1</div>
-                 <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
-                    <ChevronRight size={16} />
-                 </button>
-            </div>
-      </div>
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        itemsPerPage={pagination.itemsPerPage}
+        onPageChange={pagination.onPageChange}
+        onItemsPerPageChange={pagination.onItemsPerPageChange}
+      />
     </div>
   );
 };

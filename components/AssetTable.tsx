@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { AssetRecord } from '../types';
-import { ChevronsUpDown, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Eye } from 'lucide-react';
+import { ChevronsUpDown, Eye } from 'lucide-react';
+import { Pagination, usePagination } from './Pagination';
 
 interface Props {
   data: AssetRecord[];
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export const AssetTable: React.FC<Props> = ({ data, onView }) => {
+  const pagination = usePagination(data, 10);
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       <div className="overflow-x-auto">
@@ -49,9 +52,9 @@ export const AssetTable: React.FC<Props> = ({ data, onView }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 text-sm text-gray-700">
-            {data.map((item, index) => (
+            {pagination.paginatedData.map((item, index) => (
               <tr key={item.id} className="bg-white hover:bg-gray-50 transition-colors cursor-pointer group">
-                <td className="p-4 text-left font-medium text-gray-500 pl-6">{index + 1}</td>
+                <td className="p-4 text-left font-medium text-gray-500 pl-6">{(pagination.currentPage - 1) * pagination.itemsPerPage + index + 1}</td>
                 
                 <td className="p-4 font-mono font-semibold text-gray-900">{item.transactionNumber}</td>
 
@@ -109,41 +112,14 @@ export const AssetTable: React.FC<Props> = ({ data, onView }) => {
         </table>
       </div>
       
-      {/* Pagination Footer */}
-      <div className="px-6 py-4 border-t border-gray-200 bg-white flex items-center justify-between">
-            <div className="text-sm text-gray-900">
-                Showing 1 - 10 of <span className="text-green-500 font-semibold">58</span> Row(s)
-            </div>
-            
-            <div className="flex items-center gap-8">
-                <div className="flex items-center gap-2 text-sm text-gray-900">
-                    Row per page
-                    <select className="border border-gray-300 rounded px-2 py-1 text-sm bg-white focus:outline-none focus:border-gray-400 text-gray-900 cursor-pointer">
-                        <option>10</option>
-                        <option>20</option>
-                        <option>50</option>
-                    </select>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                     <button className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded hover:bg-gray-50 text-gray-600 transition-colors">
-                        <ChevronsLeft size={16} />
-                     </button>
-                     <button className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded hover:bg-gray-50 text-gray-600 transition-colors">
-                        <ChevronLeft size={16} />
-                     </button>
-                     
-                     <span className="text-sm text-gray-900 mx-3 font-medium">1 / 6</span>
-                     
-                     <button className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded hover:bg-gray-50 text-gray-600 transition-colors">
-                        <ChevronRight size={16} />
-                     </button>
-                     <button className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded hover:bg-gray-50 text-gray-600 transition-colors">
-                        <ChevronsRight size={16} />
-                     </button>
-                </div>
-            </div>
-      </div>
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        itemsPerPage={pagination.itemsPerPage}
+        onPageChange={pagination.onPageChange}
+        onItemsPerPageChange={pagination.onItemsPerPageChange}
+      />
     </div>
   );
 };

@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { BuildingRecord } from '../types';
-import { ChevronsUpDown, Eye, Pencil, Trash2, Building, MapPin, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Calendar, CheckCircle, RotateCcw, XCircle } from 'lucide-react';
+import { ChevronsUpDown, Eye, Pencil, Trash2, Building, MapPin, Calendar, CheckCircle, RotateCcw, XCircle } from 'lucide-react';
+import { Pagination, usePagination } from './Pagination';
 
 interface Props {
   data: BuildingRecord[];
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export const BuildingTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, onAction }) => {
+  const pagination = usePagination(data, 10);
   
   const renderStatusBadge = (status: string) => {
     const s = (status || 'Draft').toUpperCase();
@@ -127,7 +129,7 @@ export const BuildingTable: React.FC<Props> = ({ data, onEdit, onView, onDelete,
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50 text-[12px]">
-            {data.map((item) => (
+            {pagination.paginatedData.map((item) => (
               <tr key={item.id} className="hover:bg-gray-50/30 transition-colors group">
                 <td className="p-5 pl-8 text-[11px] font-mono font-bold text-gray-400">
                     {item.id}
@@ -213,43 +215,14 @@ export const BuildingTable: React.FC<Props> = ({ data, onEdit, onView, onDelete,
         </table>
       </div>
       
-      {/* Footer Pagination */}
-      <div className="px-8 py-5 bg-white border-t border-gray-100 flex items-center justify-between">
-        <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-          SHOWING 1 - {data.length} OF <span className="text-black">{data.length}</span> ROW(S)
-        </div>
-        
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-            ROW PER PAGE
-            <select className="bg-transparent border-0 text-[11px] font-black text-black focus:ring-0 cursor-pointer p-0">
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <button className="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-black transition-all">
-              <ChevronsLeft size={16} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-black transition-all">
-              <ChevronLeft size={16} />
-            </button>
-            
-            <div className="px-4 py-1.5 bg-white border border-gray-100 rounded-lg text-[11px] font-black shadow-sm mx-2">
-              1 / 1
-            </div>
-
-            <button className="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-black transition-all">
-              <ChevronRight size={16} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-black transition-all">
-              <ChevronsRight size={16} />
-            </button>
-          </div>
-        </div>
-      </div>
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        itemsPerPage={pagination.itemsPerPage}
+        onPageChange={pagination.onPageChange}
+        onItemsPerPageChange={pagination.onItemsPerPageChange}
+      />
     </div>
   );
 };

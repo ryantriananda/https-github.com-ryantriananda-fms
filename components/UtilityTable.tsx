@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { UtilityRecord } from '../types';
-import { ChevronsUpDown, Eye, Pencil, Trash2, Zap, Droplets, Wifi, CheckCircle2, Clock } from 'lucide-react';
+import { Eye, Pencil, Zap, Droplets, Wifi } from 'lucide-react';
+import { Pagination, usePagination } from './Pagination';
 
 interface Props {
   data: UtilityRecord[];
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export const UtilityTable: React.FC<Props> = ({ data, onEdit, onView, onDelete }) => {
+  const pagination = usePagination(data, 10);
   
   const getTypeIcon = (type: string) => {
       const t = type.toLowerCase();
@@ -42,7 +44,7 @@ export const UtilityTable: React.FC<Props> = ({ data, onEdit, onView, onDelete }
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {data.map((item) => (
+            {pagination.paginatedData.map((item) => (
               <tr key={item.id} className="bg-white hover:bg-[#FDFDFD] transition-all group">
                 <td className="p-6 pl-8">
                     <div className="font-bold text-black text-[12px]">{item.period}</div>
@@ -89,6 +91,15 @@ export const UtilityTable: React.FC<Props> = ({ data, onEdit, onView, onDelete }
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        itemsPerPage={pagination.itemsPerPage}
+        onPageChange={pagination.onPageChange}
+        onItemsPerPageChange={pagination.onItemsPerPageChange}
+      />
     </div>
   );
 };
