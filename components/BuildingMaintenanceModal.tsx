@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { X, Save, Wrench, Calendar, DollarSign, FileText, Building, User, UploadCloud, Trash2, Clock, CheckCircle2, AlertCircle, PlayCircle, Star, Image as ImageIcon } from 'lucide-react';
-import { BuildingMaintenanceRecord, BuildingAssetRecord } from '../types';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { X, Save, Wrench, Calendar, DollarSign, FileText, Building, User, UploadCloud, Trash2, Clock, CheckCircle2, AlertCircle, PlayCircle, Star, Image as ImageIcon, MapPin } from 'lucide-react';
+import { BuildingMaintenanceRecord, BuildingAssetRecord, BuildingRecord } from '../types';
 
 interface Props {
   isOpen: boolean;
@@ -9,6 +9,7 @@ interface Props {
   onSave: (data: Partial<BuildingMaintenanceRecord>) => void;
   initialData?: BuildingMaintenanceRecord | null;
   assetList: BuildingAssetRecord[];
+  buildingList?: BuildingRecord[];
   mode?: 'create' | 'edit' | 'view';
 }
 
@@ -18,6 +19,7 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
     onSave, 
     initialData, 
     assetList,
+    buildingList = [],
     mode = 'create'
 }) => {
   const [form, setForm] = useState<Partial<BuildingMaintenanceRecord>>({
@@ -29,6 +31,7 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
     rating: 0
   });
 
+  const [selectedBuilding, setSelectedBuilding] = useState<string>('');
   const beforeInputRef = useRef<HTMLInputElement>(null);
   const afterInputRef = useRef<HTMLInputElement>(null);
 
@@ -36,6 +39,13 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
     if (isOpen) {
       if (initialData) {
         setForm(initialData);
+        // If editing/viewing, try to find the building from the asset ID
+        if (initialData.assetId) {
+            const asset = assetList.find(a => a.id === initialData.assetId);
+            if (asset) {
+                setSelectedBuilding(asset.buildingName);
+            }
+        }
       } else {
         setForm({
             requestDate: new Date().toISOString().split('T')[0],
@@ -43,11 +53,20 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
             status: 'Scheduled',
             approvalStatus: 'Pending Approval',
             cost: '0',
-            rating: 0
+            rating: 0,
+            assetId: '',
+            assetName: '',
+            buildingLocation: ''
         });
+        setSelectedBuilding('');
       }
     }
-  }, [isOpen, initialData]);
+  }, [isOpen, initialData, assetList]);
+
+  const filteredAssets = useMemo(() => {
+      if (!selectedBuilding) return [];
+      return assetList.filter(asset => asset.buildingName === selectedBuilding);
+  }, [selectedBuilding, assetList]);
 
   if (!isOpen) return null;
 
@@ -78,6 +97,18 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
               <Clock size={12} /> {status} ({diffDays} Days)
           </div>
       );
+  };
+
+  const handleBuildingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const buildingName = e.target.value;
+      setSelectedBuilding(buildingName);
+      // Reset asset selection when building changes
+      setForm(prev => ({
+          ...prev,
+          assetId: '',
+          assetName: '',
+          buildingLocation: ''
+      }));
   };
 
   const handleAssetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -198,29 +229,52 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
                             <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Informasi Aset</h3>
                         </div>
                         
+                        {/* New Building Selection */}
+                        <div>
+                            <Label required>Lokasi Gedung / Cabang</Label>
+                            <div className="relative">
+                                <select 
+                                    disabled={isView || mode === 'edit'}
+                                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm cursor-pointer appearance-none"
+                                    value={selectedBuilding}
+                                    onChange={handleBuildingChange}
+                                >
+                                    <option value="">-- Pilih Lokasi --</option>
+                                    {buildingList.map(b => (
+                                        <option key={b.id} value={b.name}>{b.name}</option>
+                                    ))}
+                                </select>
+                                <MapPin size={16} className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
+                            </div>
+                        </div>
+
                         <div>
                             <Label required>Pilih Aset Gedung</Label>
                             <select 
-                                disabled={isView || mode === 'edit'}
+                                disabled={isView || mode === 'edit' || !selectedBuilding}
                                 className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm cursor-pointer appearance-none"
                                 value={form.assetId || ''}
                                 onChange={handleAssetChange}
                             >
-                                <option value="">-- Pilih Aset --</option>
-                                {assetList.map(asset => (
-                                    <option key={asset.id} value={asset.id}>
-                                        {asset.assetName} ({asset.assetCode})
-                                    </option>
-                                ))}
+                                <option value="">{selectedBuilding ? '-- Pilih Aset --' : '-- Pilih Lokasi Terlebih Dahulu --'}</option>
+                                {filteredAssets.length > 0 ? (
+                                    filteredAssets.map(asset => (
+                                        <option key={asset.id} value={asset.id}>
+                                            {asset.assetName} ({asset.assetCode})
+                                        </option>
+                                    ))
+                                ) : (
+                                    selectedBuilding && <option value="" disabled>Tidak ada aset di lokasi ini</option>
+                                )}
                             </select>
                         </div>
 
                         <InputField 
-                            label="Lokasi Penempatan" 
+                            label="Lokasi Penempatan Detail" 
                             value={form.buildingLocation} 
                             field="buildingLocation" 
                             disabled={true} 
-                            placeholder="Lokasi otomatis terisi..." 
+                            placeholder="Detail lantai/ruangan..." 
                         />
 
                         <div>

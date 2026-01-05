@@ -16,6 +16,8 @@ interface Props {
   hideImport?: boolean;
   hideExport?: boolean;
   customAddLabel?: string;
+  podFilters?: { lantai: string; jenisKamar: string; };
+  onPodFilterChange?: (field: string, value: string) => void;
 }
 
 export const FilterBar: React.FC<Props> = ({ 
@@ -30,7 +32,9 @@ export const FilterBar: React.FC<Props> = ({
   hideAdd = false,
   hideImport = false,
   hideExport = false,
-  customAddLabel
+  customAddLabel,
+  podFilters,
+  onPodFilterChange
 }) => {
   const { t } = useLanguage();
   const isService = moduleName === 'Servis';
@@ -130,6 +134,36 @@ export const FilterBar: React.FC<Props> = ({
           )}
         </div>
       </div>
+
+      {podFilters && onPodFilterChange && (
+        <div className="flex flex-wrap gap-4 items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+            <div className="flex items-center gap-2">
+                <Filter size={14} className="text-gray-400" />
+                <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Additional Filters:</span>
+            </div>
+            <select 
+                className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-[11px] font-bold outline-none cursor-pointer"
+                value={podFilters.lantai}
+                onChange={(e) => onPodFilterChange('lantai', e.target.value)}
+            >
+                <option value="">Semua Lantai</option>
+                <option value="Lt 2 Pria">Lt 2 Pria</option>
+                <option value="Lt 2 Perempuan">Lt 2 Perempuan</option>
+                <option value="Lt 3 Pria">Lt 3 Pria</option>
+                <option value="Lt 3 Perempuan">Lt 3 Perempuan</option>
+            </select>
+            <select 
+                className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-[11px] font-bold outline-none cursor-pointer"
+                value={podFilters.jenisKamar}
+                onChange={(e) => onPodFilterChange('jenisKamar', e.target.value)}
+            >
+                <option value="">Semua Tipe Kamar</option>
+                <option value="Single Bed">Single Bed</option>
+                <option value="Double Bed">Double Bed</option>
+                <option value="Quadruple Bed">Quadruple Bed</option>
+            </select>
+        </div>
+      )}
     </div>
   );
 };

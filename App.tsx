@@ -974,7 +974,7 @@ const App: React.FC = () => {
             {modalType === 'VEHICLE_CONTRACT' && <VehicleContractModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveData} initialData={selectedItem} mode={modalMode} vehicleList={vehicleData} />}
             {modalType === 'MUTATION' && <MutationModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveData} initialData={selectedItem} mode={modalMode} vehicleList={vehicleData} assetType='VEHICLE' />}
             {modalType === 'SALES' && <SalesModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveData} initialData={selectedItem} mode={modalMode} vehicleList={vehicleData} assetType='VEHICLE' />}
-            {modalType === 'BUILDING_MAINTENANCE' && <BuildingMaintenanceModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveData} initialData={selectedItem} mode={modalMode} assetList={buildingAssetData} />}
+            {modalType === 'BUILDING_MAINTENANCE' && <BuildingMaintenanceModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveData} initialData={selectedItem} mode={modalMode} assetList={buildingAssetData} buildingList={buildingData} />}
             {modalType === 'UTILITY' && <UtilityModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveData} initialData={selectedItem} mode={modalMode} buildingList={buildingData} />}
             {modalType === 'COMPLIANCE' && <ComplianceModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveData} initialData={selectedItem} mode={modalMode} buildingList={buildingData} />}
             

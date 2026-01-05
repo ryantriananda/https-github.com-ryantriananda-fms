@@ -213,7 +213,7 @@ export const BuildingModal: React.FC<Props> = ({
       }
   };
 
-  const toggleStructureCheckboxForm = (category: keyof typeof currentProposal.structureChecklist, value: string) => {
+  const toggleStructureCheckboxForm = (category: string, value: string) => {
       if(isView) return;
       const list = form.structureChecklist?.[category] || [];
       const updatedList = list.includes(value) ? list.filter(i => i !== value) : [...list, value];
