@@ -1,58 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  LayoutDashboard, 
-  FileText, 
-  Clock, 
-  Users, 
-  Home, 
-  BookOpen, 
-  ChevronLeft, 
-  ChevronRight, 
-  Car, 
-  Database, 
-  Wrench, 
-  Send, 
-  DollarSign, 
-  ChevronDown, 
-  X, 
-  Building, 
-  Briefcase, 
-  Bell, 
-  Box, 
-  House, 
-  Settings, 
-  UserCog, 
-  Zap, 
-  ShieldCheck, 
-  Package, 
-  List, 
-  Monitor, 
-  Tag, 
-  MapPin, 
-  Scale, 
-  CreditCard, 
-  Layers, 
-  Palette, 
-  Landmark, 
-  Component, 
-  Percent, 
-  Radio, 
-  Stamp, 
-  RefreshCw, 
-  Sliders, 
-  CheckCircle2, 
-  Headset, 
-  Gavel, 
-  FileBadge, 
-  Hammer, 
-  Shield, 
-  FileSpreadsheet, 
-  Grid, 
-  ClipboardList, 
-  Lock,
-  Umbrella,
-  AlertTriangle
+  LayoutDashboard, FileText, Clock, Users, Home, BookOpen, ChevronLeft, ChevronRight, 
+  Car, Database, Wrench, Send, DollarSign, ChevronDown, X, Building, Briefcase, Bell, 
+  Box, House, Settings, UserCog, Zap, ShieldCheck, Package, List, Monitor, Tag, 
+  MapPin, Scale, CreditCard, Layers, Palette, Landmark, Component, Percent, Radio, 
+  Stamp, RefreshCw, Sliders, CheckCircle2, Headset, Gavel, FileBadge, Hammer, Shield, 
+  FileSpreadsheet, Grid, ClipboardList, Lock, Umbrella, AlertTriangle
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -69,7 +23,7 @@ interface MenuItem {
   label: string;
   icon: React.ReactNode;
   subItems?: MenuItem[];
-  groupLabel?: string; // Added visual separator support
+  groupLabel?: string;
 }
 
 export const Sidebar: React.FC<Props> = ({ 
@@ -83,7 +37,6 @@ export const Sidebar: React.FC<Props> = ({
   const { t } = useLanguage();
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
-  // Auto-expand menu based on activeItem
   useEffect(() => {
     menuItems.forEach(item => {
         if (item.subItems && item.subItems.some(sub => sub.label === activeItem)) {
@@ -105,12 +58,9 @@ export const Sidebar: React.FC<Props> = ({
     }
   };
 
-  // ORDER BY IMPORTANCE + VISUAL GROUPS
   const menuItems: MenuItem[] = [
-    // 1. DASHBOARD
     { label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
     
-    // 2. CORE ASSETS (HIGH VALUE)
     { 
         groupLabel: 'Asset Management',
         label: 'Gedung', 
@@ -149,7 +99,6 @@ export const Sidebar: React.FC<Props> = ({
         ]
     },
 
-    // 3. INSURANCE MANAGEMENT (NEW MASTER MENU)
     {
         groupLabel: 'Risk Management',
         label: 'Insurance',
@@ -163,7 +112,6 @@ export const Sidebar: React.FC<Props> = ({
         ]
     },
 
-    // 4. FACILITY SERVICES
     {
         groupLabel: 'Facility Services',
         label: 'MODENA Pod',
@@ -182,7 +130,6 @@ export const Sidebar: React.FC<Props> = ({
         ]
     },
 
-    // 5. CONSUMABLES (ATK & ARK)
     { 
         groupLabel: 'Consumables',
         label: 'ATK', 
@@ -202,8 +149,11 @@ export const Sidebar: React.FC<Props> = ({
             { label: 'Master ARK', icon: <Settings size={16} /> },
         ]
     },
+    { 
+        label: 'Stock Opname', 
+        icon: <ClipboardList size={20} /> 
+    },
 
-    // 6. DAILY OPERATIONS
     { 
         groupLabel: 'Daily Operations',
         label: 'Log Book', 
@@ -211,7 +161,6 @@ export const Sidebar: React.FC<Props> = ({
     },
     { label: 'Timesheet', icon: <Clock size={20} /> },
 
-    // 7. ADMINISTRATION
     { 
         groupLabel: 'Administration',
         label: 'Vendor', 
@@ -223,8 +172,6 @@ export const Sidebar: React.FC<Props> = ({
       icon: <Home size={20} />,
       subItems: [
         { label: 'Master Approval', icon: <CheckCircle2 size={16} /> },
-        
-        // Group 1: General Masters
         { label: 'Master Vendor', icon: <Users size={16} /> },
         { label: 'Master PPN', icon: <Percent size={16} /> },
         { label: 'Master Brand Type', icon: <Stamp size={16} /> },
@@ -242,8 +189,6 @@ export const Sidebar: React.FC<Props> = ({
         { label: 'Master Tipe Gedung', icon: <Landmark size={16} /> },
         { label: 'Master Cost Center', icon: <CreditCard size={16} /> },
         { label: 'Asset Category', icon: <Box size={16} /> },
-        
-        // Group 2: Configuration Masters
         { label: 'Jenis Pajak', icon: <Sliders size={16} /> },
         { label: 'Jenis Pembayaran', icon: <Sliders size={16} /> },
         { label: 'Jenis Servis', icon: <Sliders size={16} /> },
@@ -268,7 +213,6 @@ export const Sidebar: React.FC<Props> = ({
 
   return (
     <div className={sidebarClasses}>
-      {/* Logo Section */}
       <div className={`h-20 flex items-center px-8 border-b border-white/5 ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white text-black rounded-xl flex items-center justify-center font-black text-xl shadow-[0_0_15px_rgba(255,255,255,0.1)]">M</div>
@@ -286,7 +230,6 @@ export const Sidebar: React.FC<Props> = ({
         )}
       </div>
 
-      {/* Menu Section */}
       <nav className="flex-1 overflow-y-auto custom-scrollbar px-4 py-6 space-y-1">
         {menuItems.map((item, index) => {
           const hasSub = item.subItems && item.subItems.length > 0;
@@ -295,7 +238,6 @@ export const Sidebar: React.FC<Props> = ({
 
           return (
             <React.Fragment key={index}>
-                {/* Render Group Label if exists */}
                 {item.groupLabel && !isCollapsed && (
                     <div className="px-4 mt-6 mb-2 text-[9px] font-black text-gray-600 uppercase tracking-[0.15em] opacity-80">
                         {t(item.groupLabel)}
@@ -320,13 +262,11 @@ export const Sidebar: React.FC<Props> = ({
                                 />
                             )}
                             
-                            {/* Active Indicator Line */}
                             {isParentActive && !isCollapsed && (
                                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"></div>
                             )}
                         </button>
 
-                        {/* Submenu */}
                         <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isExpanded && !isCollapsed ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
                             <div className="pt-1 pb-2 pl-4 space-y-1">
                                 {item.subItems!.map((sub, subIndex) => {
@@ -365,7 +305,6 @@ export const Sidebar: React.FC<Props> = ({
         })}
       </nav>
 
-      {/* Footer Toggle */}
       <div className="p-6 border-t border-white/5 hidden lg:block">
         <button 
             onClick={onToggle}

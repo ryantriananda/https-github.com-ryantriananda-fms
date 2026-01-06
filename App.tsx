@@ -61,6 +61,11 @@ import { LockerModal } from './components/LockerModal';
 import { LockerRequestTable } from './components/LockerRequestTable';
 import { LockerRequestModal } from './components/LockerRequestModal';
 
+// Stock Opname (NEW)
+import { StockOpnameTable } from './components/StockOpnameTable';
+import { AddStockOpnameModal } from './components/AddStockOpnameModal';
+import { ImportStockOpnameModal } from './components/ImportStockOpnameModal';
+
 // Daily Ops & Admin
 import { LogBookTable } from './components/LogBookTable';
 import { TimesheetTable } from './components/TimesheetTable';
@@ -83,7 +88,7 @@ import {
     GeneralAssetRecord, BuildingMaintenanceRecord, MaintenanceScheduleRecord, InsuranceRecord, 
     InsuranceProviderRecord, ModenaPodRecord, PodRequestRecord, LockerRecord, LockerRequestRecord, 
     LogBookRecord, TimesheetRecord, VendorRecord, UserRecord, MasterApprovalRecord, 
-    GeneralMasterItem, DeliveryLocationRecord
+    GeneralMasterItem, DeliveryLocationRecord, StockOpnameRecord
 } from './types';
 
 import { 
@@ -93,7 +98,7 @@ import {
     MOCK_BUILDING_DATA, MOCK_UTILITY_DATA, MOCK_REMINDER_DATA, MOCK_BUILDING_MAINTENANCE_DATA,
     MOCK_GENERAL_ASSET_DATA, MOCK_INSURANCE_DATA, MOCK_INSURANCE_PROVIDERS,
     MOCK_POD_DATA, MOCK_POD_REQUEST_DATA, MOCK_LOCKER_DATA, MOCK_LOCKER_REQUEST_DATA,
-    MOCK_LOGBOOK_DATA, MOCK_TIMESHEET_DATA, MOCK_VENDOR_DATA, 
+    MOCK_STOCK_OPNAME_DATA, MOCK_LOGBOOK_DATA, MOCK_TIMESHEET_DATA, MOCK_VENDOR_DATA, 
     MOCK_USER_DATA, MOCK_GENERAL_MASTER_DATA, MOCK_BRAND_DATA, MOCK_COLOR_DATA, MOCK_BUILDING_ASSETS,
     MOCK_PPN_DATA, MOCK_BRAND_TYPE_DATA, MOCK_VEHICLE_MODEL_DATA, MOCK_BUILDING_COMPONENT_DATA,
     MOCK_DOC_TYPE_DATA, MOCK_UTILITY_TYPE_DATA, MOCK_OPERATOR_DATA, MOCK_ASSET_TYPE_DATA,
@@ -117,6 +122,7 @@ export const App: React.FC = () => {
   const [arkRequests, setArkRequests] = useState<AssetRecord[]>(MOCK_ARK_DATA);
   const [masterArk, setMasterArk] = useState<MasterItem[]>(MOCK_MASTER_ARK_DATA);
   const [deliveryLocations, setDeliveryLocations] = useState<DeliveryLocationRecord[]>(MOCK_DELIVERY_LOCATIONS);
+  const [stockOpnames, setStockOpnames] = useState<StockOpnameRecord[]>(MOCK_STOCK_OPNAME_DATA);
   
   // Vehicle
   const [vehicles, setVehicles] = useState<VehicleRecord[]>(MOCK_VEHICLE_DATA);
@@ -248,6 +254,23 @@ export const App: React.FC = () => {
     const setList = isArk ? setMasterArk : setMasterAtk;
     
     setList(prev => prev.filter(item => item.id !== id));
+  };
+
+  // --- HANDLER FOR STOCK OPNAME APPROVAL ---
+  const handleStockOpnameApproval = (opnameId: string, status: 'Approved' | 'Rejected', note?: string) => {
+      setStockOpnames(prev => prev.map(record => {
+          if (record.opnameId === opnameId) {
+              return {
+                  ...record,
+                  statusApproval: status,
+                  approvedBy: 'Current User', // Replace with actual logged-in user
+                  approvalDate: new Date().toISOString().split('T')[0],
+                  approvalNote: note
+              };
+          }
+          return record;
+      }));
+      closeModal();
   };
 
   // --- RENDER CONTENT ---
@@ -391,6 +414,40 @@ export const App: React.FC = () => {
             )}
           </>
         );
+
+      // --- STOCK OPNAME MODULE ---
+      case 'Stock Opname':
+          const filteredSO = activeTab === 'SEMUA' 
+              ? stockOpnames 
+              : stockOpnames.filter(s => s.status === activeTab);
+          return (
+              <>
+                  <FilterBar 
+                      tabs={['SEMUA', 'MATCHED', 'DISCREPANCY']} 
+                      activeTab={activeTab} 
+                      onTabChange={setActiveTab} 
+                      onAddClick={() => openModal('STOCK_OPNAME_INIT', 'create')} 
+                      customAddLabel="TAMBAH DATA" 
+                      onExportClick={() => openModal('STOCK_OPNAME_IMPORT', 'create')}
+                  />
+                  <StockOpnameTable 
+                      data={filteredSO} 
+                      onView={(i) => {
+                          const opnameItems = stockOpnames.filter(so => so.opnameId === i.opnameId);
+                          openModal('STOCK_OPNAME_INIT', 'view', opnameItems);
+                      }} 
+                      onEdit={(i) => {
+                          const opnameItems = stockOpnames.filter(so => so.opnameId === i.opnameId);
+                          // Only allow approve mode if pending
+                          if (i.statusApproval === 'Pending') {
+                              openModal('STOCK_OPNAME_INIT', 'approve', opnameItems);
+                          } else {
+                              openModal('STOCK_OPNAME_INIT', 'view', opnameItems);
+                          }
+                      }}
+                  />
+              </>
+          );
 
       // --- VEHICLE MODULE ---
       case 'Daftar Kendaraan':
@@ -785,6 +842,22 @@ export const App: React.FC = () => {
       <PodRequestModal isOpen={modalState.isOpen && modalState.type === 'POD_REQUEST'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
       <LockerModal isOpen={modalState.isOpen && modalState.type === 'LOCKER'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
       <LockerRequestModal isOpen={modalState.isOpen && modalState.type === 'LOCKER_REQUEST'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
+
+      {/* Stock Opname Modals */}
+      <AddStockOpnameModal 
+        isOpen={modalState.isOpen && modalState.type === 'STOCK_OPNAME_INIT'} 
+        onClose={closeModal} 
+        onSave={(records) => { setStockOpnames(prev => [...prev, ...records]); closeModal(); }} 
+        mode={modalState.mode as any}
+        initialData={modalState.data} // Pass data for view/edit
+        onApprove={(opnameId, note) => handleStockOpnameApproval(opnameId, 'Approved', note)}
+        onReject={(opnameId, note) => handleStockOpnameApproval(opnameId, 'Rejected', note)}
+      />
+      <ImportStockOpnameModal
+        isOpen={modalState.isOpen && modalState.type === 'STOCK_OPNAME_IMPORT'}
+        onClose={closeModal}
+        onImport={(file) => { console.log('Importing...', file); closeModal(); }}
+      />
 
       {/* Admin Modals */}
       <TimesheetModal isOpen={modalState.isOpen && modalState.type === 'TIMESHEET'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} userList={users} />
