@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Save, Calendar, Box, Hash, Calculator, AlertTriangle, Search, Layers, ChevronDown, FileText, CheckCircle2, XCircle, User } from 'lucide-react';
+import { X, Save, Calendar, Box, Hash, Calculator, AlertTriangle, Search, Layers, ChevronDown, FileText, CheckCircle2, XCircle, User, Info, Check } from 'lucide-react';
 import { StockOpnameRecord, MasterItem } from '../types';
 import { MOCK_MASTER_DATA, MOCK_MASTER_ARK_DATA } from '../constants';
 
@@ -46,8 +46,6 @@ export const AddStockOpnameModal: React.FC<Props> = ({
 
   // Extract unique sub-categories
   const subCategories = useMemo(() => {
-      // If viewing/approving existing data, extract from items directly if needed
-      // But for consistency we use master data categories for the filter dropdown
       const cats = new Set(currentMasterData.map(item => item.category));
       return Array.from(cats);
   }, [currentMasterData]);
@@ -64,10 +62,8 @@ export const AddStockOpnameModal: React.FC<Props> = ({
 
               // Map records back to OpnameItem structure
               const mappedItems: OpnameItem[] = initialData.map(record => {
-                  // Try to find original master data to get extra fields like min/max stock if available
-                  // In a real app, this might come from a join or embedded data
                   return {
-                      id: record.itemCode, // Using itemCode as ID for simplicity in mapping
+                      id: record.itemCode, 
                       itemCode: record.itemCode,
                       itemName: record.itemName,
                       category: record.category,
@@ -75,11 +71,10 @@ export const AddStockOpnameModal: React.FC<Props> = ({
                       remainingStock: record.systemQty,
                       inputPhysicalQty: record.physicalQty.toString(),
                       diff: record.diff,
-                      // Mock fields required by MasterItem interface
                       minimumStock: 0,
                       maximumStock: 0,
                       requestedStock: 0
-                  };
+                  } as OpnameItem;
               });
               setItems(mappedItems);
           } else {
@@ -87,6 +82,7 @@ export const AddStockOpnameModal: React.FC<Props> = ({
               setOpnameId(`SO-${category}-${Date.now().toString().slice(-6)}`);
               setSubCategory('');
               setApprovalNote('');
+              setOpnameDate(new Date().toISOString().split('T')[0]);
               
               const mappedItems: OpnameItem[] = currentMasterData.map(item => ({
                   ...item,
@@ -146,6 +142,7 @@ export const AddStockOpnameModal: React.FC<Props> = ({
 
   const totalDiscrepancies = items.filter(i => i.diff !== 0).length;
   const isReadOnly = mode !== 'create';
+  const isApproveMode = mode === 'approve';
 
   if (!isOpen) return null;
 
@@ -156,20 +153,22 @@ export const AddStockOpnameModal: React.FC<Props> = ({
   );
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center backdrop-blur-[2px] p-4 animate-in fade-in duration-200">
       <div className="bg-[#F8F9FA] w-full max-w-6xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all scale-100 max-h-[95vh]">
         
         {/* Header */}
         <div className="px-10 py-8 bg-white border-b border-gray-100 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-5">
-            <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center text-white shadow-xl shadow-black/20">
-                <Calculator size={24} strokeWidth={2.5} />
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-black/20 ${isApproveMode ? 'bg-orange-500' : 'bg-black'}`}>
+                {isApproveMode ? <CheckCircle2 size={24} strokeWidth={2.5} /> : <Calculator size={24} strokeWidth={2.5} />}
             </div>
             <div>
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
-                    {mode === 'create' ? 'INITIALIZE STOCK OPNAME' : mode === 'approve' ? 'APPROVE STOCK OPNAME' : 'STOCK OPNAME DETAIL'}
+                    {mode === 'create' ? 'INITIALIZE STOCK OPNAME' : mode === 'approve' ? 'PERSETUJUAN STOCK OPNAME' : 'STOCK OPNAME DETAIL'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Inventory Control System</p>
+                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">
+                    {mode === 'approve' ? 'REVIEW & VALIDASI HASIL OPNAME' : 'INVENTORY CONTROL SYSTEM'}
+                </p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
@@ -179,6 +178,22 @@ export const AddStockOpnameModal: React.FC<Props> = ({
 
         {/* Controls Section */}
         <div className="p-10 space-y-6 shrink-0 overflow-y-auto max-h-[40vh] custom-scrollbar">
+            
+            {/* ALERT FOR APPROVAL */}
+            {isApproveMode && totalDiscrepancies > 0 && (
+                <div className="bg-red-50 border border-red-100 rounded-[1.5rem] p-6 flex items-start gap-4 mb-4">
+                    <div className="p-3 bg-white rounded-xl text-red-500 shadow-sm border border-red-100">
+                        <AlertTriangle size={24} />
+                    </div>
+                    <div>
+                        <h4 className="text-[12px] font-black text-red-600 uppercase tracking-widest mb-1">PERHATIAN: SELISIH DITEMUKAN</h4>
+                        <p className="text-[11px] font-medium text-red-500 leading-relaxed">
+                            Terdapat <strong>{totalDiscrepancies} item</strong> dengan selisih stok fisik dan sistem. Mohon periksa kembali sebelum menyetujui.
+                        </p>
+                    </div>
+                </div>
+            )}
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
                 {/* Categorization Filter Card */}
@@ -282,9 +297,16 @@ export const AddStockOpnameModal: React.FC<Props> = ({
         {/* Table Content */}
         <div className="flex-1 overflow-y-auto custom-scrollbar px-10 pb-6">
             <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden min-h-[300px]">
-                <div className="p-6 border-b border-gray-100 flex items-center gap-2">
-                    <Box size={16} className="text-black" />
-                    <h3 className="text-[11px] font-black text-black uppercase tracking-[0.2em]">INVENTORY COUNT TABLE</h3>
+                <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <Box size={16} className="text-black" />
+                        <h3 className="text-[11px] font-black text-black uppercase tracking-[0.2em]">INVENTORY COUNT TABLE</h3>
+                    </div>
+                    {isApproveMode && (
+                        <div className="text-[10px] font-bold text-gray-400">
+                            Viewing in Approval Mode (Read-Only)
+                        </div>
+                    )}
                 </div>
                 <table className="w-full text-left">
                     <thead>
@@ -313,10 +335,10 @@ export const AddStockOpnameModal: React.FC<Props> = ({
                                         <input 
                                             type="number"
                                             disabled={isReadOnly}
-                                            className="w-20 text-center bg-white border border-gray-200 rounded-lg py-1.5 font-bold text-black focus:border-black focus:ring-0 outline-none transition-all shadow-sm"
+                                            className={`w-20 text-center bg-white border border-gray-200 rounded-lg py-1.5 font-bold text-black focus:border-black focus:ring-0 outline-none transition-all shadow-sm ${isReadOnly ? 'bg-transparent border-none' : ''}`}
                                             value={item.inputPhysicalQty}
                                             onChange={(e) => handleQtyChange(item.id, e.target.value)}
-                                            onFocus={(e) => e.target.select()}
+                                            onFocus={(e) => !isReadOnly && e.target.select()}
                                         />
                                     </td>
                                     <td className="p-4 text-center">
@@ -343,6 +365,7 @@ export const AddStockOpnameModal: React.FC<Props> = ({
 
         {/* Footer */}
         <div className="px-10 py-6 bg-white border-t border-gray-100 flex justify-between items-center shrink-0">
+            {/* Left: Summary */}
             <div className="flex items-center gap-3 px-5 py-3 bg-gray-50 rounded-2xl border border-gray-100">
                 <AlertTriangle size={16} className={totalDiscrepancies > 0 ? 'text-red-500' : 'text-gray-300'} />
                 <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">
@@ -350,16 +373,18 @@ export const AddStockOpnameModal: React.FC<Props> = ({
                 </span>
             </div>
             
+            {/* Right: Actions */}
             <div className="flex gap-4 items-center">
-                {mode === 'approve' && (
-                    <div className="mr-4">
+                {isApproveMode && (
+                    <div className="mr-4 w-72 relative">
                         <input 
                             type="text" 
-                            className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-[11px] font-medium outline-none w-64 focus:bg-white focus:border-black transition-all"
-                            placeholder="Approval Notes (Optional)..."
+                            className="w-full bg-[#F8F9FA] border border-gray-200 rounded-xl px-4 py-4 text-[11px] font-black text-black outline-none focus:border-black placeholder:text-gray-400"
+                            placeholder="Tulis Catatan / Alasan..."
                             value={approvalNote}
                             onChange={(e) => setApprovalNote(e.target.value)}
                         />
+                        <Info size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300" />
                     </div>
                 )}
 
@@ -372,7 +397,7 @@ export const AddStockOpnameModal: React.FC<Props> = ({
                         onClick={handleSave}
                         className="px-12 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-black rounded-2xl hover:bg-gray-900 shadow-xl shadow-black/20 transition-all active:scale-95 flex items-center gap-2"
                     >
-                        <Save size={16} strokeWidth={2.5} /> SAVE DATA
+                        <Save size={16} strokeWidth={2.5} /> SIMPAN OPNAME
                     </button>
                 )}
 
@@ -382,13 +407,13 @@ export const AddStockOpnameModal: React.FC<Props> = ({
                             onClick={() => onReject && onReject(opnameId, approvalNote)}
                             className="px-8 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-red-500 rounded-2xl hover:bg-red-600 shadow-xl shadow-red-500/20 transition-all active:scale-95 flex items-center gap-2"
                         >
-                            <XCircle size={16} strokeWidth={2.5} /> REJECT
+                            <XCircle size={16} strokeWidth={2.5} /> TOLAK
                         </button>
                         <button 
                             onClick={() => onApprove && onApprove(opnameId, approvalNote)}
                             className="px-10 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-green-500 rounded-2xl hover:bg-green-600 shadow-xl shadow-green-500/20 transition-all active:scale-95 flex items-center gap-2"
                         >
-                            <CheckCircle2 size={16} strokeWidth={2.5} /> APPROVE
+                            <Check size={16} strokeWidth={3} /> SETUJUI
                         </button>
                     </>
                 )}

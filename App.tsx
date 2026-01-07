@@ -5,7 +5,8 @@ import { TopBar } from './components/TopBar';
 import { FilterBar } from './components/FilterBar';
 import { 
     LayoutDashboard, TrendingUp, Package, Building, Car, Clock, 
-    ArrowRight, CheckCircle2, AlertCircle, Timer, FileText 
+    ArrowRight, CheckCircle2, AlertCircle, Timer, FileText, 
+    Bed, Lock, Users, AlertTriangle, Layers, Wrench, Activity
 } from 'lucide-react';
 
 // Consumables & Masters
@@ -107,10 +108,12 @@ import {
     MOCK_VEHICLE_DATA, MOCK_VEHICLE_CONTRACT_DATA, MOCK_SERVICE_DATA, MOCK_TAX_KIR_DATA, 
     MOCK_VEHICLE_REMINDER_DATA, MOCK_MUTATION_DATA, MOCK_SALES_DATA,
     MOCK_BUILDING_DATA, MOCK_UTILITY_DATA, MOCK_REMINDER_DATA, MOCK_BUILDING_MAINTENANCE_DATA,
-    MOCK_GENERAL_ASSET_DATA, MOCK_INSURANCE_DATA, MOCK_INSURANCE_PROVIDERS,
+    MOCK_GENERAL_ASSET_DATA, MOCK_ASSET_MAINTENANCE_DATA, // Imported
+    MOCK_INSURANCE_DATA, MOCK_INSURANCE_PROVIDERS,
     MOCK_POD_REQUEST_DATA, MOCK_LOCKER_DATA, MOCK_LOCKER_REQUEST_DATA,
     MOCK_STOCK_OPNAME_DATA, MOCK_LOGBOOK_DATA, MOCK_TIMESHEET_DATA, MOCK_VENDOR_DATA, 
-    MOCK_USER_DATA, MOCK_GENERAL_MASTER_DATA, MOCK_BRAND_DATA, MOCK_COLOR_DATA, MOCK_BUILDING_ASSETS,
+    MOCK_USER_DATA, MOCK_MASTER_APPROVAL_DATA, // Imported
+    MOCK_GENERAL_MASTER_DATA, MOCK_BRAND_DATA, MOCK_COLOR_DATA, MOCK_BUILDING_ASSETS,
     MOCK_PPN_DATA, MOCK_BRAND_TYPE_DATA, MOCK_VEHICLE_MODEL_DATA, MOCK_BUILDING_COMPONENT_DATA,
     MOCK_DOC_TYPE_DATA, MOCK_UTILITY_TYPE_DATA, MOCK_OPERATOR_DATA, MOCK_ASSET_TYPE_DATA,
     MOCK_DEPARTMENT_DATA, MOCK_LOCATION_DATA, MOCK_UOM_DATA, MOCK_BUILDING_TYPE_DATA,
@@ -130,7 +133,7 @@ export const App: React.FC = () => {
   // ROLE STATE (Simulation)
   const [userRole, setUserRole] = useState<'Admin' | 'Staff' | 'Officer'>('Admin');
 
-  // --- DATA STATES ---
+  // --- DATA STATES (Initialized with MOCK data) ---
   // ATK/ARK
   const [atkRequests, setAtkRequests] = useState<AssetRecord[]>(MOCK_DATA);
   const [masterAtk, setMasterAtk] = useState<MasterItem[]>(MOCK_MASTER_DATA);
@@ -145,8 +148,8 @@ export const App: React.FC = () => {
   const [vehicleServices, setVehicleServices] = useState<ServiceRecord[]>(MOCK_SERVICE_DATA);
   const [vehicleTaxes, setVehicleTaxes] = useState<TaxKirRecord[]>(MOCK_TAX_KIR_DATA);
   const [vehicleReminders, setVehicleReminders] = useState<VehicleReminderRecord[]>(MOCK_VEHICLE_REMINDER_DATA);
-  const [vehicleMutations, setVehicleMutations] = useState<MutationRecord[]>(MOCK_MUTATION_DATA);
-  const [vehicleSales, setVehicleSales] = useState<SalesRecord[]>(MOCK_SALES_DATA);
+  const [vehicleMutations, setVehicleMutations] = useState<MutationRecord[]>(MOCK_MUTATION_DATA.filter(m => m.assetType === 'VEHICLE'));
+  const [vehicleSales, setVehicleSales] = useState<SalesRecord[]>(MOCK_SALES_DATA.filter(s => s.assetType === 'VEHICLE'));
 
   // Building
   const [buildings, setBuildings] = useState<BuildingRecord[]>(MOCK_BUILDING_DATA);
@@ -156,9 +159,9 @@ export const App: React.FC = () => {
 
   // General Asset
   const [generalAssets, setGeneralAssets] = useState<GeneralAssetRecord[]>(MOCK_GENERAL_ASSET_DATA);
-  const [assetMaintenances, setAssetMaintenances] = useState<MaintenanceScheduleRecord[]>([]); // Mock empty for now
-  const [assetMutations, setAssetMutations] = useState<MutationRecord[]>([]);
-  const [assetSales, setAssetSales] = useState<SalesRecord[]>([]);
+  const [assetMaintenances, setAssetMaintenances] = useState<MaintenanceScheduleRecord[]>(MOCK_ASSET_MAINTENANCE_DATA);
+  const [assetMutations, setAssetMutations] = useState<MutationRecord[]>(MOCK_MUTATION_DATA.filter(m => m.assetType === 'GENERAL_ASSET'));
+  const [assetSales, setAssetSales] = useState<SalesRecord[]>(MOCK_SALES_DATA.filter(s => s.assetType === 'GENERAL_ASSET'));
 
   // Insurance
   const [insurances, setInsurances] = useState<InsuranceRecord[]>(MOCK_INSURANCE_DATA);
@@ -177,7 +180,7 @@ export const App: React.FC = () => {
   const [timesheets, setTimesheets] = useState<TimesheetRecord[]>(MOCK_TIMESHEET_DATA);
   const [vendors, setVendors] = useState<VendorRecord[]>(MOCK_VENDOR_DATA);
   const [users, setUsers] = useState<UserRecord[]>(MOCK_USER_DATA);
-  const [masterApprovals, setMasterApprovals] = useState<MasterApprovalRecord[]>([]);
+  const [masterApprovals, setMasterApprovals] = useState<MasterApprovalRecord[]>(MOCK_MASTER_APPROVAL_DATA);
   
   // General Masters Data Map
   const masterDataMap: Record<string, GeneralMasterItem[]> = {
@@ -285,6 +288,7 @@ export const App: React.FC = () => {
           'All Policies': 'INSURANCE_POLICY_TEMPLATE.xlsx', // Added
           'Manajemen User': 'USER_DATA_TEMPLATE.xlsx',
           'Stock Opname': 'STOCK_OPNAME_TEMPLATE.xlsx',
+          'Input Stock Opname': 'STOCK_OPNAME_TEMPLATE.xlsx',
           'Log Book': 'VISITOR_LOG_TEMPLATE.xlsx',
           'Utility Monitoring': 'UTILITY_USAGE_TEMPLATE.xlsx',
           'Daftar Loker': 'MASTER_LOCKER_TEMPLATE.xlsx',
@@ -322,6 +326,7 @@ export const App: React.FC = () => {
       } else if (module === 'LOCKER') {
           setLockerRequests(prev => prev.map(r => r.id === item.id ? { ...r, status } : r));
       } else if (module === 'OPNAME') {
+          // This path is via small workflow modal, but OPNAME has dedicated modal
           setStockOpnames(prev => prev.map(r => r.opnameId === item.opnameId ? { 
               ...r, 
               statusApproval: status as any, 
@@ -331,6 +336,17 @@ export const App: React.FC = () => {
       }
 
       handleCloseWorkflow();
+  };
+  
+  // Specific handler for Stock Opname Modal actions
+  const handleStockOpnameApproval = (opnameId: string, status: 'Approved' | 'Rejected', note?: string) => {
+      setStockOpnames(prev => prev.map(r => r.opnameId === opnameId ? { 
+          ...r, 
+          statusApproval: status, 
+          approvalNote: note, 
+          approvalDate: new Date().toISOString().split('T')[0] 
+      } : r));
+      closeModal();
   };
 
   // --- CRUD HANDLERS FOR MASTER ITEMS (ATK & ARK) ---
@@ -405,144 +421,248 @@ export const App: React.FC = () => {
     switch (activeItem) {
       // --- DASHBOARD ---
       case 'Dashboard':
-        // Calculate Summary Stats
-        const totalVehicles = vehicles.length;
-        const totalBuildings = buildings.length;
-        const totalGeneralAssets = generalAssets.length;
-        const pendingATK = atkRequests.filter(r => r.status === 'Pending').length;
-        const pendingServices = vehicleServices.filter(s => s.statusApproval === 'Pending').length;
+        // 1. CALCULATE SUMMARY STATS
+        const pendingATK = atkRequests.filter(r => r.status === 'Pending' || r.status === 'Waiting Approval').length;
+        const pendingARK = arkRequests.filter(r => r.status === 'Pending' || r.status === 'Waiting Approval').length;
+        const pendingVehicle = vehicles.filter(v => (v.approvalStatus || '').toLowerCase().includes('pending')).length;
+        const pendingService = vehicleServices.filter(s => (s.statusApproval || '').toLowerCase().includes('pending')).length;
+        const pendingPod = podRequests.filter(r => r.status === 'Waiting Approval').length;
+        const pendingLocker = lockerRequests.filter(r => r.status === 'Pending').length;
+        
+        const totalPendingRequests = pendingATK + pendingARK + pendingVehicle + pendingService + pendingPod + pendingLocker;
 
-        // Combine recent activities for the feed
+        // Facility Status
+        const totalPods = masterPods.length;
+        // Assume active master pods are occupied for simplicity in this view or use tenant list
+        const occupiedPods = tenantPods.length; 
+        const totalLockers = lockers.length;
+        const occupiedLockers = lockers.filter(l => l.status === 'Terisi').length;
+
+        // Assets Status
+        const activeVehicles = vehicles.filter(v => v.status === 'Aktif' || v.status === 'Available').length;
+        const serviceVehicles = vehicles.filter(v => v.status === 'Service').length;
+        const maintenanceBuildings = buildingMaintenances.filter(m => m.status === 'In Progress').length;
+
+        // Consumables Alert
+        const lowStockATK = masterAtk.filter(i => i.remainingStock <= i.minimumStock).length;
+        const lowStockARK = masterArk.filter(i => i.remainingStock <= i.minimumStock).length;
+
+        // Daily Ops
+        const activeVisitors = logBooks.filter(l => !l.jamPulang).length;
+
+        // 2. COMBINE RECENT ACTIVITIES
         const recentActivities = [
-            ...atkRequests.map(r => ({ ...r, type: 'ATK Request' })),
-            ...arkRequests.map(r => ({ ...r, type: 'ARK Request' })),
+            ...atkRequests.map(r => ({ ...r, type: 'ATK Request', code: 'ATK' })),
+            ...arkRequests.map(r => ({ ...r, type: 'ARK Request', code: 'ARK' })),
             ...vehicleServices.map(s => ({ 
                 id: s.id, 
                 itemName: `Servis ${s.noPolisi}`, 
                 status: s.statusApproval, 
                 date: s.tglRequest,
-                type: 'Vehicle Service' 
+                transactionNumber: s.id,
+                type: 'Vehicle Service',
+                code: 'SRV'
+            })),
+            ...podRequests.map(p => ({
+                id: p.id,
+                itemName: `Pod Request ${p.roomType}`,
+                status: p.status,
+                date: p.requestDate,
+                transactionNumber: p.id,
+                type: 'Pod Request',
+                code: 'POD'
+            })),
+             ...lockerRequests.map(l => ({
+                id: l.id,
+                itemName: `Locker Request`,
+                status: l.status,
+                date: l.requestDate,
+                transactionNumber: l.id,
+                type: 'Locker Request',
+                code: 'LOC'
             }))
         ].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
 
         return (
             <div className="p-8 space-y-8 animate-in fade-in duration-500">
-                {/* Insurance & Risk Summary (Existing) */}
-                <InsuranceDashboard data={insurances} />
-                
-                {/* Asset Summary Widgets */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col justify-between h-40 relative overflow-hidden group">
-                        <div className="absolute right-[-20px] top-[-20px] w-24 h-24 bg-blue-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-                        <div className="flex items-center gap-3 relative z-10">
-                            <div className="p-3 bg-blue-100 rounded-xl text-blue-600">
-                                <Car size={20} />
-                            </div>
-                            <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Total Vehicles</span>
+                {/* 1. TOP STATS ROW */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
+                        <div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Pending</p>
+                            <h3 className="text-[28px] font-black text-black leading-none">{totalPendingRequests}</h3>
+                            <p className="text-[10px] font-medium text-orange-500 mt-2">Requests awaiting approval</p>
                         </div>
-                        <div className="relative z-10">
-                            <h3 className="text-[32px] font-black text-black">{totalVehicles}</h3>
-                            <p className="text-[10px] font-bold text-gray-400 flex items-center gap-1">
-                                <span className="text-green-500 flex items-center"><TrendingUp size={12}/> +2</span> this month
-                            </p>
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-orange-50 text-orange-600 group-hover:scale-110 transition-transform">
+                            <Clock size={24} />
                         </div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col justify-between h-40 relative overflow-hidden group">
-                        <div className="absolute right-[-20px] top-[-20px] w-24 h-24 bg-purple-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-                        <div className="flex items-center gap-3 relative z-10">
-                            <div className="p-3 bg-purple-100 rounded-xl text-purple-600">
-                                <Building size={20} />
-                            </div>
-                            <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Buildings</span>
+                    <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
+                        <div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Active Issues</p>
+                            <h3 className="text-[28px] font-black text-black leading-none">{serviceVehicles + maintenanceBuildings}</h3>
+                            <p className="text-[10px] font-medium text-blue-500 mt-2">Maint. & Service In Progress</p>
                         </div>
-                        <div className="relative z-10">
-                            <h3 className="text-[32px] font-black text-black">{totalBuildings}</h3>
-                            <p className="text-[10px] font-bold text-gray-400">
-                                Active Leases & Owned
-                            </p>
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-blue-50 text-blue-600 group-hover:scale-110 transition-transform">
+                            <Wrench size={24} />
                         </div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col justify-between h-40 relative overflow-hidden group">
-                        <div className="absolute right-[-20px] top-[-20px] w-24 h-24 bg-orange-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
-                        <div className="flex items-center gap-3 relative z-10">
-                            <div className="p-3 bg-orange-100 rounded-xl text-orange-600">
-                                <Package size={20} />
-                            </div>
-                            <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">General Assets</span>
+                    <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
+                        <div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Inventory Alert</p>
+                            <h3 className="text-[28px] font-black text-black leading-none">{lowStockATK + lowStockARK}</h3>
+                            <p className="text-[10px] font-medium text-red-500 mt-2">Items below min. stock</p>
                         </div>
-                        <div className="relative z-10">
-                            <h3 className="text-[32px] font-black text-black">{totalGeneralAssets}</h3>
-                            <p className="text-[10px] font-bold text-gray-400">
-                                IT & General Equipment
-                            </p>
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-red-50 text-red-600 group-hover:scale-110 transition-transform">
+                            <AlertTriangle size={24} />
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
+                        <div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Live Visitors</p>
+                            <h3 className="text-[28px] font-black text-black leading-none">{activeVisitors}</h3>
+                            <p className="text-[10px] font-medium text-green-500 mt-2">Currently checked in</p>
+                        </div>
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-green-50 text-green-600 group-hover:scale-110 transition-transform">
+                            <Users size={24} />
                         </div>
                     </div>
                 </div>
 
-                {/* Recent Activity Feed */}
+                {/* 2. MIDDLE ROW: ASSET & FACILITY STATUS */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-[14px] font-black text-black uppercase tracking-widest flex items-center gap-2">
-                                <Clock size={16} /> Recent Requests
-                            </h3>
-                            <button className="text-[10px] font-bold text-blue-600 hover:text-blue-800 uppercase tracking-wider flex items-center gap-1">
-                                View All <ArrowRight size={12} />
-                            </button>
+                    
+                    {/* Facility Occupancy */}
+                    <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col justify-between">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Layers size={18} className="text-black"/>
+                            <h3 className="text-[12px] font-black text-black uppercase tracking-[0.2em]">FACILITY STATUS</h3>
                         </div>
-                        <div className="space-y-4">
-                            {recentActivities.map((act: any, idx) => (
-                                <div key={idx} className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
-                                    <div className="flex items-center gap-4">
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-[10px] shadow-sm
-                                            ${act.type.includes('Vehicle') ? 'bg-black' : act.type.includes('ATK') ? 'bg-blue-500' : 'bg-orange-500'}`}>
-                                            {act.type.substring(0, 3)}
-                                        </div>
-                                        <div>
-                                            <h4 className="text-[12px] font-black text-black uppercase tracking-tight group-hover:text-blue-600 transition-colors">{act.itemName}</h4>
-                                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{act.transactionNumber || act.id} • {act.date}</p>
-                                        </div>
-                                    </div>
-                                    <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border
-                                        ${(act.status || '').toLowerCase().includes('pending') ? 'bg-orange-100 text-orange-600 border-orange-200' : 
-                                          (act.status || '').toLowerCase().includes('approved') ? 'bg-green-100 text-green-600 border-green-200' : 
-                                          'bg-gray-200 text-gray-500 border-gray-300'}`}>
-                                        {act.status || 'Pending'}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Quick Actions / Pending Tasks */}
-                    <div className="bg-black text-white p-8 rounded-[2rem] shadow-xl shadow-black/20 flex flex-col justify-between relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
                         
-                        <div>
-                            <h3 className="text-[14px] font-black uppercase tracking-widest mb-6 flex items-center gap-2">
-                                <AlertCircle size={16} className="text-orange-400" /> Action Required
-                            </h3>
-                            <div className="space-y-4 relative z-10">
-                                <div className="flex justify-between items-center border-b border-white/10 pb-3">
-                                    <span className="text-[11px] font-bold text-gray-300">Pending ATK Approval</span>
-                                    <span className="bg-orange-500 text-white px-2 py-0.5 rounded text-[10px] font-black">{pendingATK}</span>
+                        <div className="space-y-6">
+                            {/* Pod Status */}
+                            <div>
+                                <div className="flex justify-between items-end mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <Bed size={14} className="text-gray-400" />
+                                        <span className="text-[11px] font-bold text-gray-600 uppercase">POD OCCUPANCY</span>
+                                    </div>
+                                    <span className="text-[14px] font-black text-black">{occupiedPods} <span className="text-gray-400 text-[10px]">/ {totalPods}</span></span>
                                 </div>
-                                <div className="flex justify-between items-center border-b border-white/10 pb-3">
-                                    <span className="text-[11px] font-bold text-gray-300">Vehicle Service Need</span>
-                                    <span className="bg-blue-500 text-white px-2 py-0.5 rounded text-[10px] font-black">{pendingServices}</span>
+                                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                                    <div 
+                                        className="h-full bg-black rounded-full transition-all duration-1000" 
+                                        style={{ width: `${(occupiedPods/totalPods)*100}%` }}
+                                    ></div>
                                 </div>
-                                <div className="flex justify-between items-center pb-3">
-                                    <span className="text-[11px] font-bold text-gray-300">Stock Discrepancies</span>
-                                    <span className="bg-red-500 text-white px-2 py-0.5 rounded text-[10px] font-black">2</span>
+                            </div>
+
+                            {/* Locker Status */}
+                            <div>
+                                <div className="flex justify-between items-end mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <Lock size={14} className="text-gray-400" />
+                                        <span className="text-[11px] font-bold text-gray-600 uppercase">LOCKER USAGE</span>
+                                    </div>
+                                    <span className="text-[14px] font-black text-black">{occupiedLockers} <span className="text-gray-400 text-[10px]">/ {totalLockers}</span></span>
+                                </div>
+                                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                                    <div 
+                                        className="h-full bg-blue-600 rounded-full transition-all duration-1000" 
+                                        style={{ width: `${(occupiedLockers/totalLockers)*100}%` }}
+                                    ></div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <button className="w-full py-4 bg-white text-black rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all mt-8 flex items-center justify-center gap-2">
-                            <CheckCircle2 size={14} /> Review All Tasks
+                    </div>
+
+                    {/* Operational Status (Vehicles & Buildings) */}
+                    <div className="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
+                        <div className="flex items-center justify-between mb-6">
+                             <div className="flex items-center gap-3">
+                                <Activity size={18} className="text-black"/>
+                                <h3 className="text-[12px] font-black text-black uppercase tracking-[0.2em]">OPERATIONAL HEALTH</h3>
+                            </div>
+                            <button className="text-[10px] font-bold text-gray-400 hover:text-black uppercase">View Report</button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-6">
+                             <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex flex-col gap-3">
+                                 <div className="flex justify-between items-start">
+                                     <div className="p-2 bg-white rounded-lg shadow-sm text-black"><Car size={16} /></div>
+                                     <span className="text-[10px] font-bold text-gray-400 uppercase">VEHICLES</span>
+                                 </div>
+                                 <div className="flex gap-4 mt-1">
+                                     <div>
+                                         <span className="text-[16px] font-black text-black">{activeVehicles}</span>
+                                         <p className="text-[9px] text-green-600 font-bold uppercase">Active</p>
+                                     </div>
+                                     <div>
+                                         <span className="text-[16px] font-black text-black">{serviceVehicles}</span>
+                                         <p className="text-[9px] text-orange-500 font-bold uppercase">Service</p>
+                                     </div>
+                                 </div>
+                             </div>
+
+                             <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex flex-col gap-3">
+                                 <div className="flex justify-between items-start">
+                                     <div className="p-2 bg-white rounded-lg shadow-sm text-black"><Building size={16} /></div>
+                                     <span className="text-[10px] font-bold text-gray-400 uppercase">BUILDINGS</span>
+                                 </div>
+                                 <div className="flex gap-4 mt-1">
+                                     <div>
+                                         <span className="text-[16px] font-black text-black">{buildings.length}</span>
+                                         <p className="text-[9px] text-green-600 font-bold uppercase">Total</p>
+                                     </div>
+                                     <div>
+                                         <span className="text-[16px] font-black text-black">{maintenanceBuildings}</span>
+                                         <p className="text-[9px] text-blue-500 font-bold uppercase">Maint.</p>
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 3. RECENT ACTIVITY FEED */}
+                <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-[14px] font-black text-black uppercase tracking-widest flex items-center gap-2">
+                            <Clock size={16} /> Recent Activity Feed
+                        </h3>
+                        <button className="text-[10px] font-bold text-blue-600 hover:text-blue-800 uppercase tracking-wider flex items-center gap-1">
+                            View All History <ArrowRight size={12} />
                         </button>
+                    </div>
+                    <div className="space-y-4">
+                        {recentActivities.map((act: any, idx) => (
+                            <div key={idx} className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-[10px] shadow-sm
+                                        ${['ATK', 'ARK'].includes(act.code) ? 'bg-blue-500' : 
+                                          ['SRV'].includes(act.code) ? 'bg-orange-500' : 
+                                          ['POD', 'LOC'].includes(act.code) ? 'bg-purple-600' : 'bg-black'}`}>
+                                        {act.code}
+                                    </div>
+                                    <div>
+                                        <h4 className="text-[12px] font-black text-black uppercase tracking-tight group-hover:text-blue-600 transition-colors">{act.itemName}</h4>
+                                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{act.transactionNumber || act.id} • {act.date}</p>
+                                    </div>
+                                </div>
+                                <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border
+                                    ${(act.status || '').toLowerCase().includes('pending') || (act.status || '').toLowerCase().includes('waiting') ? 'bg-orange-100 text-orange-600 border-orange-200' : 
+                                      (act.status || '').toLowerCase().includes('approved') || (act.status || '').toLowerCase().includes('completed') ? 'bg-green-100 text-green-600 border-green-200' : 
+                                      'bg-gray-200 text-gray-500 border-gray-300'}`}>
+                                    {act.status || 'Pending'}
+                                </span>
+                            </div>
+                        ))}
+                        {recentActivities.length === 0 && (
+                            <div className="text-center py-8 text-gray-400 italic text-[11px] uppercase tracking-widest">No recent activities found</div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -697,7 +817,8 @@ export const App: React.FC = () => {
         );
 
       // --- STOCK OPNAME MODULE ---
-      case 'Stock Opname':
+      case 'Input Stock Opname':
+      case 'Stock Opname': // Handle generic route if still used
           const filteredSO = activeTab === 'SEMUA' 
               ? stockOpnames 
               : stockOpnames.filter(s => s.status === activeTab);
@@ -717,16 +838,34 @@ export const App: React.FC = () => {
                           const opnameItems = stockOpnames.filter(so => so.opnameId === i.opnameId);
                           openModal('STOCK_OPNAME_INIT', 'view', opnameItems);
                       }} 
-                      onEdit={(i) => {
+                  />
+              </>
+          );
+      case 'Stock Opname Approval':
+          const approvalSO = activeTab === 'SEMUA'
+              ? stockOpnames.filter(s => s.statusApproval === 'Pending') // Default to pending if all, or adjust
+              : stockOpnames.filter(s => s.statusApproval?.toUpperCase() === activeTab);
+
+          return (
+              <>
+                  <FilterBar 
+                      tabs={['SEMUA', 'PENDING', 'APPROVED', 'REJECTED']} 
+                      activeTab={activeTab} 
+                      onTabChange={setActiveTab} 
+                      onAddClick={() => {}} 
+                      hideAdd={true}
+                  />
+                  <StockOpnameTable 
+                      data={approvalSO} 
+                      onView={(i) => {
                           const opnameItems = stockOpnames.filter(so => so.opnameId === i.opnameId);
-                          // Only allow approve mode if pending
-                          if (i.statusApproval === 'Pending') {
-                              openModal('STOCK_OPNAME_INIT', 'approve', opnameItems);
-                          } else {
-                              openModal('STOCK_OPNAME_INIT', 'view', opnameItems);
-                          }
+                          openModal('STOCK_OPNAME_INIT', 'view', opnameItems);
+                      }} 
+                      onAction={(i, action) => {
+                           // This just triggers the modal in approve mode
+                           const opnameItems = stockOpnames.filter(so => so.opnameId === i.opnameId);
+                           openModal('STOCK_OPNAME_INIT', 'approve', opnameItems);
                       }}
-                      onAction={(item, action) => handleOpenWorkflow(item, action, 'OPNAME')}
                   />
               </>
           );
@@ -975,7 +1114,29 @@ export const App: React.FC = () => {
                   <LockerRequestTable 
                     data={lockerRequests} 
                     onView={(i) => openModal('LOCKER_REQUEST', 'view', i)} 
-                    onAction={(item, action) => handleOpenWorkflow(item, action, 'LOCKER')}
+                    // removed onAction
+                  />
+              </>
+          );
+      case 'Locker Approval':
+          return (
+              <>
+                  <FilterBar 
+                    tabs={['SEMUA', 'WAITING APPROVAL', 'APPROVED', 'REJECTED']} 
+                    activeTab={activeTab} 
+                    onTabChange={setActiveTab} 
+                    hideAdd={true} 
+                  />
+                  <LockerRequestTable 
+                    data={lockerRequests.filter(r => {
+                        if (activeTab === 'SEMUA') return r.status === 'Pending';
+                        if (activeTab === 'WAITING APPROVAL') return r.status === 'Pending';
+                        if (activeTab === 'APPROVED') return r.status === 'Approved';
+                        if (activeTab === 'REJECTED') return r.status === 'Rejected';
+                        return true;
+                    })} 
+                    onView={(i) => openModal('LOCKER_REQUEST', 'approve', i)} 
+                    // removed onAction, workflow action handled in detail view
                   />
               </>
           );
@@ -1213,10 +1374,12 @@ export const App: React.FC = () => {
         initialData={modalState.data} 
         mode={modalState.mode as any}
         brandList={MOCK_BRAND_DATA} colorList={MOCK_COLOR_DATA}
+        channelList={MOCK_GENERAL_MASTER_DATA} // Mock or correct list
+        branchList={MOCK_LOCATION_DATA}
       />
       <VehicleContractModal isOpen={modalState.isOpen && modalState.type === 'VEHICLE_CONTRACT'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} vehicleList={vehicles} />
       <ServiceModal isOpen={modalState.isOpen && modalState.type === 'SERVICE'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} vehicleList={vehicles} vendorList={vendors} />
-      <TaxKirModal isOpen={modalState.isOpen && modalState.type === 'TAX_KIR'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} vehicleList={vehicles} />
+      <TaxKirModal isOpen={modalState.isOpen && modalState.type === 'TAX_KIR'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} vehicleList={vehicles} channelList={[]} branchList={MOCK_LOCATION_DATA} />
       <VehicleReminderModal isOpen={modalState.isOpen && modalState.type === 'VEHICLE_REMINDER'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} vehicleList={vehicles} />
       
       {/* Mutation & Sales (Shared for Vehicle & General Asset) */}
@@ -1227,7 +1390,7 @@ export const App: React.FC = () => {
         initialData={modalState.data} 
         mode={modalState.mode as any} 
         vehicleList={vehicles}
-        generalAssetList={generalAssets}
+        generalAssetList={[...generalAssets, ...MOCK_BUILDING_ASSETS]} // Combined list for selection
         assetType={modalState.extraData?.type || 'VEHICLE'}
       />
       <SalesModal 
@@ -1237,18 +1400,18 @@ export const App: React.FC = () => {
         initialData={modalState.data} 
         mode={modalState.mode as any} 
         vehicleList={vehicles}
-        generalAssetList={generalAssets}
+        generalAssetList={[...generalAssets, ...MOCK_BUILDING_ASSETS]}
         assetType={modalState.extraData?.type || 'VEHICLE'}
       />
 
       {/* Building Modals */}
-      <BuildingModal isOpen={modalState.isOpen && modalState.type === 'BUILDING'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} existingBuildings={buildings} />
+      <BuildingModal isOpen={modalState.isOpen && modalState.type === 'BUILDING'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} existingBuildings={buildings} buildingTypeList={MOCK_BUILDING_TYPE_DATA} />
       <UtilityModal isOpen={modalState.isOpen && modalState.type === 'UTILITY'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} />
       <ComplianceModal isOpen={modalState.isOpen && modalState.type === 'COMPLIANCE'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} />
       <BuildingMaintenanceModal isOpen={modalState.isOpen && modalState.type === 'BUILDING_MAINTENANCE'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} assetList={MOCK_BUILDING_ASSETS} />
 
       {/* General Asset Modals */}
-      <AssetGeneralModal isOpen={modalState.isOpen && modalState.type === 'GENERAL_ASSET'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
+      <AssetGeneralModal isOpen={modalState.isOpen && modalState.type === 'GENERAL_ASSET'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} assetTypeList={MOCK_ASSET_TYPE_DATA} categoryList={MOCK_ASSET_CATEGORY_DATA} locationList={MOCK_LOCATION_DATA} departmentList={MOCK_DEPARTMENT_DATA} />
       <MaintenanceScheduleModal isOpen={modalState.isOpen && modalState.type === 'MAINTENANCE_SCHEDULE'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} assetList={MOCK_BUILDING_ASSETS} />
 
       {/* Insurance Modals */}
@@ -1285,7 +1448,21 @@ export const App: React.FC = () => {
       />
       
       <LockerModal isOpen={modalState.isOpen && modalState.type === 'LOCKER'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
-      <LockerRequestModal isOpen={modalState.isOpen && modalState.type === 'LOCKER_REQUEST'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
+      <LockerRequestModal 
+        isOpen={modalState.isOpen && modalState.type === 'LOCKER_REQUEST'} 
+        onClose={closeModal} 
+        onSave={(data) => {
+             if (modalState.mode === 'create') {
+                setLockerRequests(prev => [...prev, { ...data, id: `REQ-LOC-${Date.now()}` } as LockerRequestRecord]);
+             } else {
+                setLockerRequests(prev => prev.map(item => item.id === modalState.data.id ? { ...item, ...data } as LockerRequestRecord : item));
+             }
+             closeModal();
+        }} 
+        initialData={modalState.data} 
+        mode={modalState.mode as any} 
+        currentUser={users[0]} // Mock user context
+      />
       <MasterPodModal 
         isOpen={modalState.isOpen && modalState.type === 'MASTER_POD'}
         onClose={closeModal}
@@ -1308,6 +1485,8 @@ export const App: React.FC = () => {
         onSave={(records) => { setStockOpnames(prev => [...prev, ...records]); closeModal(); }} 
         mode={modalState.mode as any}
         initialData={modalState.data} // Pass data for view/edit
+        onApprove={handleStockOpnameApproval} // Pass handlers for approval
+        onReject={handleStockOpnameApproval}
       />
 
       {/* Admin Modals */}
@@ -1321,8 +1500,8 @@ export const App: React.FC = () => {
         userList={users} 
       />
       <VendorModal isOpen={modalState.isOpen && modalState.type === 'VENDOR'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
-      <UserModal isOpen={modalState.isOpen && modalState.type === 'USER'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
-      <MasterApprovalModal isOpen={modalState.isOpen && modalState.type === 'MASTER_APPROVAL'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
+      <UserModal isOpen={modalState.isOpen && modalState.type === 'USER'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} departmentList={MOCK_DEPARTMENT_DATA} locationList={MOCK_LOCATION_DATA} roleList={MOCK_ROLE_DATA} />
+      <MasterApprovalModal isOpen={modalState.isOpen && modalState.type === 'MASTER_APPROVAL'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} branchList={MOCK_LOCATION_DATA} roleList={MOCK_ROLE_DATA} userList={users} />
       <GeneralMasterModal isOpen={modalState.isOpen && modalState.type === 'GENERAL_MASTER'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} title={modalState.extraData?.title || 'Master Data'} />
 
     </div>

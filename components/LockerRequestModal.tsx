@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, Save, Lock, User, MapPin, Briefcase, Info, Unlock, AlertCircle, ChevronDown } from 'lucide-react';
+import { X, Save, Lock, User, MapPin, Briefcase, Info, Unlock, AlertCircle, ChevronDown, CheckCircle2, XCircle } from 'lucide-react';
 import { LockerRequestRecord, UserRecord } from '../types';
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
   onClose: () => void;
   onSave: (data: Partial<LockerRequestRecord>) => void;
   initialData?: LockerRequestRecord | null;
-  mode?: 'create' | 'edit' | 'view';
+  mode?: 'create' | 'edit' | 'view' | 'approve';
   currentUser?: UserRecord;
 }
 
@@ -22,8 +22,8 @@ export const LockerRequestModal: React.FC<Props> = ({
 }) => {
   const [form, setForm] = useState<Partial<LockerRequestRecord>>({
     requestDate: new Date().toISOString().split('T')[0],
-    lockerNumber: '',
-    floor: '',
+    lockerNumber: '001',
+    floor: 'LANTAI 1',
     requestType: 'REQUEST LOKER BARU',
     requesterName: '',
     requesterRole: '',
@@ -41,13 +41,13 @@ export const LockerRequestModal: React.FC<Props> = ({
       } else {
         setForm({
             requestDate: new Date().toISOString().split('T')[0],
-            lockerNumber: '001', // Example default from image
+            lockerNumber: '001', 
             floor: 'LANTAI 1',
             requestType: 'REQUEST LOKER BARU',
-            requesterName: currentUser?.name || 'AAN JUNAIDI',
-            requesterRole: currentUser?.role || 'TECHNICIAN',
-            jobTitle: 'TEAM LEADER', // Mock default
-            department: currentUser?.department || 'AFTER SALES',
+            requesterName: currentUser?.name || 'Siti Aminah',
+            requesterRole: currentUser?.role || 'Staff',
+            jobTitle: 'Team Leader',
+            department: currentUser?.department || 'Finance',
             statusLocker: 'Kosong',
             status: 'Pending',
             reason: ''
@@ -59,6 +59,8 @@ export const LockerRequestModal: React.FC<Props> = ({
   if (!isOpen) return null;
 
   const isView = mode === 'view';
+  const isApprove = mode === 'approve';
+  const isReadOnly = isView || isApprove;
 
   const Label = ({ children }: { children?: React.ReactNode }) => (
     <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">
@@ -74,16 +76,16 @@ export const LockerRequestModal: React.FC<Props> = ({
   );
 
   const InputField = ({ label, value, onChange, placeholder, icon: Icon, disabled, className }: any) => (
-    <div className={`mb-4 ${className}`}>
+    <div className={`mb-6 ${className}`}>
         <Label>{label}</Label>
         <div className="relative">
             <input 
                 type="text"
-                className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 pl-12 text-[12px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 placeholder:text-gray-300 transition-all shadow-inner"
+                className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 pl-12 text-[12px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 placeholder:text-gray-300 transition-all shadow-inner uppercase"
                 placeholder={placeholder}
                 value={value || ''}
                 onChange={(e) => onChange(e.target.value)}
-                disabled={disabled || isView}
+                disabled={disabled || isReadOnly}
             />
             {Icon && <Icon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />}
         </div>
@@ -91,12 +93,12 @@ export const LockerRequestModal: React.FC<Props> = ({
   );
 
   const handleStatusChange = (status: 'Terisi' | 'Kosong' | 'Kunci Hilang') => {
-      if (isView) return;
+      if (isReadOnly) return;
       setForm(prev => ({ ...prev, statusLocker: status }));
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center backdrop-blur-sm p-4 animate-in fade-in duration-300">
+    <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center backdrop-blur-sm p-4 animate-in fade-in duration-300">
       <div className="bg-white w-full max-w-5xl rounded-[2rem] shadow-2xl overflow-hidden flex flex-col transform transition-all scale-100 max-h-[95vh] animate-in zoom-in-95 duration-300">
         
         {/* Header */}
@@ -107,7 +109,7 @@ export const LockerRequestModal: React.FC<Props> = ({
               </div>
               <div>
                   <h2 className="text-[16px] font-black text-black uppercase tracking-[0.2em] leading-none">
-                    {mode === 'create' ? 'TAMBAH DATA PERMINTAAN LOKER' : 'DETAIL PERMINTAAN LOKER'}
+                    {mode === 'create' ? 'TAMBAH DATA PERMINTAAN LOKER' : mode === 'approve' ? 'DETAIL PERMINTAAN LOKER' : 'DETAIL PERMINTAAN LOKER'}
                   </h2>
                   <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">FORMULIR PENGAJUAN FASILITAS LOKER</p>
               </div>
@@ -125,7 +127,7 @@ export const LockerRequestModal: React.FC<Props> = ({
                 <div className="p-2">
                     <SectionHeader icon={Info} title="INFORMASI DASAR" />
                     
-                    <div className="space-y-6">
+                    <div className="space-y-2">
                         <InputField 
                             label="LOCKER NO" 
                             value={form.lockerNumber} 
@@ -149,7 +151,7 @@ export const LockerRequestModal: React.FC<Props> = ({
                                     className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 appearance-none cursor-pointer uppercase shadow-sm"
                                     value={form.requestType}
                                     onChange={(e) => setForm({...form, requestType: e.target.value})}
-                                    disabled={isView}
+                                    disabled={isReadOnly}
                                 >
                                     <option value="REQUEST LOKER BARU">REQUEST LOKER BARU</option>
                                     <option value="PINDAH LOKER">PINDAH LOKER</option>
@@ -166,7 +168,7 @@ export const LockerRequestModal: React.FC<Props> = ({
                 <div className="p-2 border-l border-dashed border-gray-100 pl-12">
                     <SectionHeader icon={User} title="OCCUPANT DETAILS" />
                     
-                    <div className="space-y-6">
+                    <div className="space-y-2">
                         <InputField 
                             label="NAMA PENGHUNI" 
                             value={form.requesterName} 
@@ -189,11 +191,11 @@ export const LockerRequestModal: React.FC<Props> = ({
                                 <div className="relative">
                                     <input 
                                         type="text"
-                                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 placeholder:text-gray-300 transition-all shadow-inner"
+                                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 placeholder:text-gray-300 transition-all shadow-inner uppercase"
                                         placeholder="TEAM LEADER"
                                         value={form.jobTitle || ''}
                                         onChange={(e) => setForm({...form, jobTitle: e.target.value})}
-                                        disabled={isView}
+                                        disabled={isReadOnly}
                                     />
                                 </div>
                             </div>
@@ -202,11 +204,11 @@ export const LockerRequestModal: React.FC<Props> = ({
                                 <div className="relative">
                                     <input 
                                         type="text"
-                                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 placeholder:text-gray-300 transition-all shadow-inner"
+                                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 placeholder:text-gray-300 transition-all shadow-inner uppercase"
                                         placeholder="AFTER SALES"
                                         value={form.department || ''}
                                         onChange={(e) => setForm({...form, department: e.target.value})}
-                                        disabled={isView}
+                                        disabled={isReadOnly}
                                     />
                                 </div>
                             </div>
@@ -216,18 +218,18 @@ export const LockerRequestModal: React.FC<Props> = ({
             </div>
 
             {/* STATUS LOKER Section */}
-            <div className="mt-12 pt-8 border-t border-gray-100">
+            <div className="mt-8 pt-8 border-t border-gray-100">
                 <SectionHeader icon={Lock} title="STATUS LOKER" />
                 
                 <div className="grid grid-cols-3 gap-6">
                     <button
                         onClick={() => handleStatusChange('Terisi')}
-                        disabled={isView}
+                        disabled={isReadOnly}
                         className={`h-32 rounded-[2rem] flex flex-col items-center justify-center gap-3 transition-all duration-300 border-2 ${
                             form.statusLocker === 'Terisi' 
-                            ? 'bg-black text-white border-black shadow-xl scale-[1.02]' 
-                            : 'bg-white text-gray-300 border-gray-100 hover:border-gray-200 hover:text-gray-400'
-                        }`}
+                            ? 'bg-white border-gray-100 text-gray-300' 
+                            : 'bg-white border-gray-100 text-gray-300 hover:border-gray-200 hover:text-gray-400'
+                        } ${isReadOnly && form.statusLocker !== 'Terisi' ? 'opacity-50' : ''}`}
                     >
                         <Lock size={24} strokeWidth={2.5} />
                         <span className="text-[11px] font-black uppercase tracking-widest">TERISI</span>
@@ -235,12 +237,12 @@ export const LockerRequestModal: React.FC<Props> = ({
 
                     <button
                         onClick={() => handleStatusChange('Kosong')}
-                        disabled={isView}
+                        disabled={isReadOnly}
                         className={`h-32 rounded-[2rem] flex flex-col items-center justify-center gap-3 transition-all duration-300 border-2 ${
                             form.statusLocker === 'Kosong' 
-                            ? 'bg-[#10B981] text-white border-[#10B981] shadow-xl shadow-green-500/30 scale-[1.02]' 
-                            : 'bg-white text-gray-300 border-gray-100 hover:border-gray-200 hover:text-gray-400'
-                        }`}
+                            ? 'bg-white border-gray-100 text-gray-300' 
+                            : 'bg-white border-gray-100 text-gray-300 hover:border-gray-200 hover:text-gray-400'
+                        } ${isReadOnly && form.statusLocker !== 'Kosong' ? 'opacity-50' : ''}`}
                     >
                         <Unlock size={24} strokeWidth={2.5} />
                         <span className="text-[11px] font-black uppercase tracking-widest">KOSONG</span>
@@ -248,12 +250,12 @@ export const LockerRequestModal: React.FC<Props> = ({
 
                     <button
                         onClick={() => handleStatusChange('Kunci Hilang')}
-                        disabled={isView}
+                        disabled={isReadOnly}
                         className={`h-32 rounded-[2rem] flex flex-col items-center justify-center gap-3 transition-all duration-300 border-2 ${
                             form.statusLocker === 'Kunci Hilang' 
-                            ? 'bg-red-500 text-white border-red-500 shadow-xl shadow-red-500/30 scale-[1.02]' 
-                            : 'bg-white text-gray-300 border-gray-100 hover:border-gray-200 hover:text-gray-400'
-                        }`}
+                            ? 'bg-white border-gray-100 text-gray-300' 
+                            : 'bg-white border-gray-100 text-gray-300 hover:border-gray-200 hover:text-gray-400'
+                        } ${isReadOnly && form.statusLocker !== 'Kunci Hilang' ? 'opacity-50' : ''}`}
                     >
                         <AlertCircle size={24} strokeWidth={2.5} />
                         <span className="text-[11px] font-black uppercase tracking-widest">KUNCI HILANG</span>
@@ -263,20 +265,39 @@ export const LockerRequestModal: React.FC<Props> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-10 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
-          <button 
-            onClick={onClose} 
-            className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 hover:text-black transition-all"
-          >
-            BATAL
-          </button>
-          {!isView && (
-            <button 
-                onClick={() => onSave(form)} 
-                className="px-16 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-white bg-black rounded-2xl hover:bg-gray-900 shadow-2xl shadow-black/20 transition-all active:scale-95 flex items-center gap-3"
-            >
-                <Save size={18} strokeWidth={2.5} /> SIMPAN PERMINTAAN
-            </button>
+        <div className="px-10 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
+          {isApprove ? (
+             <>
+                <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all">
+                  BATAL
+                </button>
+                <button 
+                    onClick={() => onSave({ ...form, status: 'Rejected' })} 
+                    className="px-16 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-white bg-red-600 rounded-2xl hover:bg-red-700 shadow-xl shadow-red-200 transition-all active:scale-95 flex items-center gap-3"
+                >
+                    <XCircle size={18} strokeWidth={2.5} /> REJECT
+                </button>
+                <button 
+                    onClick={() => onSave({ ...form, status: 'Approved' })} 
+                    className="px-16 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-white bg-[#10B981] rounded-2xl hover:bg-green-600 shadow-xl shadow-green-200 transition-all active:scale-95 flex items-center gap-3"
+                >
+                    <CheckCircle2 size={18} strokeWidth={2.5} /> APPROVE
+                </button>
+             </>
+          ) : (
+             <>
+                <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all">
+                  BATAL
+                </button>
+                {!isView && (
+                    <button 
+                        onClick={() => onSave(form)} 
+                        className="px-16 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-white bg-black rounded-2xl hover:bg-gray-900 shadow-2xl shadow-black/20 transition-all active:scale-95 flex items-center gap-3"
+                    >
+                        <Save size={18} strokeWidth={2.5} /> SIMPAN PERMINTAAN
+                    </button>
+                )}
+             </>
           )}
         </div>
       </div>

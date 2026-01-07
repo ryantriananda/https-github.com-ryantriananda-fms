@@ -6,7 +6,7 @@ import {
   Box, House, Settings, UserCog, Zap, ShieldCheck, Package, List, Monitor, Tag, 
   MapPin, Scale, CreditCard, Layers, Palette, Landmark, Component, Percent, Radio, 
   Stamp, RefreshCw, Sliders, CheckCircle2, Headset, Gavel, FileBadge, Hammer, Shield, 
-  FileSpreadsheet, Grid, ClipboardList, Lock, Umbrella, AlertTriangle, Bed
+  FileSpreadsheet, Grid, ClipboardList, Lock, Umbrella, AlertTriangle, Bed, CheckSquare
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -40,9 +40,6 @@ export const Sidebar: React.FC<Props> = ({
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
   useEffect(() => {
-    // Re-expand menu if active item is inside a submenu
-    // This logic needs to run when activeItem OR userRole changes
-    // to ensure correct state after role switch
     const findParentMenu = (items: MenuItem[]): string | undefined => {
         for (const item of items) {
             if (item.subItems) {
@@ -53,10 +50,6 @@ export const Sidebar: React.FC<Props> = ({
         }
         return undefined;
     };
-    
-    // We need to pass the *filtered* list here ideally, but for now we iterate full list
-    // and the filter in render will handle visibility. 
-    // Just ensuring expansion logic works is enough.
   }, [activeItem, userRole]);
 
   const toggleMenu = (label: string) => {
@@ -72,38 +65,27 @@ export const Sidebar: React.FC<Props> = ({
     }
   };
 
-  // --- ACCESS CONTROL LIST (ACL) LOGIC ---
   const getAllowedMenus = (role: string): string[] => {
-      if (role === 'Admin') return ['*']; // Wildcard for all
-
+      if (role === 'Admin') return ['*']; 
       if (role === 'Staff') {
           return [
               'Dashboard',
-              // ATK
               'ATK', 'Request ATK',
-              // Vehicle
-              'Kendaraan', 'Daftar Kendaraan', 'Pajak & KIR', // View only ideally
-              // Pod & Locker
+              'Kendaraan', 'Daftar Kendaraan', 'Pajak & KIR', 
               'MODENA Pod', 'Permintaan Pod', 'Tenant Pod',
               'Loker', 'Request Locker',
-              // Timesheet
               'Timesheet'
           ];
       }
-
       if (role === 'Officer') {
           return [
               'Dashboard',
-              // Building Ops
               'Gedung', 'Utility Monitoring', 'Pemeliharaan Asset',
-              // Vehicle Ops
               'Kendaraan', 'Servis', 'Reminder Pajak & KIR', 'Log Book',
-              // Asset Ops
-              'General Asset', 'Asset HC', 'Asset IT', 'Stock Opname',
-              'Timesheet'
+              'General Asset', 'Asset HC', 'Asset IT', 'Stock Opname', 'Input Stock Opname',
+              'Timesheet', 'Locker Approval'
           ];
       }
-
       return ['Dashboard'];
   };
 
@@ -185,6 +167,7 @@ export const Sidebar: React.FC<Props> = ({
         subItems: [
             { label: 'Daftar Loker', icon: <List size={16} /> },
             { label: 'Request Locker', icon: <FileText size={16} /> },
+            { label: 'Locker Approval', icon: <CheckCircle2 size={16} /> },
         ]
     },
 
@@ -209,7 +192,11 @@ export const Sidebar: React.FC<Props> = ({
     },
     { 
         label: 'Stock Opname', 
-        icon: <ClipboardList size={20} /> 
+        icon: <ClipboardList size={20} />,
+        subItems: [
+            { label: 'Input Stock Opname', icon: <FileText size={16} /> },
+            { label: 'Stock Opname Approval', icon: <CheckSquare size={16} /> },
+        ]
     },
 
     { 
@@ -264,18 +251,13 @@ export const Sidebar: React.FC<Props> = ({
     },
   ];
 
-  // Filtering Logic
   const filteredMenuItems = fullMenuItems.map(item => {
-      // 1. Check parent
       if (!isMenuVisible(item.label)) return null;
-
-      // 2. Check sub-items
       if (item.subItems) {
           const visibleSubs = item.subItems.filter(sub => isMenuVisible(sub.label));
-          if (visibleSubs.length === 0) return null; // Hide parent if no children visible
+          if (visibleSubs.length === 0) return null; 
           return { ...item, subItems: visibleSubs };
       }
-
       return item;
   }).filter(Boolean) as MenuItem[];
 

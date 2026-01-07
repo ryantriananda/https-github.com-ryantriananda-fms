@@ -53,6 +53,7 @@ const translations: Record<string, Record<Language, string>> = {
   // Loker
   'Daftar Loker': { id: 'Daftar Loker', en: 'Locker List' },
   'Request Locker': { id: 'Permintaan Loker', en: 'Locker Request' },
+  'Locker Approval': { id: 'Persetujuan Loker', en: 'Locker Approval' },
 
   // Pod
   'Request MODENA Pod': { id: 'Permintaan Pod', en: 'Pod Request' },
@@ -80,6 +81,10 @@ const translations: Record<string, Record<Language, string>> = {
   'Branch Improvement': { id: 'Perbaikan Cabang', en: 'Branch Improvement' },
   'Compliance & Legal': { id: 'Kepatuhan & Legal', en: 'Compliance & Legal' },
   'Master Gedung': { id: 'Master Gedung', en: 'Master Building' },
+
+  // Stock Opname Submenus
+  'Input Stock Opname': { id: 'Input Stock Opname', en: 'Input Stock Opname' },
+  'Stock Opname Approval': { id: 'Persetujuan Opname', en: 'Opname Approval' },
 
   // --- MASTER DATA SUB-MENUS ---
   'Master Vendor': { id: 'Master Vendor', en: 'Master Vendor' },
@@ -134,6 +139,8 @@ const translations: Record<string, Record<Language, string>> = {
   'LIVE': { id: 'LIVE', en: 'LIVE' },
   'ENDING SOON': { id: 'SEGERA BERAKHIR', en: 'ENDING SOON' },
   'LIST': { id: 'DAFTAR', en: 'LIST' },
+  'MATCHED': { id: 'SESUAI', en: 'MATCHED' },
+  'DISCREPANCY': { id: 'SELISIH', en: 'DISCREPANCY' },
 
   // --- BUTTON ACTIONS ---
   'Add': { id: 'Tambah', en: 'Add' },
@@ -165,6 +172,7 @@ const translations: Record<string, Record<Language, string>> = {
   'Add Locker': { id: 'Tambah Loker', en: 'Add Locker' },
   'Add Unit': { id: 'Tambah Unit', en: 'Add Unit' },
   'Start Count': { id: 'Mulai Hitung', en: 'Start Count' },
+  'TAMBAH DATA': { id: 'TAMBAH DATA', en: 'ADD DATA' },
   
   // --- UI LABELS ---
   'Search...': { id: 'Cari...', en: 'Search...' },
