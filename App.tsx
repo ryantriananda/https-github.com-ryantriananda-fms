@@ -93,6 +93,8 @@ import { MasterPodTable } from './components/MasterPodTable';
 import { MasterPodModal } from './components/MasterPodModal';
 import { TenantPodTable } from './components/TenantPodTable';
 import { TenantPodModal } from './components/TenantPodModal';
+import { MasterRequestTypeTable } from './components/MasterRequestTypeTable';
+import { MasterRequestTypeModal } from './components/MasterRequestTypeModal';
 
 import { 
     AssetRecord, MasterItem, VehicleRecord, VehicleContractRecord, ServiceRecord, TaxKirRecord, 
@@ -100,7 +102,8 @@ import {
     GeneralAssetRecord, BuildingMaintenanceRecord, MaintenanceScheduleRecord, InsuranceRecord, 
     InsuranceProviderRecord, PodRequestRecord, LockerRecord, LockerRequestRecord, 
     LogBookRecord, TimesheetRecord, VendorRecord, UserRecord, MasterApprovalRecord, 
-    GeneralMasterItem, DeliveryLocationRecord, StockOpnameRecord, MasterPodRecord, TenantPodRecord
+    GeneralMasterItem, DeliveryLocationRecord, StockOpnameRecord, MasterPodRecord, TenantPodRecord,
+    RequestTypeRecord
 } from './types';
 
 import { 
@@ -121,7 +124,7 @@ import {
     MOCK_SERVICE_TYPE_DATA, MOCK_MUTATION_STATUS_DATA, MOCK_SALES_STATUS_DATA, MOCK_REQUEST_STATUS_DATA,
     MOCK_MUTATION_TYPE_DATA, MOCK_VENDOR_TYPE_DATA, MOCK_ROLE_DATA, MOCK_VEHICLE_TYPE_DATA,
     MOCK_ATK_CATEGORY, MOCK_ARK_CATEGORY, MOCK_DELIVERY_LOCATIONS, MOCK_MASTER_POD_DATA,
-    MOCK_TENANT_POD_DATA
+    MOCK_TENANT_POD_DATA, MOCK_REQUEST_TYPES
 } from './constants';
 
 export const App: React.FC = () => {
@@ -141,6 +144,7 @@ export const App: React.FC = () => {
   const [masterArk, setMasterArk] = useState<MasterItem[]>(MOCK_MASTER_ARK_DATA);
   const [deliveryLocations, setDeliveryLocations] = useState<DeliveryLocationRecord[]>(MOCK_DELIVERY_LOCATIONS);
   const [stockOpnames, setStockOpnames] = useState<StockOpnameRecord[]>(MOCK_STOCK_OPNAME_DATA);
+  const [requestTypes, setRequestTypes] = useState<RequestTypeRecord[]>(MOCK_REQUEST_TYPES);
   
   // Vehicle
   const [vehicles, setVehicles] = useState<VehicleRecord[]>(MOCK_VEHICLE_DATA);
@@ -387,6 +391,21 @@ export const App: React.FC = () => {
     setList(prev => prev.filter(item => item.id !== id));
   };
 
+  const handleSaveRequestType = (data: Partial<RequestTypeRecord>) => {
+      if (modalState.mode === 'create') {
+          setRequestTypes(prev => [...prev, { ...data, id: Date.now() } as RequestTypeRecord]);
+      } else {
+          setRequestTypes(prev => prev.map(item => item.id === modalState.data.id ? { ...item, ...data } as RequestTypeRecord : item));
+      }
+      closeModal();
+  };
+
+  const handleDeleteRequestType = (id: number | string) => {
+      if(window.confirm("Delete this request type?")) {
+          setRequestTypes(prev => prev.filter(i => i.id !== id));
+      }
+  };
+
   // --- HANDLER FOR LOGBOOK CRUD ---
   const handleSaveLogBook = (data: Partial<LogBookRecord>) => {
       if (modalState.mode === 'create') {
@@ -419,7 +438,7 @@ export const App: React.FC = () => {
   // --- RENDER CONTENT ---
   const renderContent = () => {
     switch (activeItem) {
-      // --- DASHBOARD ---
+      // ... (previous dashboard case remains same) ...
       case 'Dashboard':
         // 1. CALCULATE SUMMARY STATS
         const pendingATK = atkRequests.filter(r => r.status === 'Pending' || r.status === 'Waiting Approval').length;
@@ -433,7 +452,6 @@ export const App: React.FC = () => {
 
         // Facility Status
         const totalPods = masterPods.length;
-        // Assume active master pods are occupied for simplicity in this view or use tenant list
         const occupiedPods = tenantPods.length; 
         const totalLockers = lockers.length;
         const occupiedLockers = lockers.filter(l => l.status === 'Terisi').length;
@@ -699,13 +717,14 @@ export const App: React.FC = () => {
         return (
           <>
             <FilterBar 
-                tabs={['ITEMS', 'CATEGORY', 'UOM', 'DELIVERY']} 
+                tabs={['ITEMS', 'CATEGORY', 'UOM', 'DELIVERY', 'DETAIL REQUEST']} 
                 activeTab={activeTab === 'SEMUA' ? 'ITEMS' : activeTab} 
                 onTabChange={setActiveTab} 
                 onAddClick={() => {
                     if (activeTab === 'CATEGORY') openModal('GENERAL_MASTER', 'create', undefined, { title: 'Kategori ATK' });
                     else if (activeTab === 'UOM') openModal('GENERAL_MASTER', 'create', undefined, { title: 'Master Satuan' });
                     else if (activeTab === 'DELIVERY') openModal('DELIVERY_LOCATION', 'create');
+                    else if (activeTab === 'DETAIL REQUEST') openModal('REQUEST_TYPE', 'create');
                     else openModal('MASTER_ITEM', 'create');
                 }} 
                 customAddLabel="TAMBAH DATA" 
@@ -737,6 +756,13 @@ export const App: React.FC = () => {
                     data={deliveryLocations} 
                     onEdit={(i) => openModal('DELIVERY_LOCATION', 'edit', i)} 
                     onDelete={(id) => setDeliveryLocations(prev => prev.filter(i => i.id !== id))} 
+                />
+            )}
+            {activeTab === 'DETAIL REQUEST' && (
+                <MasterRequestTypeTable 
+                    data={requestTypes} 
+                    onEdit={(i) => openModal('REQUEST_TYPE', 'edit', i)}
+                    onDelete={handleDeleteRequestType}
                 />
             )}
           </>
@@ -773,13 +799,14 @@ export const App: React.FC = () => {
         return (
           <>
             <FilterBar 
-                tabs={['ITEMS', 'CATEGORY', 'UOM', 'DELIVERY']} 
+                tabs={['ITEMS', 'CATEGORY', 'UOM', 'DELIVERY', 'DETAIL REQUEST']} 
                 activeTab={activeTab === 'SEMUA' ? 'ITEMS' : activeTab} 
                 onTabChange={setActiveTab} 
                 onAddClick={() => {
                     if (activeTab === 'CATEGORY') openModal('GENERAL_MASTER', 'create', undefined, { title: 'Kategori ARK' });
                     else if (activeTab === 'UOM') openModal('GENERAL_MASTER', 'create', undefined, { title: 'Master Satuan' });
                     else if (activeTab === 'DELIVERY') openModal('DELIVERY_LOCATION', 'create');
+                    else if (activeTab === 'DETAIL REQUEST') openModal('REQUEST_TYPE', 'create');
                     else openModal('MASTER_ITEM', 'create');
                 }} 
                 customAddLabel="TAMBAH DATA" 
@@ -811,6 +838,13 @@ export const App: React.FC = () => {
                     data={deliveryLocations} 
                     onEdit={(i) => openModal('DELIVERY_LOCATION', 'edit', i)} 
                     onDelete={(id) => setDeliveryLocations(prev => prev.filter(i => i.id !== id))} 
+                />
+            )}
+            {activeTab === 'DETAIL REQUEST' && (
+                <MasterRequestTypeTable 
+                    data={requestTypes} 
+                    onEdit={(i) => openModal('REQUEST_TYPE', 'edit', i)}
+                    onDelete={handleDeleteRequestType}
                 />
             )}
           </>
@@ -1299,6 +1333,14 @@ export const App: React.FC = () => {
       </div>
 
       {/* --- GLOBAL MODALS --- */}
+      
+      <MasterRequestTypeModal
+        isOpen={modalState.isOpen && modalState.type === 'REQUEST_TYPE'}
+        onClose={closeModal}
+        onSave={handleSaveRequestType}
+        initialData={modalState.data}
+        mode={modalState.mode as any}
+      />
       
       {/* Workflow Action Modal */}
       <WorkflowActionModal 
