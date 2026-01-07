@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { ServiceRecord } from '../types';
-import { ChevronsUpDown, Eye, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Pencil } from 'lucide-react';
+import { ChevronsUpDown, Eye, ChevronLeft, ChevronRight, Pencil } from 'lucide-react';
 
 interface Props {
   data: ServiceRecord[];
@@ -10,131 +11,116 @@ interface Props {
 
 export const ServiceTable: React.FC<Props> = ({ data, onEdit, onView }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[1200px] text-left border-collapse">
+    <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden transition-all duration-500">
+      <div className="overflow-x-auto custom-scrollbar">
+        <table className="w-full min-w-[1300px] text-left border-collapse">
           <thead>
-            <tr className="bg-gray-100 border-b border-gray-200 text-xs font-semibold text-gray-700 uppercase tracking-wider">
-              <th className="p-4 group cursor-pointer hover:bg-gray-200 transition-colors">
+            <tr className="bg-[#F9FAFB] border-b border-gray-200">
+              <th className="p-6 pl-8 w-32 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
-                  No Request
-                  <ChevronsUpDown size={14} className="text-gray-500 group-hover:text-gray-700"/>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">NO REQUEST</span>
+                  <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors"/>
                 </div>
               </th>
-              <th className="p-4 group cursor-pointer hover:bg-gray-200 transition-colors">
+              <th className="p-6 w-40 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
-                  No Polisi
-                  <ChevronsUpDown size={14} className="text-gray-500 group-hover:text-gray-700"/>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">NO POLISI</span>
+                  <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors"/>
                 </div>
               </th>
-              <th className="p-4 group cursor-pointer hover:bg-gray-200 transition-colors">
+              <th className="p-6 w-40 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
-                  Tgl Request
-                  <ChevronsUpDown size={14} className="text-gray-500 group-hover:text-gray-700"/>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">TGL REQUEST</span>
+                  <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors"/>
                 </div>
               </th>
-              <th className="p-4 group cursor-pointer hover:bg-gray-200 transition-colors">
+              <th className="p-6 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
-                  Channel
-                  <ChevronsUpDown size={14} className="text-gray-500 group-hover:text-gray-700"/>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">CHANNEL & CABANG</span>
+                  <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors"/>
                 </div>
               </th>
-              <th className="p-4 group cursor-pointer hover:bg-gray-200 transition-colors">
-                <div className="flex items-center justify-between">
-                  Cabang
-                  <ChevronsUpDown size={14} className="text-gray-500 group-hover:text-gray-700"/>
-                </div>
-              </th>
-              <th className="p-4 group cursor-pointer hover:bg-gray-200 transition-colors">
-                <div className="flex items-center justify-between">
-                  Status
-                  <ChevronsUpDown size={14} className="text-gray-500 group-hover:text-gray-700"/>
-                </div>
-              </th>
-              <th className="p-4 group cursor-pointer hover:bg-gray-200 transition-colors">
-                <div className="flex items-center justify-between">
-                  Status Approval
-                  <ChevronsUpDown size={14} className="text-gray-500 group-hover:text-gray-700"/>
-                </div>
-              </th>
-              <th className="p-4 w-24 text-center">
-                 {/* Action Column */}
-              </th>
+              <th className="p-6 w-32 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">STATUS</th>
+              <th className="p-6 w-40 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">APPROVAL</th>
+              <th className="p-6 w-24 text-center pr-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">AKSI</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 text-sm text-gray-700">
+          <tbody className="divide-y divide-gray-50 text-[12px]">
             {data.map((item) => (
-              <tr key={item.id} className="bg-white hover:bg-gray-50 transition-colors cursor-pointer group">
-                <td className="p-4 font-medium text-gray-900">{item.id}</td>
-                <td className="p-4 font-medium text-gray-900">{item.noPolisi}</td>
-                <td className="p-4 text-gray-600">{item.tglRequest}</td>
-                <td className="p-4 text-gray-600">{item.channel}</td>
-                <td className="p-4 text-gray-600">{item.cabang}</td>
-                <td className="p-4">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
+              <tr key={item.id} className="bg-white hover:bg-[#FDFDFD] transition-all cursor-pointer group">
+                <td className="p-6 pl-8">
+                    <span className="font-mono font-bold text-black text-[12px] bg-gray-50 px-2 py-1 rounded border border-gray-100">
+                        {item.id}
+                    </span>
+                </td>
+                <td className="p-6">
+                    <span className="font-black text-black uppercase bg-black text-white px-2 py-1 rounded text-[11px]">{item.noPolisi}</span>
+                </td>
+                <td className="p-6 text-gray-600 font-bold font-mono">
+                    {item.tglRequest}
+                </td>
+                <td className="p-6">
+                    <div className="flex flex-col">
+                        <span className="text-[12px] font-black text-black uppercase">{item.cabang}</span>
+                        <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{item.channel}</span>
+                    </div>
+                </td>
+                <td className="p-6 text-center">
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                        item.status === 'Completed' ? 'bg-[#E8FDF5] text-[#059669] border-[#10B981]/20' : 
+                        item.status === 'Scheduled' ? 'bg-blue-50 text-blue-600 border-blue-200' :
+                        'bg-gray-50 text-gray-500 border-gray-200'
+                    }`}>
                         {item.status}
                     </span>
                 </td>
-                <td className="p-4">
-                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-400 font-bold text-xs">
+                <td className="p-6 text-center">
+                    <span className={`text-[9px] font-black uppercase tracking-widest ${item.statusApproval === 'Approved' ? 'text-green-600' : 'text-orange-500'}`}>
                         {item.statusApproval}
-                    </div>
+                    </span>
                 </td>
-                <td className="p-4 text-center">
+                <td className="p-6 text-center pr-8">
                     <div className="flex items-center justify-center gap-2">
                          <button 
                           onClick={(e) => { e.stopPropagation(); onView?.(item); }}
-                          className="text-gray-400 hover:text-gray-600 transition-colors"
+                          className="p-2 text-gray-300 hover:text-black bg-white hover:bg-gray-50 rounded-xl transition-all border border-transparent hover:border-gray-200"
                         >
-                            <Eye size={18} />
+                            <Eye size={16} />
                         </button>
                         <button 
                           onClick={(e) => { e.stopPropagation(); onEdit?.(item); }}
-                          className="text-gray-400 hover:text-gray-600 transition-colors"
+                          className="p-2 text-gray-300 hover:text-blue-600 bg-white hover:bg-blue-50 rounded-xl transition-all border border-transparent hover:border-blue-100"
                         >
-                            <Pencil size={18} />
+                            <Pencil size={16} />
                         </button>
                     </div>
                 </td>
               </tr>
             ))}
+            {data.length === 0 && (
+                <tr>
+                    <td colSpan={7} className="p-24 text-center">
+                        <p className="text-[11px] font-black uppercase tracking-[0.3em] text-gray-300 opacity-50">Belum ada history servis</p>
+                    </td>
+                </tr>
+            )}
           </tbody>
         </table>
       </div>
       
-      {/* Pagination Footer */}
-      <div className="px-6 py-4 border-t border-gray-200 bg-white flex items-center justify-between">
-            <div className="text-sm text-gray-900">
-                Showing 1 - {data.length} of <span className="text-green-500 font-semibold">{data.length}</span> Row(s)
+      {/* Footer */}
+      <div className="px-8 py-6 bg-[#FAFAFA] border-t border-gray-100 flex items-center justify-between">
+            <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                Showing <span className="text-black ml-1">{data.length} records</span>
             </div>
             
-            <div className="flex items-center gap-8">
-                <div className="flex items-center gap-2 text-sm text-gray-900">
-                    Row per page
-                    <select className="border border-gray-300 rounded px-2 py-1 text-sm bg-white focus:outline-none focus:border-gray-400 text-gray-900 cursor-pointer">
-                        <option>10</option>
-                        <option>20</option>
-                        <option>50</option>
-                    </select>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                     <button className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded hover:bg-gray-50 text-gray-600 transition-colors">
-                        <ChevronsLeft size={16} />
-                     </button>
-                     <button className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded hover:bg-gray-50 text-gray-600 transition-colors">
-                        <ChevronLeft size={16} />
-                     </button>
-                     
-                     <span className="text-sm text-gray-900 mx-3 font-medium">1 / 1</span>
-                     
-                     <button className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded hover:bg-gray-50 text-gray-600 transition-colors">
-                        <ChevronRight size={16} />
-                     </button>
-                     <button className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded hover:bg-gray-50 text-gray-600 transition-colors">
-                        <ChevronsRight size={16} />
-                     </button>
-                </div>
+            <div className="flex items-center gap-2">
+                 <button className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
+                    <ChevronLeft size={16} />
+                 </button>
+                 <button className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
+                    <ChevronRight size={16} />
+                 </button>
             </div>
       </div>
     </div>

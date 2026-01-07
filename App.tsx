@@ -1,8 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
 import { FilterBar } from './components/FilterBar';
+import { 
+    LayoutDashboard, TrendingUp, Package, Building, Car, Clock, 
+    ArrowRight, CheckCircle2, AlertCircle, Timer, FileText 
+} from 'lucide-react';
 
 // Consumables & Masters
 import { StationeryRequestTable } from './components/StationeryRequestTable';
@@ -53,10 +57,9 @@ import { InsuranceProviderModal } from './components/InsuranceProviderModal';
 import { InsuranceReminderModal } from './components/InsuranceReminderModal'; // NEW
 
 // Facility
-import { ModenaPodTable } from './components/ModenaPodTable';
-import { PodCensusModal } from './components/PodCensusModal';
 import { PodRequestTable } from './components/PodRequestTable';
 import { PodRequestModal } from './components/PodRequestModal';
+import { PodApprovalTable } from './components/PodApprovalTable'; // NEW
 import { LockerTable } from './components/LockerTable';
 import { LockerModal } from './components/LockerModal';
 import { LockerRequestTable } from './components/LockerRequestTable';
@@ -85,14 +88,18 @@ import { GeneralMasterModal } from './components/GeneralMasterModal';
 import { MasterDeliveryLocationTable } from './components/MasterDeliveryLocationTable';
 import { DeliveryLocationModal } from './components/DeliveryLocationModal';
 import { WorkflowActionModal } from './components/WorkflowActionModal'; 
+import { MasterPodTable } from './components/MasterPodTable';
+import { MasterPodModal } from './components/MasterPodModal';
+import { TenantPodTable } from './components/TenantPodTable';
+import { TenantPodModal } from './components/TenantPodModal';
 
 import { 
     AssetRecord, MasterItem, VehicleRecord, VehicleContractRecord, ServiceRecord, TaxKirRecord, 
     VehicleReminderRecord, MutationRecord, SalesRecord, BuildingRecord, UtilityRecord, ReminderRecord, 
     GeneralAssetRecord, BuildingMaintenanceRecord, MaintenanceScheduleRecord, InsuranceRecord, 
-    InsuranceProviderRecord, ModenaPodRecord, PodRequestRecord, LockerRecord, LockerRequestRecord, 
+    InsuranceProviderRecord, PodRequestRecord, LockerRecord, LockerRequestRecord, 
     LogBookRecord, TimesheetRecord, VendorRecord, UserRecord, MasterApprovalRecord, 
-    GeneralMasterItem, DeliveryLocationRecord, StockOpnameRecord
+    GeneralMasterItem, DeliveryLocationRecord, StockOpnameRecord, MasterPodRecord, TenantPodRecord
 } from './types';
 
 import { 
@@ -101,7 +108,7 @@ import {
     MOCK_VEHICLE_REMINDER_DATA, MOCK_MUTATION_DATA, MOCK_SALES_DATA,
     MOCK_BUILDING_DATA, MOCK_UTILITY_DATA, MOCK_REMINDER_DATA, MOCK_BUILDING_MAINTENANCE_DATA,
     MOCK_GENERAL_ASSET_DATA, MOCK_INSURANCE_DATA, MOCK_INSURANCE_PROVIDERS,
-    MOCK_POD_DATA, MOCK_POD_REQUEST_DATA, MOCK_LOCKER_DATA, MOCK_LOCKER_REQUEST_DATA,
+    MOCK_POD_REQUEST_DATA, MOCK_LOCKER_DATA, MOCK_LOCKER_REQUEST_DATA,
     MOCK_STOCK_OPNAME_DATA, MOCK_LOGBOOK_DATA, MOCK_TIMESHEET_DATA, MOCK_VENDOR_DATA, 
     MOCK_USER_DATA, MOCK_GENERAL_MASTER_DATA, MOCK_BRAND_DATA, MOCK_COLOR_DATA, MOCK_BUILDING_ASSETS,
     MOCK_PPN_DATA, MOCK_BRAND_TYPE_DATA, MOCK_VEHICLE_MODEL_DATA, MOCK_BUILDING_COMPONENT_DATA,
@@ -110,7 +117,8 @@ import {
     MOCK_COST_CENTER_DATA, MOCK_ASSET_CATEGORY_DATA, MOCK_TAX_TYPE_DATA, MOCK_PAYMENT_TYPE_DATA,
     MOCK_SERVICE_TYPE_DATA, MOCK_MUTATION_STATUS_DATA, MOCK_SALES_STATUS_DATA, MOCK_REQUEST_STATUS_DATA,
     MOCK_MUTATION_TYPE_DATA, MOCK_VENDOR_TYPE_DATA, MOCK_ROLE_DATA, MOCK_VEHICLE_TYPE_DATA,
-    MOCK_ATK_CATEGORY, MOCK_ARK_CATEGORY, MOCK_DELIVERY_LOCATIONS
+    MOCK_ATK_CATEGORY, MOCK_ARK_CATEGORY, MOCK_DELIVERY_LOCATIONS, MOCK_MASTER_POD_DATA,
+    MOCK_TENANT_POD_DATA
 } from './constants';
 
 export const App: React.FC = () => {
@@ -158,7 +166,8 @@ export const App: React.FC = () => {
   const [insuranceReminders, setInsuranceReminders] = useState<ReminderRecord[]>([]); // New manual reminders state
 
   // Facility
-  const [pods, setPods] = useState<ModenaPodRecord[]>(MOCK_POD_DATA);
+  const [masterPods, setMasterPods] = useState<MasterPodRecord[]>(MOCK_MASTER_POD_DATA);
+  const [tenantPods, setTenantPods] = useState<TenantPodRecord[]>(MOCK_TENANT_POD_DATA);
   const [podRequests, setPodRequests] = useState<PodRequestRecord[]>(MOCK_POD_REQUEST_DATA);
   const [lockers, setLockers] = useState<LockerRecord[]>(MOCK_LOCKER_DATA);
   const [lockerRequests, setLockerRequests] = useState<LockerRequestRecord[]>(MOCK_LOCKER_REQUEST_DATA);
@@ -396,16 +405,144 @@ export const App: React.FC = () => {
     switch (activeItem) {
       // --- DASHBOARD ---
       case 'Dashboard':
+        // Calculate Summary Stats
+        const totalVehicles = vehicles.length;
+        const totalBuildings = buildings.length;
+        const totalGeneralAssets = generalAssets.length;
+        const pendingATK = atkRequests.filter(r => r.status === 'Pending').length;
+        const pendingServices = vehicleServices.filter(s => s.statusApproval === 'Pending').length;
+
+        // Combine recent activities for the feed
+        const recentActivities = [
+            ...atkRequests.map(r => ({ ...r, type: 'ATK Request' })),
+            ...arkRequests.map(r => ({ ...r, type: 'ARK Request' })),
+            ...vehicleServices.map(s => ({ 
+                id: s.id, 
+                itemName: `Servis ${s.noPolisi}`, 
+                status: s.statusApproval, 
+                date: s.tglRequest,
+                type: 'Vehicle Service' 
+            }))
+        ].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
+
         return (
-            <div className="p-8">
+            <div className="p-8 space-y-8 animate-in fade-in duration-500">
+                {/* Insurance & Risk Summary (Existing) */}
                 <InsuranceDashboard data={insurances} />
-                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Placeholder for other dashboards */}
-                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center h-64 text-gray-400 font-bold uppercase tracking-widest text-xs">
-                        Asset Overview Chart
+                
+                {/* Asset Summary Widgets */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col justify-between h-40 relative overflow-hidden group">
+                        <div className="absolute right-[-20px] top-[-20px] w-24 h-24 bg-blue-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
+                        <div className="flex items-center gap-3 relative z-10">
+                            <div className="p-3 bg-blue-100 rounded-xl text-blue-600">
+                                <Car size={20} />
+                            </div>
+                            <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Total Vehicles</span>
+                        </div>
+                        <div className="relative z-10">
+                            <h3 className="text-[32px] font-black text-black">{totalVehicles}</h3>
+                            <p className="text-[10px] font-bold text-gray-400 flex items-center gap-1">
+                                <span className="text-green-500 flex items-center"><TrendingUp size={12}/> +2</span> this month
+                            </p>
+                        </div>
                     </div>
-                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center h-64 text-gray-400 font-bold uppercase tracking-widest text-xs">
-                        Maintenance Schedule
+
+                    <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col justify-between h-40 relative overflow-hidden group">
+                        <div className="absolute right-[-20px] top-[-20px] w-24 h-24 bg-purple-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
+                        <div className="flex items-center gap-3 relative z-10">
+                            <div className="p-3 bg-purple-100 rounded-xl text-purple-600">
+                                <Building size={20} />
+                            </div>
+                            <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Buildings</span>
+                        </div>
+                        <div className="relative z-10">
+                            <h3 className="text-[32px] font-black text-black">{totalBuildings}</h3>
+                            <p className="text-[10px] font-bold text-gray-400">
+                                Active Leases & Owned
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col justify-between h-40 relative overflow-hidden group">
+                        <div className="absolute right-[-20px] top-[-20px] w-24 h-24 bg-orange-50 rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
+                        <div className="flex items-center gap-3 relative z-10">
+                            <div className="p-3 bg-orange-100 rounded-xl text-orange-600">
+                                <Package size={20} />
+                            </div>
+                            <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">General Assets</span>
+                        </div>
+                        <div className="relative z-10">
+                            <h3 className="text-[32px] font-black text-black">{totalGeneralAssets}</h3>
+                            <p className="text-[10px] font-bold text-gray-400">
+                                IT & General Equipment
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Recent Activity Feed */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-[14px] font-black text-black uppercase tracking-widest flex items-center gap-2">
+                                <Clock size={16} /> Recent Requests
+                            </h3>
+                            <button className="text-[10px] font-bold text-blue-600 hover:text-blue-800 uppercase tracking-wider flex items-center gap-1">
+                                View All <ArrowRight size={12} />
+                            </button>
+                        </div>
+                        <div className="space-y-4">
+                            {recentActivities.map((act: any, idx) => (
+                                <div key={idx} className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-[10px] shadow-sm
+                                            ${act.type.includes('Vehicle') ? 'bg-black' : act.type.includes('ATK') ? 'bg-blue-500' : 'bg-orange-500'}`}>
+                                            {act.type.substring(0, 3)}
+                                        </div>
+                                        <div>
+                                            <h4 className="text-[12px] font-black text-black uppercase tracking-tight group-hover:text-blue-600 transition-colors">{act.itemName}</h4>
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{act.transactionNumber || act.id} • {act.date}</p>
+                                        </div>
+                                    </div>
+                                    <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border
+                                        ${(act.status || '').toLowerCase().includes('pending') ? 'bg-orange-100 text-orange-600 border-orange-200' : 
+                                          (act.status || '').toLowerCase().includes('approved') ? 'bg-green-100 text-green-600 border-green-200' : 
+                                          'bg-gray-200 text-gray-500 border-gray-300'}`}>
+                                        {act.status || 'Pending'}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Quick Actions / Pending Tasks */}
+                    <div className="bg-black text-white p-8 rounded-[2rem] shadow-xl shadow-black/20 flex flex-col justify-between relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+                        
+                        <div>
+                            <h3 className="text-[14px] font-black uppercase tracking-widest mb-6 flex items-center gap-2">
+                                <AlertCircle size={16} className="text-orange-400" /> Action Required
+                            </h3>
+                            <div className="space-y-4 relative z-10">
+                                <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                                    <span className="text-[11px] font-bold text-gray-300">Pending ATK Approval</span>
+                                    <span className="bg-orange-500 text-white px-2 py-0.5 rounded text-[10px] font-black">{pendingATK}</span>
+                                </div>
+                                <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                                    <span className="text-[11px] font-bold text-gray-300">Vehicle Service Need</span>
+                                    <span className="bg-blue-500 text-white px-2 py-0.5 rounded text-[10px] font-black">{pendingServices}</span>
+                                </div>
+                                <div className="flex justify-between items-center pb-3">
+                                    <span className="text-[11px] font-bold text-gray-300">Stock Discrepancies</span>
+                                    <span className="bg-red-500 text-white px-2 py-0.5 rounded text-[10px] font-black">2</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button className="w-full py-4 bg-white text-black rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all mt-8 flex items-center justify-center gap-2">
+                            <CheckCircle2 size={14} /> Review All Tasks
+                        </button>
                     </div>
                 </div>
             </div>
@@ -799,14 +936,25 @@ export const App: React.FC = () => {
           );
 
       // --- FACILITY MODULE ---
-      case 'Pod Census':
+      case 'Permintaan Pod':
           return (
               <>
-                  <FilterBar tabs={['SEMUA', 'AVAILABLE', 'OCCUPIED']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('POD_CENSUS', 'create')} customAddLabel="Update Census" onImportClick={handleOpenImport} />
-                  <ModenaPodTable data={pods} onView={(i) => openModal('POD_CENSUS', 'view', i)} onEdit={(i) => openModal('POD_CENSUS', 'edit', i)} />
+                  <FilterBar tabs={['SEMUA', 'DRAFT', 'WAITING APPROVAL', 'APPROVED', 'REJECTED']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('POD_REQUEST', 'create')} customAddLabel="TAMBAH DATA" />
+                  <PodRequestTable data={podRequests} onView={(i) => openModal('POD_REQUEST', 'view', i)} />
+              </>
+          );
+      case 'Persetujuan Pod':
+          return (
+              <>
+                  <FilterBar tabs={['SEMUA', 'WAITING APPROVAL', 'APPROVED', 'REJECTED']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => {}} hideAdd={true} />
+                  <PodApprovalTable 
+                      data={podRequests} 
+                      onView={(i) => openModal('POD_REQUEST', 'approve', i)} 
+                  />
               </>
           );
       case 'Request MODENA Pod':
+          // Legacy redirect or alias
           return (
               <>
                   <FilterBar tabs={['SEMUA', 'PENDING', 'APPROVED', 'REJECTED']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('POD_REQUEST', 'create')} customAddLabel="Request Pod" />
@@ -828,6 +976,24 @@ export const App: React.FC = () => {
                     data={lockerRequests} 
                     onView={(i) => openModal('LOCKER_REQUEST', 'view', i)} 
                     onAction={(item, action) => handleOpenWorkflow(item, action, 'LOCKER')}
+                  />
+              </>
+          );
+      case 'Tenant Pod':
+          return (
+              <>
+                  <FilterBar 
+                      tabs={['SEMUA', 'LT 2 PRIA', 'LT 2 PEREMPUAN', 'LT 3 PRIA', 'LT 3 PEREMPUAN']} 
+                      activeTab={activeTab} 
+                      onTabChange={setActiveTab} 
+                      onAddClick={() => openModal('TENANT_POD', 'create')} 
+                      customAddLabel="TAMBAH DATA" 
+                      onImportClick={handleOpenImport}
+                  />
+                  <TenantPodTable 
+                      data={tenantPods} 
+                      onView={(i) => openModal('TENANT_POD', 'view', i)} 
+                      onEdit={(i) => openModal('TENANT_POD', 'edit', i)} 
                   />
               </>
           );
@@ -894,6 +1060,26 @@ export const App: React.FC = () => {
               <>
                   <FilterBar tabs={['SEMUA', 'ACTIVE', 'INACTIVE']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('VENDOR', 'create')} customAddLabel="Add Master Vendor" onImportClick={handleOpenImport}/>
                   <MasterVendorTable data={vendors as any} onView={(i) => openModal('VENDOR', 'view', i as any)} onEdit={(i) => openModal('VENDOR', 'edit', i as any)} />
+              </>
+          );
+      case 'Master Pod':
+          return (
+              <>
+                  <FilterBar 
+                      tabs={['SEMUA', 'LT 2', 'LT 3']} 
+                      activeTab={activeTab} 
+                      onTabChange={setActiveTab} 
+                      onAddClick={() => openModal('MASTER_POD', 'create')} 
+                      customAddLabel="TAMBAH DATA" 
+                      onImportClick={handleOpenImport}
+                      podFilters={{ lantai: '', jenisKamar: '' }}
+                      onPodFilterChange={() => {}} // Placeholder
+                  />
+                  <MasterPodTable 
+                      data={masterPods} 
+                      onView={(i) => openModal('MASTER_POD', 'view', i)} 
+                      onEdit={(i) => openModal('MASTER_POD', 'edit', i)} 
+                  />
               </>
           );
       case 'Sync Branchs':
@@ -1090,10 +1276,30 @@ export const App: React.FC = () => {
       />
 
       {/* Facility Modals */}
-      <PodCensusModal isOpen={modalState.isOpen && modalState.type === 'POD_CENSUS'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
-      <PodRequestModal isOpen={modalState.isOpen && modalState.type === 'POD_REQUEST'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
+      <PodRequestModal 
+          isOpen={modalState.isOpen && modalState.type === 'POD_REQUEST'} 
+          onClose={closeModal} 
+          onSave={() => closeModal()} 
+          initialData={modalState.data} 
+          mode={modalState.mode as any} 
+      />
+      
       <LockerModal isOpen={modalState.isOpen && modalState.type === 'LOCKER'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
       <LockerRequestModal isOpen={modalState.isOpen && modalState.type === 'LOCKER_REQUEST'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} />
+      <MasterPodModal 
+        isOpen={modalState.isOpen && modalState.type === 'MASTER_POD'}
+        onClose={closeModal}
+        onSave={() => closeModal()}
+        initialData={modalState.data}
+        mode={modalState.mode as any}
+      />
+      <TenantPodModal 
+        isOpen={modalState.isOpen && modalState.type === 'TENANT_POD'}
+        onClose={closeModal}
+        onSave={() => closeModal()}
+        initialData={modalState.data}
+        mode={modalState.mode as any}
+      />
 
       {/* Stock Opname Modals */}
       <AddStockOpnameModal 

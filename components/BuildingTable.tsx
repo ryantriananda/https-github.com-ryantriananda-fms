@@ -30,7 +30,7 @@ export const BuildingTable: React.FC<Props> = ({ data, onEdit, onView, onDelete,
     }
 
     return (
-      <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm ${styles}`}>
+      <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm ${styles}`}>
         {(s === 'PENDING' || s === 'PENDING APPROVAL') ? 'PENDING' : s}
       </span>
     );
@@ -69,70 +69,70 @@ export const BuildingTable: React.FC<Props> = ({ data, onEdit, onView, onDelete,
       }
 
       return (
-          <div className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] italic text-center">
-              WORKFLOW COMPLETED
+          <div className="text-[9px] font-black text-gray-300 uppercase tracking-[0.2em] italic text-center">
+              COMPLETED
           </div>
       );
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden transition-all duration-500">
       <div className="overflow-x-auto custom-scrollbar">
         <table className="w-full min-w-[1400px] text-left border-collapse">
           <thead>
-            <tr className="bg-white border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-              <th className="p-5 pl-8 w-24 group cursor-pointer hover:bg-gray-50/50 transition-colors">
+            <tr className="bg-[#FAFAFA] border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <th className="p-6 pl-8 w-24 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
                   ID
-                  <ChevronsUpDown size={14} className="text-gray-300" />
+                  <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors" />
                 </div>
               </th>
-              <th className="p-5 w-56 group cursor-pointer hover:bg-gray-50/50 transition-colors">
+              <th className="p-6 w-56 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
                   PROPERTI / ASSET
-                  <ChevronsUpDown size={14} className="text-gray-300" />
+                  <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors" />
                 </div>
               </th>
-              <th className="p-5 w-32 group cursor-pointer hover:bg-gray-50/50 transition-colors">
+              <th className="p-6 w-32 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
                   TIPE
-                  <ChevronsUpDown size={14} className="text-gray-300" />
+                  <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors" />
                 </div>
               </th>
-              <th className="p-5 w-48 group cursor-pointer hover:bg-gray-50/50 transition-colors">
+              <th className="p-6 w-48 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
                   PERIODE
-                  <ChevronsUpDown size={14} className="text-gray-300" />
+                  <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors" />
                 </div>
               </th>
-              <th className="p-5 w-32 group cursor-pointer hover:bg-gray-50/50 transition-colors">
+              <th className="p-6 w-32 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
                   KEPEMILIKAN
-                  <ChevronsUpDown size={14} className="text-gray-300" />
+                  <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors" />
                 </div>
               </th>
-              <th className="p-5 group cursor-pointer hover:bg-gray-50/50 transition-colors">
+              <th className="p-6 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
                   LOKASI / ALAMAT
-                  <ChevronsUpDown size={14} className="text-gray-300" />
+                  <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors" />
                 </div>
               </th>
-              <th className="p-5 w-48 text-center group cursor-pointer hover:bg-gray-50/50 transition-colors">
+              <th className="p-6 w-48 text-center group cursor-pointer hover:bg-gray-100 transition-colors">
                   APPROVAL STATUS
               </th>
-              <th className="p-5 w-48 text-center group cursor-pointer hover:bg-gray-50/50 transition-colors">
+              <th className="p-6 w-48 text-center group cursor-pointer hover:bg-gray-100 transition-colors">
                   WORKFLOW ACTIONS
               </th>
-              <th className="p-5 w-24 pr-8 text-right">AKSI</th>
+              <th className="p-6 w-24 pr-8 text-center">AKSI</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50 text-[12px]">
             {data.map((item) => (
-              <tr key={item.id} className="hover:bg-gray-50/30 transition-colors group">
-                <td className="p-5 pl-8 text-[11px] font-mono font-bold text-gray-400">
+              <tr key={item.id} className="bg-white hover:bg-[#FDFDFD] transition-colors group cursor-pointer" onClick={() => onView?.(item)}>
+                <td className="p-6 pl-8 text-[11px] font-mono font-bold text-gray-400">
                     {item.id}
                 </td>
-                <td className="p-5">
+                <td className="p-6">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-gray-50 rounded-lg flex items-center justify-center text-black border border-gray-100 shrink-0">
                         <Building size={16} />
@@ -143,10 +143,10 @@ export const BuildingTable: React.FC<Props> = ({ data, onEdit, onView, onDelete,
                     </div>
                   </div>
                 </td>
-                <td className="p-5 text-gray-500 font-black uppercase">
+                <td className="p-6 text-gray-500 font-black uppercase">
                     {item.type}
                 </td>
-                <td className="p-5">
+                <td className="p-6">
                     {item.startDate && item.endDate ? (
                         <div className="flex items-start gap-2">
                             <Calendar size={14} className="text-gray-400 mt-0.5" />
@@ -159,7 +159,7 @@ export const BuildingTable: React.FC<Props> = ({ data, onEdit, onView, onDelete,
                         <span className="text-gray-300 font-bold text-[10px]">-</span>
                     )}
                 </td>
-                <td className="p-5">
+                <td className="p-6">
                     <span className={`inline-flex px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter border ${
                         item.ownership === 'Own' 
                         ? 'bg-blue-50 text-blue-600 border-blue-100' 
@@ -168,7 +168,7 @@ export const BuildingTable: React.FC<Props> = ({ data, onEdit, onView, onDelete,
                         {item.ownership === 'Own' ? 'MILIK SENDIRI' : 'SEWA / RENTAL'}
                     </span>
                 </td>
-                <td className="p-5">
+                <td className="p-6">
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-gray-600 font-bold uppercase">
                             <MapPin size={12} className="text-gray-300" />
@@ -179,31 +179,25 @@ export const BuildingTable: React.FC<Props> = ({ data, onEdit, onView, onDelete,
                         </div>
                     </div>
                 </td>
-                <td className="p-5 text-center">
+                <td className="p-6 text-center">
                     {renderStatusBadge(item.status)}
                 </td>
-                <td className="p-5 text-center">
+                <td className="p-6 text-center">
                     {renderWorkflowActions(item)}
                 </td>
-                <td className="p-5 pr-8 text-right">
-                  <div className="flex items-center justify-end gap-1">
+                <td className="p-6 pr-8 text-center">
+                  <div className="flex items-center justify-center gap-2">
                     <button 
                       onClick={(e) => { e.stopPropagation(); onView?.(item); }}
-                      className="p-1.5 text-gray-300 hover:text-black transition-all"
+                      className="p-2 text-gray-300 hover:text-black transition-all bg-white hover:bg-gray-50 rounded-xl"
                     >
-                      <Eye size={18} />
+                      <Eye size={16} />
                     </button>
                     <button 
                       onClick={(e) => { e.stopPropagation(); onEdit?.(item); }}
-                      className="p-1.5 text-gray-300 hover:text-black transition-all"
+                      className="p-2 text-gray-300 hover:text-blue-600 transition-all bg-white hover:bg-blue-50 rounded-xl"
                     >
-                      <Pencil size={18} />
-                    </button>
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); onDelete?.(item.id); }}
-                      className="p-1.5 text-gray-300 hover:text-red-500 transition-all"
-                    >
-                      <Trash2 size={18} />
+                      <Pencil size={16} />
                     </button>
                   </div>
                 </td>
@@ -214,40 +208,19 @@ export const BuildingTable: React.FC<Props> = ({ data, onEdit, onView, onDelete,
       </div>
       
       {/* Footer Pagination */}
-      <div className="px-8 py-5 bg-white border-t border-gray-100 flex items-center justify-between">
+      <div className="px-8 py-6 bg-[#FAFAFA] border-t border-gray-100 flex items-center justify-between">
         <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
           SHOWING 1 - {data.length} OF <span className="text-black">{data.length}</span> ROW(S)
         </div>
         
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-            ROW PER PAGE
-            <select className="bg-transparent border-0 text-[11px] font-black text-black focus:ring-0 cursor-pointer p-0">
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <button className="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-black transition-all">
-              <ChevronsLeft size={16} />
+        <div className="flex items-center gap-2">
+            <button className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
+                <ChevronLeft size={16} />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-black transition-all">
-              <ChevronLeft size={16} />
+            <div className="bg-black text-white w-9 h-9 flex items-center justify-center rounded-xl font-black text-[11px] shadow-xl shadow-black/20">1</div>
+            <button className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
+                <ChevronRight size={16} />
             </button>
-            
-            <div className="px-4 py-1.5 bg-white border border-gray-100 rounded-lg text-[11px] font-black shadow-sm mx-2">
-              1 / 1
-            </div>
-
-            <button className="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-black transition-all">
-              <ChevronRight size={16} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-black transition-all">
-              <ChevronsRight size={16} />
-            </button>
-          </div>
         </div>
       </div>
     </div>

@@ -542,20 +542,6 @@ export interface InsuranceProviderRecord {
   rating: number;
 }
 
-export interface ModenaPodRecord {
-  id: string;
-  lantai: string;
-  jenisKamar: string;
-  nomorKamar: string;
-  namaPenghuni: string;
-  status: 'Available' | 'Occupied'; 
-  statusLokerBarang: string;
-  statusLokerPantry: string;
-  jadwalLaundry: string;
-  keterangan?: string;
-  occupiedBy?: string; 
-}
-
 export interface PodRequestRecord {
   id: string;
   requesterName: string;
@@ -567,16 +553,149 @@ export interface PodRequestRecord {
   roomType: string;
   floorPreference?: string;
   reason?: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Waiting Approval';
+  gender?: 'Pria' | 'Perempuan';
+  isExpat?: boolean;
+  facilities?: {
+      meja: boolean;
+      ac: boolean;
+      kursi: boolean;
+      colokan: boolean;
+      lemari: boolean;
+      cermin: boolean;
+      parkirMotor: boolean;
+      parkirMobil: boolean;
+      kmLuar: boolean;
+      kmDalam: boolean;
+      gym: boolean;
+      pantry: boolean;
+      lokerPantry: boolean;
+      lokerBarang: boolean;
+      kitchen: boolean;
+      laundry: boolean;
+      kolamRenang: boolean;
+  };
+}
+
+export interface PodTransaction {
+    period: string; // e.g., "JAN 2024"
+    rentCost: string;
+    kwh: string;
+    electricityCost: string;
 }
 
 export interface MasterPodRecord {
     id: string;
     lantai: string;
+    gender: 'PRIA' | 'PEREMPUAN';
     jenisKamar: string;
     nomorKamar: string;
-    status: string;
+    kapasitas: number;
+    status: 'ACTIVE' | 'MAINTENANCE' | 'INACTIVE';
     occupiedBy?: string;
+    
+    // Pricing
+    biayaAwal: string;
+    biayaTerbaru: string;
+    
+    // History
+    priceHistory: { date: string; price: string; note: string }[];
+    transactions: PodTransaction[];
+    
+    // Facilities (booleans)
+    facilities: {
+        meja: boolean;
+        ac: boolean;
+        kursi: boolean;
+        colokan: boolean;
+        lemari: boolean;
+        cermin: boolean;
+        parkirMotor: boolean;
+        parkirMobil: boolean;
+        kmLuar: boolean;
+        kmDalam: boolean;
+        gym: boolean;
+        pantry: boolean;
+        lokerPantry: boolean;
+        lokerBarang: boolean;
+        kitchen: boolean;
+        laundry: boolean;
+        kolamRenang: boolean;
+    };
+}
+
+export interface TenantHistory {
+    id: string;
+    period: string;
+    rentCost: string;
+    kwh: string;
+    electricityCost: string;
+    lockerBarangStatus: boolean;
+    lockerPantryStatus: boolean;
+    dateAdded: string;
+}
+
+export interface TenantPodRecord {
+    id: string;
+    // Room Info
+    lantai: string;
+    jenisKamar: string;
+    nomorKamar: string;
+    
+    // Occupant Info
+    namaPenghuni: string;
+    gender: 'Pria' | 'Perempuan';
+    isExpat: boolean;
+    posisi: string;
+    departemen: string;
+    
+    // Facilities & Services
+    jadwalLaundry: string;
+    facilities: {
+        meja: boolean;
+        ac: boolean;
+        kursi: boolean;
+        colokan: boolean;
+        lemari: boolean;
+        cermin: boolean;
+        parkirMotor: boolean;
+        parkirMobil: boolean;
+        kmLuar: boolean;
+        kmDalam: boolean;
+        gym: boolean;
+        pantry: boolean;
+        lokerPantry: boolean;
+        lokerBarang: boolean;
+        kitchen: boolean;
+        laundry: boolean;
+        kolamRenang: boolean;
+    };
+    
+    // Statuses
+    statusLokerBarang: 'Terpakai' | 'Tidak Terpakai' | 'Extra Loker Terpakai' | 'Belum Dapat';
+    statusLokerPantry: 'Terpakai' | 'Tidak Terpakai' | 'Extra Loker Terpakai' | 'Belum Dapat';
+    
+    keterangan?: string;
+    
+    // History
+    history: TenantHistory[];
+}
+
+export interface ModenaPodRecord {
+    id: string;
+    lantai: string;
+    gender?: string;
+    jenisKamar: string;
+    nomorKamar: string;
+    kapasitas?: number;
+    status?: string;
+    biayaAwal?: string;
+    biayaTerbaru?: string;
+    namaPenghuni: string;
+    statusLokerBarang: string;
+    statusLokerPantry: string;
+    jadwalLaundry: string;
+    keterangan?: string;
 }
 
 export interface LockerRecord {

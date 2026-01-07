@@ -5,9 +5,9 @@ import {
     VehicleContractRecord, GeneralMasterItem, UserRecord, BuildingAssetRecord, 
     BuildingMaintenanceRecord, UtilityRecord, GeneralAssetRecord, VendorRecord, 
     TimesheetRecord, ServiceRecord, MutationRecord, SalesRecord, InsuranceRecord, 
-    MaintenanceScheduleRecord, VehicleReminderRecord, LockerRecord, ModenaPodRecord, 
+    MaintenanceScheduleRecord, VehicleReminderRecord, LockerRecord, 
     StockOpnameRecord, LockerRequestRecord, PodRequestRecord, MasterPodRecord, 
-    MasterLockerRecord, InsuranceProviderRecord 
+    MasterLockerRecord, InsuranceProviderRecord, TenantPodRecord
 } from './types';
 
 export const ACTIVITY_TYPES = {
@@ -99,12 +99,123 @@ export const MOCK_INSURANCE_PROVIDERS: InsuranceProviderRecord[] = [
     { id: 1, name: 'AXA Mandiri', contactPerson: 'Budi', phone: '021-555555', email: 'axa@example.com', address: 'Jakarta', rating: 5 },
 ];
 
-export const MOCK_POD_DATA: ModenaPodRecord[] = [
-    { id: 'POD-001', lantai: 'Lt 2 Pria', jenisKamar: 'Single Bed', nomorKamar: '201', namaPenghuni: 'Budi', status: 'Occupied', statusLokerBarang: 'Terpakai', statusLokerPantry: 'Terpakai', jadwalLaundry: 'Senin' },
+export const MOCK_MASTER_POD_DATA: MasterPodRecord[] = [
+    { 
+        id: '1', 
+        lantai: 'LT 2', 
+        gender: 'PRIA',
+        jenisKamar: 'SINGLE BED', 
+        nomorKamar: '201', 
+        kapasitas: 1,
+        status: 'ACTIVE', 
+        biayaAwal: '2250000',
+        biayaTerbaru: '2350000',
+        priceHistory: [
+            { date: '01 JAN 2024', price: '2.350.000', note: 'Penyesuaian Biaya Tahunan' },
+            { date: '15 JUN 2023', price: '2.250.000', note: 'Harga Awal Unit Baru' }
+        ],
+        transactions: [
+            { period: 'JAN 2024', rentCost: '2.250.000', kwh: '152.5', electricityCost: '228.750' },
+            { period: 'DES 2023', rentCost: '2.250.000', kwh: '148', electricityCost: '222.000' }
+        ],
+        facilities: {
+            meja: true, ac: true, kursi: true, colokan: true, lemari: true, cermin: true,
+            parkirMotor: true, parkirMobil: true, kmLuar: false, kmDalam: true,
+            gym: true, pantry: true, lokerPantry: true, lokerBarang: true,
+            kitchen: true, laundry: true, kolamRenang: true
+        }
+    },
+    { 
+        id: '2', 
+        lantai: 'LT 2', 
+        gender: 'PRIA',
+        jenisKamar: 'DOUBLE BED', 
+        nomorKamar: '202', 
+        kapasitas: 2,
+        status: 'ACTIVE', 
+        biayaAwal: '1350000',
+        biayaTerbaru: '1400000',
+        priceHistory: [],
+        transactions: [],
+        facilities: {
+            meja: true, ac: true, kursi: true, colokan: true, lemari: true, cermin: true,
+            parkirMotor: true, parkirMobil: false, kmLuar: true, kmDalam: false,
+            gym: true, pantry: true, lokerPantry: true, lokerBarang: true,
+            kitchen: true, laundry: true, kolamRenang: false
+        }
+    },
+    { 
+        id: '3', 
+        lantai: 'LT 2', 
+        gender: 'PRIA',
+        jenisKamar: 'QUADRUPLE BED', 
+        nomorKamar: '203', 
+        kapasitas: 4,
+        status: 'MAINTENANCE', 
+        biayaAwal: '540000',
+        biayaTerbaru: '650000',
+        priceHistory: [],
+        transactions: [],
+        facilities: {
+            meja: true, ac: true, kursi: true, colokan: true, lemari: true, cermin: false,
+            parkirMotor: true, parkirMobil: false, kmLuar: true, kmDalam: false,
+            gym: false, pantry: true, lokerPantry: true, lokerBarang: true,
+            kitchen: true, laundry: true, kolamRenang: false
+        }
+    },
+    { 
+        id: '4', 
+        lantai: 'LT 3', 
+        gender: 'PEREMPUAN',
+        jenisKamar: 'SINGLE BED', 
+        nomorKamar: '301', 
+        kapasitas: 1,
+        status: 'ACTIVE', 
+        biayaAwal: '2250000',
+        biayaTerbaru: '2350000',
+        priceHistory: [],
+        transactions: [],
+        facilities: {
+            meja: true, ac: true, kursi: true, colokan: true, lemari: true, cermin: true,
+            parkirMotor: true, parkirMobil: true, kmLuar: false, kmDalam: true,
+            gym: true, pantry: true, lokerPantry: true, lokerBarang: true,
+            kitchen: true, laundry: true, kolamRenang: true
+        }
+    },
 ];
 
+// UPDATED: MOCK DATA FOR POD REQUESTS (MATCHING SCREENSHOT)
 export const MOCK_POD_REQUEST_DATA: PodRequestRecord[] = [
-    { id: 'REQ-POD-001', requesterName: 'Andi', department: 'Sales', requestDate: '2024-03-20', roomType: 'Single Bed', status: 'Pending' },
+    { 
+        id: 'REQ/POD/2024/001', 
+        requesterName: 'Aan Junaidi', 
+        requesterRole: 'Technician',
+        department: 'After Sales', 
+        requestDate: '20/03/2024', 
+        roomType: 'Single Bed', 
+        floorPreference: 'LT 2 Pria',
+        status: 'Waiting Approval',
+        gender: 'Pria',
+        isExpat: false,
+        facilities: {
+            meja: true, ac: true, kursi: true, colokan: true, lemari: true, cermin: true,
+            parkirMotor: false, parkirMobil: false, kmLuar: false, kmDalam: true,
+            gym: false, pantry: false, lokerPantry: false, lokerBarang: false,
+            kitchen: false, laundry: false, kolamRenang: false
+        }
+    },
+    {
+        id: 'REQ/POD/2024/002',
+        requesterName: 'Budi Santoso',
+        requesterRole: 'Staff Admin',
+        department: 'HRGA',
+        requestDate: '21/03/2024',
+        roomType: 'Double Bed',
+        floorPreference: 'LT 3 Pria',
+        status: 'Approved',
+        gender: 'Pria',
+        isExpat: false
+    }
 ];
 
 export const MOCK_LOCKER_DATA: LockerRecord[] = [
@@ -256,5 +367,102 @@ export const MOCK_STOCK_OPNAME_DATA: StockOpnameRecord[] = [
         diff: 5, 
         performedBy: 'Budi Santoso', 
         status: 'DISCREPANCY' 
+    }
+];
+
+export const MOCK_TENANT_POD_DATA: TenantPodRecord[] = [
+    {
+        id: '1',
+        lantai: 'Lt 2 Pria',
+        jenisKamar: 'Single Bed',
+        nomorKamar: '211',
+        namaPenghuni: 'Gian Nanda Pratama',
+        gender: 'Pria',
+        isExpat: false,
+        posisi: 'Technician Team Leader',
+        departemen: 'After Sales',
+        jadwalLaundry: '-',
+        facilities: {
+            meja: true, ac: true, kursi: true, colokan: true, lemari: true, cermin: true,
+            parkirMotor: true, parkirMobil: false, kmLuar: false, kmDalam: true,
+            gym: true, pantry: true, lokerPantry: true, lokerBarang: true,
+            kitchen: true, laundry: true, kolamRenang: true
+        },
+        statusLokerBarang: 'Terpakai',
+        statusLokerPantry: 'Tidak Terpakai',
+        keterangan: 'isi',
+        history: [
+            { id: 'h1', period: 'Des 2023', rentCost: '2250000', kwh: '145', electricityCost: '217500', lockerBarangStatus: true, lockerPantryStatus: true, dateAdded: '2023-12-25' },
+            { id: 'h2', period: 'Jan 2024', rentCost: '2250000', kwh: '160', electricityCost: '240000', lockerBarangStatus: true, lockerPantryStatus: true, dateAdded: '2024-01-25' }
+        ]
+    },
+    {
+        id: '2',
+        lantai: 'Lt 3 Pria',
+        jenisKamar: 'Quadruple Bed',
+        nomorKamar: '317 B',
+        namaPenghuni: 'Sung Yong Hong',
+        gender: 'Pria',
+        isExpat: true,
+        posisi: 'Expert Engineer',
+        departemen: 'Production',
+        jadwalLaundry: 'Tidak Ada',
+        facilities: {
+            meja: true, ac: true, kursi: true, colokan: true, lemari: true, cermin: false,
+            parkirMotor: false, parkirMobil: true, kmLuar: true, kmDalam: false,
+            gym: false, pantry: true, lokerPantry: true, lokerBarang: true,
+            kitchen: true, laundry: false, kolamRenang: false
+        },
+        statusLokerBarang: 'Extra Loker Terpakai',
+        statusLokerPantry: 'Extra Loker Terpakai',
+        keterangan: 'kosong kunci gada',
+        history: []
+    },
+    {
+        id: '3',
+        lantai: 'Lt 3 Pria',
+        jenisKamar: 'Quadruple Bed',
+        nomorKamar: '318 A',
+        namaPenghuni: 'Dani Rizky Nugraha',
+        gender: 'Pria',
+        isExpat: false,
+        posisi: 'Staff',
+        departemen: 'After Sales',
+        jadwalLaundry: 'Selasa & Jumat',
+        facilities: {
+            meja: true, ac: true, kursi: true, colokan: true, lemari: true, cermin: true,
+            parkirMotor: true, parkirMobil: false, kmLuar: true, kmDalam: false,
+            gym: true, pantry: true, lokerPantry: true, lokerBarang: true,
+            kitchen: true, laundry: true, kolamRenang: false
+        },
+        statusLokerBarang: 'Terpakai',
+        statusLokerPantry: 'Belum Dapat',
+        keterangan: 'isi',
+        history: [
+            { id: 'h3', period: 'Des 2023', rentCost: '2250000', kwh: '145', electricityCost: '217500', lockerBarangStatus: true, lockerPantryStatus: true, dateAdded: '2023-12-25' },
+            { id: 'h4', period: 'Jan 2024', rentCost: '2250000', kwh: '160', electricityCost: '240000', lockerBarangStatus: true, lockerPantryStatus: true, dateAdded: '2024-01-25' }
+        ]
+    },
+    {
+        id: '4',
+        lantai: 'Lt 3 Perempuan',
+        jenisKamar: 'Single Bed',
+        nomorKamar: '322',
+        namaPenghuni: 'R.A Putri Minang Permatasari',
+        gender: 'Perempuan',
+        isExpat: false,
+        posisi: 'Senior Staff',
+        departemen: 'Finance',
+        jadwalLaundry: 'Senin & Kamis',
+        facilities: {
+            meja: true, ac: true, kursi: true, colokan: true, lemari: true, cermin: true,
+            parkirMotor: false, parkirMobil: false, kmLuar: false, kmDalam: true,
+            gym: false, pantry: true, lokerPantry: true, lokerBarang: true,
+            kitchen: true, laundry: true, kolamRenang: false
+        },
+        statusLokerBarang: 'Terpakai',
+        statusLokerPantry: 'Terpakai',
+        keterangan: 'isi',
+        history: []
     }
 ];

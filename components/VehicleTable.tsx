@@ -14,10 +14,10 @@ interface Props {
 export const VehicleTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, onAction }) => {
   const getApprovalBadge = (status: string) => {
       const s = (status || 'Approved').toLowerCase();
-      if(s.includes('pending')) return <span className="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.1em] bg-orange-50 text-orange-600 border border-orange-200">Pending Approval</span>;
-      if(s.includes('rejected')) return <span className="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.1em] bg-red-50 text-red-600 border border-red-200">Rejected</span>;
-      if(s.includes('revised')) return <span className="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.1em] bg-blue-50 text-blue-600 border border-blue-200">Revised</span>;
-      return <span className="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.1em] bg-[#E8FDF5] text-[#059669] border border-[#10B981]/20">Approved</span>;
+      if(s.includes('pending')) return <span className="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-orange-50 text-orange-600 border border-orange-200">Pending</span>;
+      if(s.includes('rejected')) return <span className="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-red-50 text-red-600 border border-red-200">Rejected</span>;
+      if(s.includes('revised')) return <span className="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-200">Revised</span>;
+      return <span className="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-[#E8FDF5] text-[#059669] border border-[#10B981]/20">Approved</span>;
   }
 
   const renderWorkflowActions = (item: VehicleRecord) => {
@@ -33,15 +33,15 @@ export const VehicleTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, 
       }
       return (
           <div className="text-center">
-              <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic">
-                  WORKFLOW COMPLETED
+              <span className="text-[9px] font-black text-gray-300 uppercase tracking-widest italic">
+                  COMPLETED
               </span>
           </div>
       );
   };
 
   return (
-    <div className="bg-white rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden transition-all duration-500">
+    <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden transition-all duration-500">
       <div className="overflow-x-auto custom-scrollbar">
         <table className="w-full min-w-[1600px] text-left border-collapse">
           <thead>
@@ -49,40 +49,40 @@ export const VehicleTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, 
               <th className="p-6 pl-8 w-16 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">#</th>
               <th className="p-6 w-40 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">No. Registrasi</span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">REGISTRATION</span>
                   <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors"/>
                 </div>
               </th>
               <th className="p-6 w-56 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black text-black uppercase tracking-[0.15em]">Vehicle Info</span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">VEHICLE INFO</span>
                   <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors"/>
                 </div>
               </th>
               <th className="p-6 w-40 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black text-black uppercase tracking-[0.15em]">Ownership</span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">OWNERSHIP</span>
                   <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors"/>
                 </div>
               </th>
               <th className="p-6 w-40 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black text-black uppercase tracking-[0.15em]">License Plate</span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">LICENSE PLATE</span>
                   <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors"/>
                 </div>
               </th>
               <th className="p-6 w-36 group cursor-pointer hover:bg-gray-100 transition-colors">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black text-black uppercase tracking-[0.15em]">Branch</span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">BRANCH</span>
                   <ChevronsUpDown size={12} className="text-gray-300 group-hover:text-black transition-colors"/>
                 </div>
               </th>
-              <th className="p-6 w-36 text-center text-[10px] font-black text-black uppercase tracking-[0.15em]">Approval</th>
-              <th className="p-6 w-56 text-center text-[10px] font-black text-black uppercase tracking-[0.15em]">Workflow Actions</th>
-              <th className="p-6 w-32 text-center text-[10px] font-black text-black uppercase tracking-[0.15em]">Action</th>
+              <th className="p-6 w-36 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">APPROVAL</th>
+              <th className="p-6 w-56 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">WORKFLOW</th>
+              <th className="p-6 w-32 text-center pr-8 text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">ACTION</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody className="divide-y divide-gray-50 text-[12px]">
             {data.map((item, index) => (
               <tr 
                 key={item.id} 
@@ -139,7 +139,7 @@ export const VehicleTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, 
                 <td className="p-6 text-center">
                     {renderWorkflowActions(item)}
                 </td>
-                <td className="p-6 text-center">
+                <td className="p-6 text-center pr-8">
                     <div className="flex items-center justify-center gap-2">
                         <button onClick={(e) => { e.stopPropagation(); onView?.(item); }} className="p-2 text-gray-300 hover:text-black bg-white hover:bg-gray-100 rounded-xl transition-all border border-transparent hover:border-gray-200"><Eye size={16} /></button>
                         <button onClick={(e) => { e.stopPropagation(); onEdit?.(item); }} className="p-2 text-gray-300 hover:text-blue-600 bg-white hover:bg-blue-50 rounded-xl transition-all border border-transparent hover:border-blue-100"><Pencil size={16} /></button>
@@ -159,11 +159,11 @@ export const VehicleTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, 
             </div>
             
             <div className="flex items-center gap-2">
-                 <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
+                 <button className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
                     <ChevronLeft size={16} />
                  </button>
-                 <div className="bg-black text-white w-10 h-10 flex items-center justify-center rounded-xl font-black text-[11px] shadow-xl shadow-black/20">1</div>
-                 <button className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
+                 <div className="bg-black text-white w-9 h-9 flex items-center justify-center rounded-xl font-black text-[11px] shadow-xl shadow-black/20">1</div>
+                 <button className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">
                     <ChevronRight size={16} />
                  </button>
             </div>

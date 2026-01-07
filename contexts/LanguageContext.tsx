@@ -55,8 +55,9 @@ const translations: Record<string, Record<Language, string>> = {
   'Request Locker': { id: 'Permintaan Loker', en: 'Locker Request' },
 
   // Pod
-  'Pod Census': { id: 'Sensus Pod', en: 'Pod Census' },
   'Request MODENA Pod': { id: 'Permintaan Pod', en: 'Pod Request' },
+  'Master Pod': { id: 'Master Pod', en: 'Master Pod' },
+  'Tenant Pod': { id: 'Tenant Pod', en: 'Tenant Pod' },
 
   // General Asset
   'Asset HC': { id: 'Aset HC', en: 'HC Asset' },

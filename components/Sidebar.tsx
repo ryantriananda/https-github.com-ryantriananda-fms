@@ -6,7 +6,7 @@ import {
   Box, House, Settings, UserCog, Zap, ShieldCheck, Package, List, Monitor, Tag, 
   MapPin, Scale, CreditCard, Layers, Palette, Landmark, Component, Percent, Radio, 
   Stamp, RefreshCw, Sliders, CheckCircle2, Headset, Gavel, FileBadge, Hammer, Shield, 
-  FileSpreadsheet, Grid, ClipboardList, Lock, Umbrella, AlertTriangle
+  FileSpreadsheet, Grid, ClipboardList, Lock, Umbrella, AlertTriangle, Bed
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -84,7 +84,7 @@ export const Sidebar: React.FC<Props> = ({
               // Vehicle
               'Kendaraan', 'Daftar Kendaraan', 'Pajak & KIR', // View only ideally
               // Pod & Locker
-              'MODENA Pod', 'Request MODENA Pod',
+              'MODENA Pod', 'Permintaan Pod', 'Tenant Pod',
               'Loker', 'Request Locker',
               // Timesheet
               'Timesheet'
@@ -173,8 +173,10 @@ export const Sidebar: React.FC<Props> = ({
         label: 'MODENA Pod',
         icon: <Grid size={20} />,
         subItems: [
-            { label: 'Pod Census', icon: <Home size={16} /> },
-            { label: 'Request MODENA Pod', icon: <FileText size={16} /> },
+            { label: 'Permintaan Pod', icon: <FileText size={16} /> },
+            { label: 'Persetujuan Pod', icon: <CheckCircle2 size={16} /> },
+            { label: 'Tenant Pod', icon: <Users size={16} /> },
+            { label: 'Master Pod', icon: <Bed size={16} /> },
         ]
     },
     {
@@ -229,6 +231,7 @@ export const Sidebar: React.FC<Props> = ({
       subItems: [
         { label: 'Master Approval', icon: <CheckCircle2 size={16} /> },
         { label: 'Master Vendor', icon: <Users size={16} /> },
+        { label: 'Master Pod', icon: <Bed size={16} /> },
         { label: 'Master PPN', icon: <Percent size={16} /> },
         { label: 'Master Brand Type', icon: <Stamp size={16} /> },
         { label: 'Master Brand', icon: <Tag size={16} /> },
