@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { X, Save, List, Calendar, CheckCircle, FileText, User, Package, MapPin, History, Check, XCircle, Clock, Users, MessageSquare, Send, Trash2, ChevronDown, Plus, RotateCcw, Edit3, Layers, Mail, Smartphone, CreditCard, Baby, Minus, CheckCircle2, GitBranch, Shield } from 'lucide-react';
 import { VehicleRecord, LogBookRecord, AssetRecord, StationeryRequestRecord, StationeryRequestItem, MasterPodRecord, MasterLockerRecord } from '../types';
-import { MOCK_MASTER_DATA, MOCK_MASTER_ARK_DATA, MOCK_ATK_CATEGORY, MOCK_ARK_CATEGORY, MOCK_UOM_DATA, MOCK_REQUEST_TYPES } from '../constants';
+import { MOCK_MASTER_DATA, MOCK_MASTER_ARK_DATA, MOCK_ATK_CATEGORY, MOCK_ARK_CATEGORY, MOCK_UOM_DATA } from '../constants';
 
 interface Props {
   isOpen: boolean;
@@ -40,7 +40,7 @@ export const AddStockModal: React.FC<Props> = ({
   // ATK / ARK State
   const [activeTab, setActiveTab] = useState('DETAILS');
   const [stationeryRequestForm, setStationeryRequestForm] = useState<Partial<StationeryRequestRecord>>({
-      type: 'DAILY REQUEST',
+      type: 'Daily Request',
       deliveryType: 'PICKUP HO',
       location: 'MODENA Head Office',
       date: new Date().toISOString().split('T')[0],
@@ -120,7 +120,7 @@ export const AddStockModal: React.FC<Props> = ({
           // ATK/ARK Logic
           if ((mode === 'view' || mode === 'approve') && initialAssetData) {
               setStationeryRequestForm({
-                  type: 'DAILY REQUEST',
+                  type: 'Daily Request',
                   date: initialAssetData.date,
                   remarks: initialAssetData.itemDescription || 'Permintaan rutin operasional.',
                   deliveryType: 'PICKUP HO',
@@ -136,7 +136,7 @@ export const AddStockModal: React.FC<Props> = ({
               }]);
           } else {
               setStationeryRequestForm({ 
-                  type: 'DAILY REQUEST', 
+                  type: 'Daily Request', 
                   deliveryType: 'PICKUP HO', 
                   location: 'MODENA Head Office', 
                   date: new Date().toISOString().split('T')[0],
@@ -454,20 +454,13 @@ export const AddStockModal: React.FC<Props> = ({
                       </div>
                       <div>
                           <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">REQUEST TYPE</label>
-                          <div className="relative">
-                              <select 
-                                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-bold text-black focus:border-black outline-none shadow-sm appearance-none cursor-pointer uppercase"
-                                  value={stationeryRequestForm.type}
-                                  onChange={(e) => handleStationeryRequestChange('type', e.target.value)}
-                                  disabled={isFormDisabled}
-                              >
-                                  <option value="">Select Type</option>
-                                  {MOCK_REQUEST_TYPES.map(rt => (
-                                      <option key={rt.id} value={rt.name}>{rt.name}</option>
-                                  ))}
-                              </select>
-                              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                          </div>
+                          <input 
+                              type="text"
+                              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-bold text-black focus:border-black outline-none shadow-sm"
+                              value={stationeryRequestForm.type}
+                              onChange={(e) => handleStationeryRequestChange('type', e.target.value)}
+                              disabled={isFormDisabled}
+                          />
                       </div>
                   </div>
                   <div>
@@ -532,7 +525,7 @@ export const AddStockModal: React.FC<Props> = ({
                               if (isViewMode && !selectedProduct && initialAssetData) {
                                   displayCategory = initialAssetData.category;
                                   displayItemName = initialAssetData.itemName;
-                                  displayItemCode = '-';
+                                  displayItemCode = initialAssetData.itemCode || '-';
                               }
 
                               return (

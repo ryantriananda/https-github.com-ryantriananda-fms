@@ -37,10 +37,11 @@ export const VehicleContractModal: React.FC<Props> = ({
 
   const [activeTab, setActiveTab] = useState('DETAILS');
   const [form, setForm] = useState<Partial<VehicleContractRecord>>({
-    status: 'Active',
+    status: 'Aktif',
     biayaSewa: '0',
     channel: 'Human Capital Operation',
     cabang: 'Pusat',
+    ownership: 'Sewa',
     approvalStatus: 'Pending'
   });
 
@@ -64,10 +65,11 @@ export const VehicleContractModal: React.FC<Props> = ({
         });
       } else {
         setForm({ 
-            status: 'Active', 
+            status: 'Aktif', 
             biayaSewa: '0', 
             channel: 'Human Capital Operation', 
             cabang: 'Pusat',
+            ownership: 'Sewa',
             tglMulai: new Date().toISOString().split('T')[0],
             approvalStatus: 'Pending'
         });

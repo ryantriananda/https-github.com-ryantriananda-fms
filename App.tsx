@@ -989,7 +989,7 @@ export const App: React.FC = () => {
       case 'Asset HC':
       case 'Asset IT':
       case 'Customer Service':
-          const filteredGA = generalAssets.filter(g => g.assetCategory?.includes(activeItem.split(' ')[1]));
+          const filteredGA = generalAssets.filter(g => activeItem === 'General Asset' ? true : g.assetCategory?.includes(activeItem.split(' ')[1]));
           return (
               <>
                   <FilterBar tabs={['SEMUA', 'OWN', 'RENT', 'DISPOSED']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('GENERAL_ASSET', 'create')} customAddLabel={`Request ${activeItem}`} onImportClick={handleOpenImport}/>
@@ -1160,7 +1160,6 @@ export const App: React.FC = () => {
                     activeTab={activeTab} 
                     onTabChange={setActiveTab} 
                     hideAdd={true} 
-                    onAddClick={() => {}}
                   />
                   <LockerRequestTable 
                     data={lockerRequests.filter(r => {
@@ -1370,7 +1369,6 @@ export const App: React.FC = () => {
       <AddStockModal 
         isOpen={modalState.isOpen && (['ATK_REQUEST', 'ARK_REQUEST', 'ATK_APPROVAL', 'ARK_APPROVAL', 'LOGBOOK'].includes(modalState.type))}
         onClose={closeModal}
-        onSave={() => {}}
         moduleName={modalState.type.includes('ATK') ? 'ATK' : modalState.type.includes('ARK') ? 'ARK' : 'Log Book'}
         mode={modalState.mode}
         initialAssetData={modalState.type.includes('APPROVAL') || modalState.type.includes('REQUEST') ? modalState.data : undefined}

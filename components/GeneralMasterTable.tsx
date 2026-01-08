@@ -6,7 +6,7 @@ import { Pencil, Trash2, ChevronLeft, ChevronRight, MoreHorizontal, Car, Truck, 
 interface Props {
   data: GeneralMasterItem[];
   onEdit: (item: GeneralMasterItem) => void;
-  onDelete: (id: number | string) => void;
+  onDelete: (id: number) => void;
   title?: string;
 }
 

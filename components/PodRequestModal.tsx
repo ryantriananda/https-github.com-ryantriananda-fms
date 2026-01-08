@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, Send, Calendar, MapPin, User, MessageSquare, Bed, Save, CheckCircle2, XCircle, Briefcase, Mail, Phone, Monitor, Wind, Zap, Box, Lock, Droplets, Utensils, Shirt, Waves, Home, Layers, Check } from 'lucide-react';
 import { PodRequestRecord, UserRecord } from '../types';
@@ -75,7 +76,7 @@ export const PodRequestModal: React.FC<Props> = ({
             roomType: 'SINGLE BED',
             status: 'Pending',
             requesterName: currentUser?.name || 'AAN JUNAIDI',
-            departemen: currentUser?.department || 'AFTER SALES',
+            department: currentUser?.department || 'AFTER SALES',
             requesterRole: currentUser?.role || 'TECHNICIAN',
             gender: 'Pria',
             isExpat: false,
@@ -95,235 +96,285 @@ export const PodRequestModal: React.FC<Props> = ({
   const isView = mode === 'view';
   const isApprove = mode === 'approve';
 
-  const Label = ({ children }: { children?: React.ReactNode }) => (
-    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5 ml-1">
-      {children}
-    </label>
-  );
-
-  const SectionHeader = ({ icon: Icon, title }: { icon: any, title: string }) => (
-    <div className="flex items-center gap-3 mb-6">
-        <Icon size={16} className="text-black" />
-        <h3 className="text-[11px] font-black text-black uppercase tracking-[0.2em]">{title}</h3>
-    </div>
-  );
-
-  const InputField = ({ label, value, onChange, placeholder, disabled, className }: any) => (
-    <div className={className}>
-        <Label>{label}</Label>
-        <input 
-            type="text"
-            className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 placeholder:text-gray-300 transition-all shadow-inner uppercase disabled:opacity-50"
-            placeholder={placeholder}
-            value={value || ''}
-            onChange={(e) => onChange(e.target.value)}
-            disabled={disabled || isView || isApprove}
-        />
-    </div>
-  );
-
-  const toggleFacility = (key: keyof NonNullable<PodRequestRecord['facilities']>) => {
-      if (isView || isApprove) return;
-      setForm(prev => ({
-          ...prev,
-          facilities: {
-              ...prev.facilities!,
-              [key]: !prev.facilities![key]
-          }
-      }));
+  const toggleFacility = (key: keyof typeof form.facilities) => {
+    if (isView || isApprove) return;
+    setForm(prev => ({
+        ...prev,
+        facilities: {
+            ...prev.facilities!,
+            [key]: !prev.facilities![key]
+        }
+    }));
   };
 
+  const Label = ({ children, icon: Icon }: { children?: React.ReactNode, icon?: any }) => (
+    <div className="flex items-center gap-2 mb-2">
+        {Icon && <Icon size={12} className="text-black" />}
+        <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">
+            {children}
+        </label>
+    </div>
+  );
+
   return (
-    <div className="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center backdrop-blur-sm p-4 animate-in fade-in duration-300">
-      <div className="bg-white w-full max-w-6xl rounded-[3rem] shadow-2xl overflow-hidden flex flex-col transform transition-all scale-100 max-h-[95vh] animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center backdrop-blur-[2px] p-4 animate-in fade-in duration-200">
+      <div className="bg-[#F8F9FA] w-full max-w-6xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all scale-100 max-h-[95vh]">
         
         {/* Header */}
-        <div className="px-12 py-8 bg-white border-b border-gray-100 flex items-center justify-between shrink-0">
+        <div className="px-10 py-8 bg-white border-b border-gray-100 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-5">
-              <div className="w-14 h-14 bg-black rounded-[1.2rem] flex items-center justify-center text-white shadow-xl shadow-black/20">
-                  <Home size={24} strokeWidth={2.5} />
+              <div className="w-12 h-12 bg-black rounded-[1rem] flex items-center justify-center text-white shadow-xl shadow-black/20">
+                  <Home size={22} strokeWidth={2.5} />
               </div>
               <div>
-                  <h2 className="text-[20px] font-black text-black uppercase tracking-tight leading-none">
-                    {mode === 'create' ? 'AJUKAN PERMINTAAN POD' : mode === 'approve' ? 'PERSETUJUAN PERMINTAAN POD' : 'DETAIL PERMINTAAN POD'}
+                  <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
+                    {mode === 'create' ? 'TAMBAH DATA PERMINTAAN POD' : mode === 'approve' ? 'PERSETUJUAN PERMINTAAN POD' : 'DETAIL DATA PERMINTAAN POD'}
                   </h2>
-                  <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">FORMULIR PENGAJUAN UNIT HUNIAN POD</p>
+                  <p className="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-[0.2em]">
+                      {mode === 'create' ? 'FORMULIR PENGAJUAN HUNIAN POD BARU' : mode === 'approve' ? 'TINJAU DAN BERIKAN KEPUTUSAN' : 'INFORMASI PENGAJUAN HUNIAN POD'}
+                  </p>
               </div>
           </div>
-          <button onClick={onClose} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-100 transition-all">
+          <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
             <X size={24} />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-12 overflow-y-auto custom-scrollbar flex-1 bg-[#FBFBFB]">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div className="p-10 overflow-y-auto custom-scrollbar flex-1 bg-[#FBFBFB]">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 
-                {/* Section: Requester Info */}
-                <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm h-full">
-                    <SectionHeader icon={User} title="INFORMASI PEMOHON" />
-                    <div className="space-y-6">
-                        <InputField 
-                            label="NAMA LENGKAP" 
-                            value={form.requesterName} 
-                            onChange={(val: string) => setForm({...form, requesterName: val})}
-                            placeholder="MASUKKAN NAMA LENGKAP..."
-                        />
-                        <div className="grid grid-cols-2 gap-6">
-                            <InputField label="POSISI" value={form.requesterRole} onChange={(val: string) => setForm({...form, requesterRole: val})} placeholder="JABATAN" />
-                            <InputField label="DEPARTEMEN" value={form.departemen} onChange={(val: string) => setForm({...form, departemen: val})} placeholder="DEPARTEMEN" />
+                {/* Left Column: Preferences */}
+                <div className="space-y-8">
+                     <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Layers size={16} className="text-black" />
+                            <h3 className="text-[12px] font-black text-black uppercase tracking-[0.2em]">PREFERENSI KAMAR</h3>
                         </div>
-                        <div className="grid grid-cols-2 gap-6">
-                             <div>
+                        
+                        <div className="space-y-6">
+                            <div>
+                                <Label>JENIS KAMAR</Label>
+                                <div className="relative">
+                                    <select 
+                                        disabled={isView || isApprove}
+                                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 appearance-none cursor-pointer uppercase"
+                                        value={form.roomType}
+                                        onChange={(e) => setForm({...form, roomType: e.target.value})}
+                                    >
+                                        <option value="SINGLE BED">SINGLE BED</option>
+                                        <option value="DOUBLE BED">DOUBLE BED</option>
+                                        <option value="QUADRUPLE BED">QUADRUPLE BED</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div className="flex justify-between items-center mb-2">
+                                    <Label>LANTAI (OPSIONAL)</Label>
+                                    {isApprove && <span className="text-[8px] font-bold text-blue-500 italic uppercase">- EDITABLE DURING APPROVAL</span>}
+                                </div>
+                                <div className="relative">
+                                    <select 
+                                        disabled={isView} // Allow editing in Approve mode for allocation
+                                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 appearance-none cursor-pointer uppercase"
+                                        value={form.floorPreference}
+                                        onChange={(e) => setForm({...form, floorPreference: e.target.value})}
+                                    >
+                                        <option value="LT 2 PRIA">LT 2 PRIA</option>
+                                        <option value="LT 2 PEREMPUAN">LT 2 PEREMPUAN</option>
+                                        <option value="LT 3 PRIA">LT 3 PRIA</option>
+                                        <option value="LT 3 PEREMPUAN">LT 3 PEREMPUAN</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
                                 <Label>JENIS KELAMIN</Label>
-                                <div className="flex gap-2">
-                                    {['Pria', 'Perempuan'].map(g => (
-                                        <button
-                                            key={g}
-                                            onClick={() => !(isView || isApprove) && setForm({...form, gender: g as any})}
-                                            className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                                                form.gender === g ? 'bg-black text-white shadow-md' : 'bg-[#F8F9FA] text-gray-400'
-                                            }`}
-                                        >
-                                            {g}
-                                        </button>
-                                    ))}
-                                </div>
-                             </div>
-                             <div>
-                                <Label>TIPE PEKERJA</Label>
-                                <div className="flex gap-2">
+                                <div className="flex gap-3">
                                     <button
-                                        onClick={() => !(isView || isApprove) && setForm({...form, isExpat: true})}
-                                        className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                                            form.isExpat ? 'bg-black text-white shadow-md' : 'bg-[#F8F9FA] text-gray-400'
+                                        onClick={() => !isView && !isApprove && setForm({...form, gender: 'Pria'})}
+                                        disabled={isView || isApprove}
+                                        className={`flex-1 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                                            form.gender === 'Pria' 
+                                            ? 'bg-black text-white shadow-lg' 
+                                            : 'bg-[#F8F9FA] text-gray-400 hover:bg-gray-100'
                                         }`}
                                     >
-                                        EXPAT
+                                        PRIA
                                     </button>
                                     <button
-                                        onClick={() => !(isView || isApprove) && setForm({...form, isExpat: false})}
-                                        className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                                            !form.isExpat ? 'bg-black text-white shadow-md' : 'bg-[#F8F9FA] text-gray-400'
+                                        onClick={() => !isView && !isApprove && setForm({...form, gender: 'Perempuan'})}
+                                        disabled={isView || isApprove}
+                                        className={`flex-1 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                                            form.gender === 'Perempuan' 
+                                            ? 'bg-black text-white shadow-lg' 
+                                            : 'bg-[#F8F9FA] text-gray-400 hover:bg-gray-100'
                                         }`}
                                     >
-                                        NON-EXPAT
+                                        PEREMPUAN
                                     </button>
                                 </div>
-                             </div>
+                            </div>
                         </div>
-                    </div>
+                     </div>
+
+                     {/* Facilities Grid */}
+                     <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Zap size={16} className="text-black" />
+                            <h3 className="text-[12px] font-black text-black uppercase tracking-[0.2em]">FASILITAS KAMAR ({form.roomType})</h3>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-3">
+                            {FACILITIES_CONFIG.slice(0, 8).map((fac) => {
+                                const isActive = form.facilities?.[fac.key as keyof typeof form.facilities];
+                                return (
+                                    <button
+                                        key={fac.key}
+                                        onClick={() => toggleFacility(fac.key as any)}
+                                        disabled={isView || isApprove}
+                                        className={`flex items-center gap-3 p-4 rounded-2xl transition-all text-left group ${
+                                            isActive 
+                                            ? 'bg-[#F8F9FA] text-black border border-gray-100 shadow-sm' 
+                                            : 'bg-white text-gray-300 border border-transparent opacity-50'
+                                        }`}
+                                    >
+                                        <fac.icon size={16} className={isActive ? 'text-black' : 'text-gray-300'} />
+                                        <span className="text-[10px] font-black uppercase tracking-tight">
+                                            {fac.label}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                     </div>
                 </div>
 
-                {/* Section: Preference Info */}
-                <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm h-full">
-                    <SectionHeader icon={Layers} title="PREFERENSI UNIT" />
-                    <div className="space-y-6">
+                {/* Right Column: Requester Details */}
+                <div className="bg-white p-10 rounded-[2rem] border border-gray-100 shadow-sm h-full">
+                    <div className="flex items-center gap-3 mb-8">
+                        <User size={16} className="text-black" />
+                        <h3 className="text-[12px] font-black text-black uppercase tracking-[0.2em]">DETAIL PEMOHON</h3>
+                    </div>
+
+                    <div className="space-y-8">
+                        <div>
+                            <Label>NAMA LENGKAP</Label>
+                            <div className="relative">
+                                <input 
+                                    type="text" 
+                                    disabled={isView || isApprove}
+                                    className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 pl-14 text-[13px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 placeholder:text-gray-300 transition-all uppercase"
+                                    placeholder="MASUKKAN NAMA LENGKAP..."
+                                    value={form.requesterName}
+                                    onChange={(e) => setForm({...form, requesterName: e.target.value})}
+                                />
+                                <User size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300" />
+                            </div>
+                        </div>
+
                         <div className="grid grid-cols-2 gap-6">
                             <div>
-                                <Label>LANTAI PREFERENSI</Label>
-                                <select 
-                                    className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none appearance-none uppercase shadow-inner"
-                                    value={form.floorPreference}
-                                    onChange={(e) => setForm({...form, floorPreference: e.target.value})}
-                                    disabled={isView || isApprove}
-                                >
-                                    <option value="LT 2 PRIA">LT 2 PRIA</option>
-                                    <option value="LT 2 PEREMPUAN">LT 2 PEREMPUAN</option>
-                                    <option value="LT 3 PRIA">LT 3 PRIA</option>
-                                    <option value="LT 3 PEREMPUAN">LT 3 PEREMPUAN</option>
-                                </select>
+                                <Label>POSISI</Label>
+                                <div className="relative">
+                                    <input 
+                                        type="text" 
+                                        disabled={isView || isApprove}
+                                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 pl-14 text-[11px] font-black text-black outline-none uppercase"
+                                        placeholder="CONTOH: TECHNICIAN"
+                                        value={form.requesterRole}
+                                        onChange={(e) => setForm({...form, requesterRole: e.target.value})}
+                                    />
+                                    <Briefcase size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300" />
+                                </div>
                             </div>
                             <div>
-                                <Label>TIPE KAMAR</Label>
-                                <select 
-                                    className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none appearance-none uppercase shadow-inner"
-                                    value={form.roomType}
-                                    onChange={(e) => setForm({...form, roomType: e.target.value})}
-                                    disabled={isView || isApprove}
-                                >
-                                    <option value="SINGLE BED">SINGLE BED</option>
-                                    <option value="DOUBLE BED">DOUBLE BED</option>
-                                    <option value="QUADRUPLE BED">QUADRUPLE BED</option>
-                                </select>
+                                <Label>DEPARTEMEN</Label>
+                                <div className="relative">
+                                    <input 
+                                        type="text" 
+                                        disabled={isView || isApprove}
+                                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 pl-14 text-[11px] font-black text-black outline-none uppercase"
+                                        placeholder="CONTOH: AFTER SALES"
+                                        value={form.department}
+                                        onChange={(e) => setForm({...form, department: e.target.value})}
+                                    />
+                                    <MapPin size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300" />
+                                </div>
                             </div>
                         </div>
+
                         <div>
-                            <Label>ALASAN PENGAJUAN</Label>
-                            <textarea 
-                                className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 text-[12px] font-medium text-black outline-none resize-none min-h-[120px] shadow-inner"
-                                placeholder="Jelaskan kebutuhan hunian anda..."
-                                value={form.reason}
-                                onChange={(e) => setForm({...form, reason: e.target.value})}
-                                disabled={isView || isApprove}
-                            />
+                            <Label>EMAIL</Label>
+                            <div className="relative">
+                                <input 
+                                    type="email" 
+                                    disabled={isView || isApprove}
+                                    className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 pl-14 text-[13px] font-black text-black outline-none uppercase"
+                                    placeholder="CONTOH@EMAIL.COM"
+                                    value={form.email || 'AAN.JUNAIDI@MODENA.COM'} 
+                                    readOnly={true} // Mock read only
+                                />
+                                <Mail size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300" />
+                            </div>
                         </div>
+
+                        <div>
+                            <Label>NOMOR HP</Label>
+                            <div className="relative">
+                                <input 
+                                    type="text" 
+                                    disabled={isView || isApprove}
+                                    className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 pl-14 text-[13px] font-black text-black outline-none uppercase"
+                                    placeholder="0812XXXX..."
+                                    value={form.phone || '081234567890'}
+                                    readOnly={true} // Mock read only
+                                />
+                                <Phone size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300" />
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-            </div>
 
-            {/* Facilities Checklist Section */}
-            <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm mb-12">
-                <SectionHeader icon={Zap} title="FASILITAS YANG DIBUTUHKAN" />
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {FACILITIES_CONFIG.map((fac) => {
-                        const isActive = form.facilities?.[fac.key as keyof typeof form.facilities];
-                        return (
-                            <button
-                                key={fac.key}
-                                onClick={() => toggleFacility(fac.key as any)}
-                                disabled={isView || isApprove}
-                                className={`flex items-center justify-between p-4 rounded-xl border transition-all text-left group ${
-                                    isActive 
-                                    ? 'bg-black border-black text-white shadow-md' 
-                                    : 'bg-[#F8F9FA] border-transparent text-gray-400 hover:border-gray-200'
-                                }`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <fac.icon size={14} className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-600'} />
-                                    <span className={`text-[9px] font-black uppercase tracking-tight ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-black'}`}>
-                                        {fac.label}
-                                    </span>
-                                </div>
-                                {isActive && <Check size={12} />}
-                            </button>
-                        );
-                    })}
-                </div>
             </div>
         </div>
 
         {/* Footer */}
-        <div className="px-12 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
+        <div className="px-10 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
+          
           {isApprove ? (
+            // Approval Mode Footer
             <>
-                <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.25em] text-gray-400 bg-white border border-gray-200 rounded-[1.2rem] hover:bg-gray-50 transition-all">
-                    CANCEL
+                <button onClick={onClose} className="px-10 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all">
+                    BATAL
                 </button>
                 <button 
-                    onClick={() => onSave({...form, status: 'Rejected'})} 
-                    className="px-16 py-4 text-[11px] font-black uppercase tracking-[0.25em] text-white bg-red-600 rounded-[1.2rem] hover:bg-red-700 shadow-xl shadow-red-200 transition-all active:scale-95 flex items-center gap-3"
+                    onClick={() => { onSave({...form, status: 'Rejected'}); onClose(); }} 
+                    className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-[#EF4444] bg-white border border-[#EF4444] rounded-2xl hover:bg-[#FEF2F2] transition-all flex items-center gap-2"
                 >
-                    <XCircle size={18} strokeWidth={2.5} /> REJECT
+                    <XCircle size={16} strokeWidth={2.5} /> TOLAK PERMINTAAN
                 </button>
                 <button 
-                    onClick={() => onSave({...form, status: 'Approved'})} 
-                    className="px-16 py-4 text-[11px] font-black uppercase tracking-[0.25em] text-white bg-[#10B981] rounded-[1.2rem] hover:bg-green-600 shadow-xl shadow-green-200 transition-all active:scale-95 flex items-center gap-3"
+                    onClick={() => { onSave({...form, status: 'Approved'}); onClose(); }} 
+                    className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-white bg-black rounded-2xl hover:bg-gray-900 shadow-2xl shadow-black/20 transition-all flex items-center gap-2"
                 >
-                    <CheckCircle2 size={18} strokeWidth={2.5} /> APPROVE
+                    <CheckCircle2 size={16} strokeWidth={2.5} /> SETUJUI PERMINTAAN
                 </button>
             </>
           ) : (
+            // Create/View Mode Footer
             <>
-                <button onClick={onClose} className="px-16 py-4 text-[11px] font-black uppercase tracking-[0.25em] text-gray-400 bg-white border border-gray-200 rounded-[1.2rem] hover:bg-gray-50 hover:text-black transition-all">
-                    {isView ? 'CLOSE' : 'BATAL'}
+                <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all">
+                    BATAL
                 </button>
                 {!isView && (
                     <button 
                         onClick={() => onSave(form)} 
-                        className="px-20 py-4 text-[11px] font-black uppercase tracking-[0.25em] text-white bg-black rounded-[1.2rem] hover:bg-gray-900 shadow-2xl shadow-black/20 transition-all active:scale-95 flex items-center gap-3"
+                        className="px-16 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-white bg-black rounded-2xl hover:bg-gray-900 shadow-2xl shadow-black/20 transition-all active:scale-95 flex items-center gap-3"
                     >
-                        <Save size={16} strokeWidth={2.5} /> {initialData ? 'SIMPAN PERUBAHAN' : 'KIRIM PENGAJUAN'}
+                        <Save size={18} strokeWidth={2.5} /> SIMPAN PERMINTAAN
                     </button>
                 )}
             </>
