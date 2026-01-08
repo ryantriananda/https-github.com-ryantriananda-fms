@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, FileText, Clock, Users, Home, BookOpen, ChevronLeft, ChevronRight, 
@@ -157,6 +158,7 @@ export const Sidebar: React.FC<Props> = ({
             { label: 'Permintaan Pod', icon: <FileText size={16} /> },
             { label: 'Persetujuan Pod', icon: <CheckCircle2 size={16} /> },
             { label: 'Tenant Pod', icon: <Users size={16} /> },
+            { label: 'Master Pod', icon: <Bed size={16} /> },
         ]
     },
     {

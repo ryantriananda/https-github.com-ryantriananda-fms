@@ -1,23 +1,15 @@
+
 import React from 'react';
-import { MasterPodRecord } from '../types';
-import { ChevronsUpDown, Pencil, Bed, User, Home, Eye } from 'lucide-react';
+import { ModenaPodRecord } from '../types';
+import { ChevronsUpDown, Eye, Pencil, Home, User, Bed, Box } from 'lucide-react';
 
 interface Props {
-  data: MasterPodRecord[];
-  onEdit: (item: MasterPodRecord) => void;
-  onView: (item: MasterPodRecord) => void;
+  data: ModenaPodRecord[];
+  onEdit?: (item: ModenaPodRecord) => void;
+  onView?: (item: ModenaPodRecord) => void;
 }
 
 export const ModenaPodTable: React.FC<Props> = ({ data, onEdit, onView }) => {
-  const getStatusBadge = (status: string) => {
-      switch(status) {
-          case 'Active': return <span className="bg-[#E8FDF5] text-[#059669] border-[#10B981]/20 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm">ACTIVE</span>;
-          case 'Inactive': return <span className="bg-gray-100 text-gray-500 border-gray-200 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm">INACTIVE</span>;
-          case 'Maintenance': return <span className="bg-red-50 text-red-600 border-red-100 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm">MAINTENANCE</span>;
-          default: return <span className="bg-gray-50 text-gray-500 border-gray-200 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm">{status}</span>;
-      }
-  };
-
   return (
     <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden transition-all duration-500">
       <div className="overflow-x-auto custom-scrollbar">
@@ -69,11 +61,11 @@ export const ModenaPodTable: React.FC<Props> = ({ data, onEdit, onView }) => {
                 </td>
                 <td className="p-6">
                     <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black ${item.occupiedBy === 'Kosong' || item.occupiedBy === 'Unknown' || !item.occupiedBy ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-600'}`}>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black ${item.namaPenghuni === 'Kosong' || item.namaPenghuni === 'Unknown' ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-600'}`}>
                             <User size={14} />
                         </div>
-                        <span className={`text-[12px] font-bold ${!item.occupiedBy || item.occupiedBy === 'Kosong' ? 'text-gray-400 italic' : 'text-black'}`}>
-                            {item.occupiedBy || 'Kosong'}
+                        <span className={`text-[12px] font-bold ${item.namaPenghuni === 'Kosong' ? 'text-gray-400 italic' : 'text-black'}`}>
+                            {item.namaPenghuni}
                         </span>
                     </div>
                 </td>

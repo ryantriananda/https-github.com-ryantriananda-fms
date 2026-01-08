@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { X, Save, Clock, MapPin, User, CheckSquare, Calendar, Image as ImageIcon, Trash2, Building, Plus, AlertTriangle, Box, QrCode, PenTool, ShieldAlert, Timer, RotateCcw, Copy, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
 import { TimesheetRecord, BuildingRecord, UserRecord, TimesheetActivity } from '../types';
@@ -314,7 +315,7 @@ export const TimesheetModal: React.FC<Props> = ({
                                         value={form.employee?.name || ''}
                                         onChange={(e) => {
                                             const user = validEmployees.find((c) => c.name === e.target.value);
-                                            if(user) setForm({ ...form, employee: user });
+                                            if(user) setForm({ ...form, employee: { name: user.name, role: user.role as any, phone: user.phone, avatar: user.avatar || '' } });
                                         }}
                                     >
                                         <option value="">-- Pilih Petugas --</option>

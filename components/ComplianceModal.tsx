@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Save, FileText, Building, Calendar, AlertCircle, UploadCloud, Trash2, ShieldCheck, Clock, CheckCircle2 } from 'lucide-react';
+/* Added missing ChevronDown import */
+import { X, Save, FileText, Building, Calendar, AlertCircle, UploadCloud, Trash2, ShieldCheck, Clock, CheckCircle2, Flag, ChevronDown } from 'lucide-react';
 import { ReminderRecord, BuildingRecord } from '../types';
 
 interface Props {
@@ -48,32 +48,8 @@ export const ComplianceModal: React.FC<Props> = ({
     }
   }, [isOpen, initialData]);
 
-  // Auto-calculate status based on date
-  useEffect(() => {
-      if (form.expiryDate) {
-          const today = new Date();
-          const expiry = new Date(form.expiryDate);
-          const diffTime = expiry.getTime() - today.getTime();
-          const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          
-          let status: ReminderRecord['status'] = 'Safe';
-          if (days < 0) status = 'Urgent'; // Expired
-          else if (days <= 30) status = 'Urgent';
-          else if (days <= 90) status = 'Warning';
-          
-          setForm(prev => ({ ...prev, daysRemaining: days, status }));
-      }
-  }, [form.expiryDate]);
-
-  const handleBuildingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const selectedName = e.target.value;
-      const building = buildingList.find(b => b.name === selectedName);
-      setForm(prev => ({
-          ...prev,
-          buildingName: selectedName,
-          assetNo: building?.assetNo || ''
-      }));
-  };
+  if (!isOpen) return null;
+  const isView = mode === 'view';
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -84,157 +60,127 @@ export const ComplianceModal: React.FC<Props> = ({
       }
   };
 
-  if (!isOpen) return null;
-  const isView = mode === 'view';
+  const Label = ({ children, required }: { children?: React.ReactNode, required?: boolean }) => (
+    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5 ml-1">
+      {children} {required && <span className="text-red-500 font-black">*</span>}
+    </label>
+  );
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-[#FBFBFB] w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all scale-100 max-h-[90vh]">
+    <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-4 animate-in fade-in duration-300">
+      <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all scale-100 max-h-[90vh] animate-in zoom-in-95 duration-300">
         
-        {/* Header */}
-        <div className="px-10 py-8 bg-white border-b border-gray-100 flex items-center justify-between shrink-0">
+        <div className="px-10 py-8 bg-white flex items-center justify-between shrink-0 border-b border-gray-100">
           <div className="flex items-center gap-5">
             <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center text-white shadow-xl shadow-black/20">
                 <ShieldCheck size={24} strokeWidth={2.5} />
             </div>
             <div>
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
-                    {mode === 'create' ? 'Tambah Dokumen Legal' : mode === 'edit' ? 'Edit Dokumen' : 'Detail Dokumen'}
+                    {mode === 'create' ? 'REGISTER DOKUMEN LEGAL' : 'DETAIL DOKUMEN LEGAL'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Compliance Management</p>
+                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Building Compliance Registry</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
-            <X size={28} />
+            <X size={28} strokeWidth={2.5} />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-10 overflow-y-auto custom-scrollbar flex-1">
+        <div className="p-10 overflow-y-auto custom-scrollbar flex-1 bg-[#FBFBFB]">
             <div className="space-y-8">
                 
                 <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm space-y-6">
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="w-1.5 h-6 bg-black rounded-full"></div>
+                        <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Identitas Dokumen</h3>
+                    </div>
+
                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Nama Dokumen</label>
+                        <Label required>Nama Dokumen / Izin</Label>
                         <input 
                             type="text" 
                             disabled={isView}
-                            className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:ring-2 focus:ring-black/5 outline-none placeholder:text-gray-300"
-                            placeholder="Contoh: SHGB Certificate, Izin Usaha..."
+                            className="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-[14px] font-black text-black outline-none shadow-inner uppercase"
+                            placeholder="Contoh: SHGB, IMB, IZIN DOMISILI..."
                             value={form.documentName}
                             onChange={(e) => setForm({...form, documentName: e.target.value})}
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Lokasi Aset</label>
+                            <Label required>Lokasi Gedung</Label>
                             <div className="relative">
                                 <select 
                                     disabled={isView}
-                                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none appearance-none cursor-pointer shadow-sm"
+                                    className="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-[14px] font-black text-black outline-none shadow-inner appearance-none cursor-pointer uppercase"
                                     value={form.buildingName}
-                                    onChange={handleBuildingChange}
+                                    onChange={(e) => setForm({...form, buildingName: e.target.value})}
                                 >
-                                    <option value="">-- Pilih Gedung --</option>
+                                    <option value="">-- PILIH GEDUNG --</option>
                                     {buildingList.map(b => (
                                         <option key={b.id} value={b.name}>{b.name}</option>
                                     ))}
                                 </select>
-                                <Building size={16} className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
+                                <ChevronDown size={18} className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                             </div>
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Asset No</label>
-                            <input 
-                                type="text" 
-                                disabled={true}
-                                className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 text-[13px] font-black text-gray-500 outline-none"
-                                value={form.assetNo}
-                                placeholder="Auto-filled"
-                            />
+                            <Label required>Asset Number</Label>
+                            <input type="text" disabled className="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-[14px] font-black text-gray-400 shadow-inner" value={form.assetNo} />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Tanggal Kadaluarsa</label>
-                            <div className="relative">
-                                <input 
-                                    type="date"
-                                    disabled={isView}
-                                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none shadow-sm"
-                                    value={form.expiryDate}
-                                    onChange={(e) => setForm({...form, expiryDate: e.target.value})}
-                                />
-                                <Calendar size={16} className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
-                            </div>
+                            <Label required>Tanggal Kadaluarsa</Label>
+                            <input type="date" disabled={isView} className="w-full bg-[#F2F4F7] border-none rounded-2xl px-6 py-5 text-[14px] font-black text-black outline-none shadow-inner" value={form.expiryDate} onChange={(e) => setForm({...form, expiryDate: e.target.value})} />
                         </div>
-                        <div>
-                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Status Prediksi</label>
-                            <div className={`w-full px-5 py-4 rounded-2xl text-[12px] font-black uppercase flex items-center gap-2 border ${
-                                form.status === 'Safe' ? 'bg-green-50 text-green-600 border-green-100' :
-                                form.status === 'Warning' ? 'bg-orange-50 text-orange-600 border-orange-100' :
-                                'bg-red-50 text-red-600 border-red-100'
+                        <div className="flex flex-col justify-end">
+                            <div className={`px-6 py-5 rounded-2xl text-[12px] font-black uppercase flex items-center justify-center gap-2 border ${
+                                form.status === 'Safe' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100 animate-pulse'
                             }`}>
-                                {form.status === 'Safe' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
-                                {form.status} ({form.daysRemaining} Hari)
+                                <Flag size={16} /> {form.status} ({form.daysRemaining} HARI)
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Upload Section */}
                 <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
                     <div className="flex items-center gap-3 mb-6">
-                        <FileText size={18} className="text-black"/>
-                        <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Digital Attachment</h3>
+                        <div className="w-1.5 h-6 bg-black rounded-full"></div>
+                        <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Attachment Scan (PDF/IMG)</h3>
                     </div>
                     
                     <div 
                         onClick={() => !isView && fileInputRef.current?.click()}
-                        className={`relative h-48 border-2 border-dashed rounded-[1.5rem] flex flex-col items-center justify-center overflow-hidden transition-all group
-                            ${preview ? 'border-gray-200' : 'border-gray-200 hover:border-black hover:bg-gray-50'}
-                            ${!isView ? 'cursor-pointer' : 'cursor-default'}
+                        className={`h-48 border-2 border-dashed rounded-[2rem] flex flex-col items-center justify-center bg-[#F8F9FA] transition-all overflow-hidden
+                            ${!isView ? 'cursor-pointer hover:border-black hover:bg-white' : ''}
                         `}
                     >
-                        <input type="file" ref={fileInputRef} className="hidden" accept="image/*,application/pdf" onChange={handleFileChange} />
+                        <input type="file" ref={fileInputRef} className="hidden" accept=".pdf,image/*" onChange={handleFileChange} />
                         {preview ? (
-                            <div className="relative w-full h-full flex items-center justify-center bg-gray-50">
-                                <FileText size={48} className="text-black mb-2" />
-                                <span className="absolute bottom-4 text-[10px] font-black uppercase">File Uploaded</span>
-                                {!isView && (
-                                    <button 
-                                        onClick={(e) => { e.stopPropagation(); setPreview(null); }}
-                                        className="absolute top-4 right-4 bg-white p-2 rounded-full text-red-500 shadow-md hover:bg-red-50 transition-all"
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                )}
+                            <div className="flex flex-col items-center">
+                                <FileText size={40} className="text-black mb-2" />
+                                <span className="text-[10px] font-black uppercase">DOKUMEN TERUNGGAH</span>
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center text-gray-400">
-                                <div className="p-3 bg-white rounded-full shadow-sm mb-3 group-hover:scale-110 transition-transform">
-                                    <UploadCloud size={24} className="text-black" />
-                                </div>
-                                <p className="text-[10px] font-black uppercase tracking-widest">Upload Scan Dokumen</p>
+                            <div className="text-center">
+                                <UploadCloud size={32} className="mx-auto text-gray-300 mb-2" />
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">PILIH FILE DOKUMEN</p>
                             </div>
                         )}
                     </div>
                 </div>
-
             </div>
         </div>
 
-        {/* Footer */}
         <div className="px-10 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
-          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
+          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 hover:text-black transition-all">BATAL</button>
           {!isView && (
-            <button 
-                onClick={() => onSave(form)} 
-                className="px-16 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-black rounded-2xl hover:bg-gray-900 shadow-xl shadow-black/20 transition-all active:scale-95 flex items-center gap-3"
-            >
-                <Save size={18} strokeWidth={2.5} /> Simpan Dokumen
+            <button onClick={() => onSave(form)} className="px-16 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-white bg-black rounded-2xl hover:bg-gray-800 shadow-2xl shadow-black/20 transition-all active:scale-95 flex items-center gap-3">
+                <Save size={18} strokeWidth={2.5} /> SIMPAN DOKUMEN
             </button>
           )}
         </div>
