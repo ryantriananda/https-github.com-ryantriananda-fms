@@ -314,7 +314,6 @@ export const TimesheetModal: React.FC<Props> = ({
                                         value={form.employee?.name || ''}
                                         onChange={(e) => {
                                             const user = validEmployees.find((c) => c.name === e.target.value);
-                                            // Fix: Pass the whole user object instead of partial fields to satisfy UserRecord requirement
                                             if(user) setForm({ ...form, employee: user });
                                         }}
                                     >

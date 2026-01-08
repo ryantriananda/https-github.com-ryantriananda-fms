@@ -15,7 +15,6 @@ export const PodCensusModal: React.FC<Props> = ({ isOpen, onClose, onSave, initi
     lantai: 'Lt 2 Pria',
     jenisKamar: 'Single Bed',
     nomorKamar: '',
-    // Fix: Use occupiedBy instead of namaPenghuni to match type
     occupiedBy: '',
     statusLokerBarang: 'Tidak Terpakai',
     statusLokerPantry: 'Tidak Terpakai',
@@ -32,7 +31,6 @@ export const PodCensusModal: React.FC<Props> = ({ isOpen, onClose, onSave, initi
             lantai: 'Lt 2 Pria',
             jenisKamar: 'Single Bed',
             nomorKamar: '',
-            // Fix: Use occupiedBy instead of namaPenghuni to match type
             occupiedBy: '',
             statusLokerBarang: 'Tidak Terpakai',
             statusLokerPantry: 'Tidak Terpakai',
@@ -133,7 +131,6 @@ export const PodCensusModal: React.FC<Props> = ({ isOpen, onClose, onSave, initi
                                 disabled={isView}
                                 className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-black text-black outline-none focus:border-black placeholder:text-gray-300 transition-all shadow-sm"
                                 placeholder="Masukkan nama lengkap..."
-                                // Fix: Use occupiedBy instead of namaPenghuni
                                 value={form.occupiedBy}
                                 onChange={(e) => setForm({...form, occupiedBy: e.target.value})}
                             />

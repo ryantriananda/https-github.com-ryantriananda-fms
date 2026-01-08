@@ -170,7 +170,6 @@ export const MasterApprovalModal: React.FC<Props> = ({
                 {/* 1. Module Info Card */}
                 <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-black opacity-5"></div>
-                    {/* Fix: Add icon prop to SectionHeader */}
                     <SectionHeader icon={Layers} title="1. WORKFLOW TARGET" sub="Assign workflow to specific system components" />
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -219,7 +218,6 @@ export const MasterApprovalModal: React.FC<Props> = ({
                 {/* 2. Tier Visualizer Card */}
                 <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
                     <div className="flex items-center justify-between mb-10">
-                        {/* Fix: Add icon prop to SectionHeader */}
                         <SectionHeader icon={GitBranch} title="2. APPROVAL TIER FLOW" sub="Sequence of necessary signatures" />
                         {!isView && (
                             <button 
@@ -357,7 +355,7 @@ export const MasterApprovalModal: React.FC<Props> = ({
         <div className="px-12 py-10 bg-white border-t border-gray-100 flex justify-end gap-5 shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
           <button 
             onClick={onClose} 
-            className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 hover:text-black transition-all"
+            className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 hover:text-black transition-all"
           >
             {isView ? 'CLOSE' : 'CANCEL'}
           </button>

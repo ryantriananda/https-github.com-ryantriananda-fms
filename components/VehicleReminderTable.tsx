@@ -151,7 +151,6 @@ export const VehicleReminderTable: React.FC<Props> = ({ data, onAction, onEdit, 
                                         <Pencil size={14} />
                                     </button>
                                     <button 
-                                        // Fix: Ensure item.id is converted to string
                                         onClick={() => onDelete?.(item.id.toString())}
                                         className="bg-white hover:bg-red-50 text-red-500 p-2 rounded-xl border border-gray-200 hover:border-red-200 transition-all active:scale-95"
                                         title="Delete Reminder"

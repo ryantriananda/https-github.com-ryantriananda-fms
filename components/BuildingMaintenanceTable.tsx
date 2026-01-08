@@ -188,7 +188,6 @@ export const BuildingMaintenanceTable: React.FC<Props> = ({ data, onEdit, onView
                             <Pencil size={16} />
                          </button>
                          <button 
-                            // Fix: Ensure item.id is string for onDelete
                             onClick={(e) => { e.stopPropagation(); onDelete?.(item.id.toString()); }}
                             className="p-2 text-gray-300 hover:text-red-500 transition-all bg-gray-50 rounded-lg hover:bg-red-50"
                          >
