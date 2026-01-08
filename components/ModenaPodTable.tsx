@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ModenaPodRecord } from '../types';
 import { ChevronsUpDown, Eye, Pencil, Home, User, Bed, Box } from 'lucide-react';
@@ -29,7 +28,7 @@ export const ModenaPodTable: React.FC<Props> = ({ data, onEdit, onView }) => {
                   <ChevronsUpDown size={12} className="text-gray-300" />
                 </div>
               </th>
-              <th className="p-6 w-32 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">NOMOR</th>
+              <th className="p-6 w-24 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest">NOMOR</th>
               <th className="p-6 w-56 group cursor-pointer hover:bg-gray-200/50 transition-colors">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">PENGHUNI</span>
@@ -41,9 +40,9 @@ export const ModenaPodTable: React.FC<Props> = ({ data, onEdit, onView }) => {
               <th className="p-6 w-24 text-center pr-8 text-[10px] font-black text-gray-400 uppercase tracking-widest">AKSI</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody className="divide-y divide-gray-50 text-[12px] text-gray-700">
             {data.map((item, index) => (
-              <tr key={item.id} className="bg-white hover:bg-[#FDFDFD] transition-all group cursor-pointer" onClick={() => onView?.(item)}>
+              <tr key={item.id} className="bg-white hover:bg-[#FDFDFD] transition-all group cursor-pointer h-20" onClick={() => onView?.(item)}>
                 <td className="p-6 pl-8 text-center text-[11px] font-bold text-gray-400">{index + 1}</td>
                 <td className="p-6">
                     <span className="text-[11px] font-black uppercase text-gray-600">{item.lantai}</span>
@@ -61,11 +60,12 @@ export const ModenaPodTable: React.FC<Props> = ({ data, onEdit, onView }) => {
                 </td>
                 <td className="p-6">
                     <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black ${item.namaPenghuni === 'Kosong' || item.namaPenghuni === 'Unknown' ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-600'}`}>
+                        {/* Fix: Use occupiedBy instead of namaPenghuni */}
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black ${item.occupiedBy === 'Kosong' || item.occupiedBy === 'Unknown' ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-600'}`}>
                             <User size={14} />
                         </div>
-                        <span className={`text-[12px] font-bold ${item.namaPenghuni === 'Kosong' ? 'text-gray-400 italic' : 'text-black'}`}>
-                            {item.namaPenghuni}
+                        <span className={`text-[12px] font-bold ${item.occupiedBy === 'Kosong' ? 'text-gray-400 italic' : 'text-black'}`}>
+                            {item.occupiedBy}
                         </span>
                     </div>
                 </td>
@@ -110,3 +110,9 @@ export const ModenaPodTable: React.FC<Props> = ({ data, onEdit, onView }) => {
     </div>
   );
 };
+
+const HomeIcon = ({ size, className }: { size: number, className?: string }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>
+    </svg>
+);
