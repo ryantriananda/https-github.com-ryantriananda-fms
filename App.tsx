@@ -435,6 +435,30 @@ export const App: React.FC = () => {
       }
   };
 
+  // --- HANDLER FOR STATIONERY REQUEST (ATK/ARK) CRUD ---
+  const handleSaveStationeryRequest = (data: Partial<AssetRecord>) => {
+      const isArk = modalState.type.includes('ARK');
+      const setList = isArk ? setArkRequests : setAtkRequests;
+
+      if (modalState.mode === 'create') {
+          const newReq: AssetRecord = {
+              id: Date.now(),
+              transactionNumber: `TRX/${isArk ? 'ARK' : 'ATK'}/${new Date().getFullYear()}/${Math.floor(Math.random() * 1000)}`,
+              employee: { name: 'User', role: 'Staff' },
+              category: isArk ? 'Cleaning' : 'ATK',
+              itemName: data.itemName || 'New Item',
+              qty: data.qty || 1,
+              date: new Date().toISOString().split('T')[0],
+              status: 'Pending',
+              ...data
+          } as AssetRecord;
+          setList(prev => [newReq, ...prev]);
+      } else if ((modalState.mode === 'edit' || modalState.mode === 'approve') && data.id) {
+          setList(prev => prev.map(item => item.id === data.id ? { ...item, ...data } as AssetRecord : item));
+      }
+      closeModal();
+  };
+
   // --- RENDER CONTENT ---
   const renderContent = () => {
     switch (activeItem) {
@@ -1374,13 +1398,7 @@ export const App: React.FC = () => {
         initialAssetData={modalState.type.includes('APPROVAL') || modalState.type.includes('REQUEST') ? modalState.data : undefined}
         initialLogBookData={modalState.type === 'LOGBOOK' ? modalState.data : undefined}
         onSaveLogBook={handleSaveLogBook}
-        onSaveStationeryRequest={(data) => { 
-            // Simple mock save
-            const newReq: AssetRecord = { id: Date.now(), transactionNumber: `TRX/${Date.now()}`, employee: {name: 'User', role: 'Staff'}, category: 'ATK', itemName: 'New Item', qty: 1, date: '2024-01-01', status: 'Pending' };
-            if(modalState.type.includes('ARK')) setArkRequests(prev => [newReq, ...prev]);
-            else setAtkRequests(prev => [newReq, ...prev]);
-            closeModal();
-        }}
+        onSaveStationeryRequest={handleSaveStationeryRequest}
       />
 
       {/* ... Other Modals ... */}

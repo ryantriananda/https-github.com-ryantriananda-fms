@@ -258,12 +258,23 @@ export const MOCK_LOGBOOK_DATA: LogBookRecord[] = [
     { id: 'LOG-005', tanggalKunjungan: '2024-03-22', jamDatang: '11:20', jamPulang: '', lokasiModena: 'KEMANG', kategoriTamu: 'OTHERS', countAdult: 1, countChild: 0, countIndividual: 0, namaTamu: 'DEDI KURNIAWAN', note: 'Document Pickup' }
 ];
 
+export const MOCK_USER_DATA: UserRecord[] = [
+    { id: 'USR-001', name: 'Admin User', email: 'admin@modena.com', role: 'Admin', department: 'GA', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Admin', phone: '08123456789', joinDate: '2020-01-01', employeeId: 'EMP-001', location: 'Jakarta' },
+    { id: 'USR-002', name: 'Budi Manager', email: 'budi@modena.com', role: 'Manager', department: 'GA', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Budi', phone: '08129876543', joinDate: '2019-05-15', employeeId: 'EMP-002', location: 'Jakarta' },
+    { id: 'USR-003', name: 'Siti Staff', email: 'siti@modena.com', role: 'Staff', department: 'Finance', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Siti', phone: '08134567890', joinDate: '2021-08-10', employeeId: 'EMP-003', location: 'Bandung' },
+    { id: 'USR-004', name: 'Andi Tech', email: 'andi@modena.com', role: 'Officer', department: 'IT', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Andi', phone: '08198765432', joinDate: '2022-02-20', employeeId: 'EMP-004', location: 'Surabaya' },
+    { id: 'USR-005', name: 'Rina HR', email: 'rina@modena.com', role: 'Staff', department: 'HR', status: 'Inactive', avatar: 'https://ui-avatars.com/api/?name=Rina', phone: '08156789012', joinDate: '2021-11-01', employeeId: 'EMP-005', location: 'Jakarta' },
+    // NEW USERS FOR TIMESHEET
+    { id: 'USR-006', name: 'Ujang Security', email: 'ujang@modena.com', role: 'Security', department: 'GA', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Ujang', phone: '0812000001', joinDate: '2023-01-01', employeeId: 'EMP-006', location: 'Jakarta' },
+    { id: 'USR-007', name: 'Asep Cleaning', email: 'asep@modena.com', role: 'Cleaning', department: 'GA', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Asep', phone: '0812000002', joinDate: '2023-01-15', employeeId: 'EMP-007', location: 'Jakarta' },
+    { id: 'USR-008', name: 'Dodi Teknisi', email: 'dodi@modena.com', role: 'Teknisi', department: 'Engineering', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Dodi', phone: '0812000003', joinDate: '2022-06-01', employeeId: 'EMP-008', location: 'Jakarta' }
+];
+
 export const MOCK_TIMESHEET_DATA: TimesheetRecord[] = [
-    { id: 1, employee: { name: 'Ujang', role: 'Security', id: 'SEC-01', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Ujang' }, date: '2023-12-01', shift: 'Pagi', status: 'Tepat Waktu', totalHours: 8, activities: [{id:'1', activityType: 'Patroli', startTime: '08:00', endTime: '09:00', duration: 1, location: 'Lobby'}] },
-    { id: 2, employee: { name: 'Asep', role: 'Cleaning', id: 'CLN-01', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Asep' }, date: '2023-12-01', shift: 'Pagi', status: 'Tepat Waktu', totalHours: 8, activities: [{id:'2', activityType: 'Sapu', startTime: '07:00', endTime: '08:00', duration: 1, location: 'Lantai 1'}] },
-    { id: 3, employee: { name: 'Dodi', role: 'Teknisi', id: 'TECH-01', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Dodi' }, date: '2023-12-01', shift: 'Siang', status: 'Terlambat', totalHours: 7.5, activities: [{id:'3', activityType: 'Repair AC', startTime: '13:00', endTime: '15:00', duration: 2, location: 'Ruang Meeting'}] },
-    { id: 4, employee: { name: 'Ujang', role: 'Security', id: 'SEC-01', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Ujang' }, date: '2023-12-02', shift: 'Pagi', status: 'Izin', totalHours: 0, activities: [] },
-    { id: 5, employee: { name: 'Slamet', role: 'Driver', id: 'DRV-01', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Slamet' }, date: '2023-12-02', shift: 'Pagi', status: 'Tepat Waktu', totalHours: 9, activities: [{id:'5', activityType: 'Antar Tamu', startTime: '09:00', endTime: '12:00', duration: 3, location: 'Bandara'}] }
+    { id: 1, employee: { id: 'USR-006', name: 'Ujang Security', role: 'Security', department: 'GA', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Ujang' }, date: '2023-12-01', shift: 'Pagi', status: 'Tepat Waktu', totalHours: 8, activities: [{id:'1', activityType: 'Patroli area', startTime: '08:00', endTime: '09:00', duration: 1, location: 'Lobby'}] },
+    { id: 2, employee: { id: 'USR-007', name: 'Asep Cleaning', role: 'Cleaning', department: 'GA', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Asep' }, date: '2023-12-01', shift: 'Pagi', status: 'Tepat Waktu', totalHours: 8, activities: [{id:'2', activityType: 'Penyapuan lantai', startTime: '07:00', endTime: '08:00', duration: 1, location: 'Lantai 1'}] },
+    { id: 3, employee: { id: 'USR-008', name: 'Dodi Teknisi', role: 'Teknisi', department: 'Engineering', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Dodi' }, date: '2023-12-01', shift: 'Siang', status: 'Terlambat', totalHours: 7.5, activities: [{id:'3', activityType: 'Perbaikan AC', startTime: '13:00', endTime: '15:00', duration: 2, location: 'Ruang Meeting'}] },
+    { id: 4, employee: { id: 'USR-006', name: 'Ujang Security', role: 'Security', department: 'GA', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Ujang' }, date: '2023-12-02', shift: 'Pagi', status: 'Izin', totalHours: 0, activities: [] }
 ];
 
 export const MOCK_VENDOR_DATA: VendorRecord[] = [
@@ -272,14 +283,6 @@ export const MOCK_VENDOR_DATA: VendorRecord[] = [
     { id: 3, vendorName: 'PT Technindo', vendorCode: 'VEN-003', type: 'Both', category: 'Maintenance', email: 'support@technindo.com', phone: '021-777777', address: 'Surabaya', status: 'Active', picName: 'Pak Dedi' },
     { id: 4, vendorName: 'Toko Bangunan Abadi', vendorCode: 'VEN-004', type: 'Goods', category: 'Material', email: 'sales@bangunanabadi.com', phone: '021-888888', address: 'Jakarta', status: 'Inactive', picName: 'Ko Aseng' },
     { id: 5, vendorName: 'Jasa Angkut Cepat', vendorCode: 'VEN-005', type: 'Service', category: 'Logistics', email: 'order@angkut.com', phone: '021-999999', address: 'Tangerang', status: 'Active', picName: 'Pak Joko' }
-];
-
-export const MOCK_USER_DATA: UserRecord[] = [
-    { id: 'USR-001', name: 'Admin User', email: 'admin@modena.com', role: 'Admin', department: 'GA', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Admin', phone: '08123456789', joinDate: '2020-01-01', employeeId: 'EMP-001', location: 'Jakarta' },
-    { id: 'USR-002', name: 'Budi Manager', email: 'budi@modena.com', role: 'Manager', department: 'GA', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Budi', phone: '08129876543', joinDate: '2019-05-15', employeeId: 'EMP-002', location: 'Jakarta' },
-    { id: 'USR-003', name: 'Siti Staff', email: 'siti@modena.com', role: 'Staff', department: 'Finance', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Siti', phone: '08134567890', joinDate: '2021-08-10', employeeId: 'EMP-003', location: 'Bandung' },
-    { id: 'USR-004', name: 'Andi Tech', email: 'andi@modena.com', role: 'Officer', department: 'IT', status: 'Active', avatar: 'https://ui-avatars.com/api/?name=Andi', phone: '08198765432', joinDate: '2022-02-20', employeeId: 'EMP-004', location: 'Surabaya' },
-    { id: 'USR-005', name: 'Rina HR', email: 'rina@modena.com', role: 'Staff', department: 'HR', status: 'Inactive', avatar: 'https://ui-avatars.com/api/?name=Rina', phone: '08156789012', joinDate: '2021-11-01', employeeId: 'EMP-005', location: 'Jakarta' }
 ];
 
 export const MOCK_MASTER_APPROVAL_DATA: MasterApprovalRecord[] = [
