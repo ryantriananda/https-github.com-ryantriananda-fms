@@ -41,8 +41,12 @@ export const MasterAtkTable: React.FC<Props> = ({ data, onEdit, onDelete }) => {
               <th className="px-6 w-20 text-center group cursor-pointer hover:text-black transition-colors">
                  UOM
               </th>
+              {/* New IN STOCK Column */}
+              <th className="px-6 w-24 text-center group cursor-pointer hover:text-black transition-colors bg-blue-50/20">
+                 IN STOCK
+              </th>
               <th className="px-6 w-24 text-center group cursor-pointer hover:text-black transition-colors">
-                 STOCK
+                 REMAINING
               </th>
               <th className="px-6 w-20 text-center text-gray-300">
                  MIN
@@ -87,8 +91,13 @@ export const MasterAtkTable: React.FC<Props> = ({ data, onEdit, onDelete }) => {
                 <td className="px-6 text-center text-[11px] font-bold text-gray-500 uppercase">
                     {item.uom}
                 </td>
+
+                {/* IN STOCK Value */}
+                <td className="px-6 text-center text-[12px] font-black text-blue-600 bg-blue-50/10">
+                    {item.inStock || 0}
+                </td>
                 
-                {/* Stock Logic: Red if <= min */}
+                {/* REMAINING Stock Logic: Red if <= min */}
                 <td className={`px-6 text-center text-[12px] font-black ${item.remainingStock <= item.minimumStock ? 'text-red-500 bg-red-50 rounded-lg py-1' : 'text-green-600 bg-green-50 rounded-lg py-1'}`}>
                     {item.remainingStock}
                 </td>
@@ -132,7 +141,7 @@ export const MasterAtkTable: React.FC<Props> = ({ data, onEdit, onDelete }) => {
             ))}
             {data.length === 0 && (
                 <tr>
-                    <td colSpan={11} className="p-12 text-center text-gray-400 text-xs font-bold uppercase tracking-widest">
+                    <td colSpan={12} className="p-12 text-center text-gray-400 text-xs font-bold uppercase tracking-widest">
                         No Items Found
                     </td>
                 </tr>
@@ -144,7 +153,7 @@ export const MasterAtkTable: React.FC<Props> = ({ data, onEdit, onDelete }) => {
       {/* Footer */}
       <div className="px-8 py-6 flex items-center justify-between border-t border-gray-100 bg-[#FAFAFA]">
          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            DISPLAYING <span className="text-black font-black mx-1">{data.length} SEMUA</span> ITEMS
+            DISPLAYING <span className="text-black font-black mx-1">{data.length}</span> ITEMS
          </div>
          <div className="flex items-center gap-2">
             <button className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 hover:border-black text-gray-300 hover:text-black transition-all bg-white shadow-sm active:scale-95">

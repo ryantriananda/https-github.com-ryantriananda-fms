@@ -44,8 +44,8 @@ export const MOCK_DATA: AssetRecord[] = [
 ];
 
 export const MOCK_MASTER_DATA: MasterItem[] = [
-    { id: 1, category: 'Kertas', itemName: 'Kertas A4 80gr', itemCode: 'ATK-P-001', uom: 'Rim', remainingStock: 50, minimumStock: 10, maximumStock: 100, requestedStock: 5, lastPurchasePrice: '45000', averagePrice: '44000', purchaseDate: '2023-10-01' },
-    { id: 2, category: 'Tulis', itemName: 'Pulpen Standard', itemCode: 'ATK-W-002', uom: 'Pcs', remainingStock: 120, minimumStock: 20, maximumStock: 200, requestedStock: 0, lastPurchasePrice: '3000', averagePrice: '2900', purchaseDate: '2023-09-15' }
+    { id: 1, category: 'Kertas', itemName: 'Kertas A4 80gr', itemCode: 'ATK-P-001', uom: 'Rim', inStock: 50, remainingStock: 50, minimumStock: 10, maximumStock: 100, requestedStock: 5, lastPurchasePrice: '45000', averagePrice: '44000', purchaseDate: '2023-10-01' },
+    { id: 2, category: 'Tulis', itemName: 'Pulpen Standard', itemCode: 'ATK-W-002', uom: 'Pcs', inStock: 120, remainingStock: 120, minimumStock: 20, maximumStock: 200, requestedStock: 0, lastPurchasePrice: '3000', averagePrice: '2900', purchaseDate: '2023-09-15' }
 ];
 
 export const MOCK_ARK_DATA: AssetRecord[] = [
@@ -53,7 +53,7 @@ export const MOCK_ARK_DATA: AssetRecord[] = [
 ];
 
 export const MOCK_MASTER_ARK_DATA: MasterItem[] = [
-    { id: 1, category: 'Cleaning', itemName: 'Wipol', itemCode: 'ARK-C-001', uom: 'Galon', remainingStock: 15, minimumStock: 5, maximumStock: 30, requestedStock: 0, lastPurchasePrice: '50000', averagePrice: '49000', purchaseDate: '2023-10-05' }
+    { id: 1, category: 'Cleaning', itemName: 'Wipol', itemCode: 'ARK-C-001', uom: 'Galon', inStock: 15, remainingStock: 15, minimumStock: 5, maximumStock: 30, requestedStock: 0, lastPurchasePrice: '50000', averagePrice: '49000', purchaseDate: '2023-10-05' }
 ];
 
 export const MOCK_VEHICLE_DATA: VehicleRecord[] = [

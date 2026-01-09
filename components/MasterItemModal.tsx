@@ -34,6 +34,7 @@ export const MasterItemModal: React.FC<Props> = ({
     itemName: '',
     itemCode: '',
     uom: '',
+    inStock: 0, // Added
     remainingStock: 0,
     minimumStock: 0,
     maximumStock: 0,
@@ -52,6 +53,7 @@ export const MasterItemModal: React.FC<Props> = ({
         itemName: '',
         itemCode: '',
         uom: '',
+        inStock: 0, // Added
         remainingStock: 0,
         minimumStock: 0,
         maximumStock: 0,
@@ -210,9 +212,25 @@ export const MasterItemModal: React.FC<Props> = ({
                     </div>
                   </div>
 
-                  {/* 6. Qty */}
+                  {/* 6. In Stock (Total / Initial) */}
                   <div>
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Qty (Stok Saat Ini)</label>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">In Stock (Total)</label>
+                    <div className="relative">
+                      <input 
+                        type="number" 
+                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[12px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 shadow-sm"
+                        value={form.inStock}
+                        onChange={(e) => setForm({...form, inStock: parseInt(e.target.value) || 0})}
+                        placeholder="0"
+                        disabled={isView}
+                      />
+                      <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400 uppercase">{form.uom || 'Unit'}</span>
+                    </div>
+                  </div>
+
+                  {/* 7. Remaining Stock (Available) */}
+                  <div>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Remaining (Tersedia)</label>
                     <div className="relative">
                       <input 
                         type="number" 

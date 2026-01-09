@@ -158,7 +158,6 @@ export const Sidebar: React.FC<Props> = ({
             { label: 'Permintaan Pod', icon: <FileText size={16} /> },
             { label: 'Persetujuan Pod', icon: <CheckCircle2 size={16} /> },
             { label: 'Tenant Pod', icon: <Users size={16} /> },
-            { label: 'Master Pod', icon: <Bed size={16} /> },
         ]
     },
     {
@@ -178,7 +177,6 @@ export const Sidebar: React.FC<Props> = ({
         subItems: [
             { label: 'Request ATK', icon: <Database size={16} /> },
             { label: 'Stationery Request Approval', icon: <FileText size={16} /> },
-            { label: 'Master ATK', icon: <Settings size={16} /> },
         ]
     },
     { 
@@ -187,7 +185,6 @@ export const Sidebar: React.FC<Props> = ({
         subItems: [
             { label: 'Daftar ARK', icon: <Database size={16} /> },
             { label: 'Household Request Approval', icon: <FileText size={16} /> },
-            { label: 'Master ARK', icon: <Settings size={16} /> },
         ]
     },
     { 
@@ -218,6 +215,8 @@ export const Sidebar: React.FC<Props> = ({
       subItems: [
         { label: 'Master Approval', icon: <CheckCircle2 size={16} /> },
         { label: 'Master Vendor', icon: <Users size={16} /> },
+        { label: 'Master ATK', icon: <Box size={16} /> },
+        { label: 'Master ARK', icon: <House size={16} /> },
         { label: 'Master Pod', icon: <Bed size={16} /> },
         { label: 'Master PPN', icon: <Percent size={16} /> },
         { label: 'Master Brand Type', icon: <Stamp size={16} /> },

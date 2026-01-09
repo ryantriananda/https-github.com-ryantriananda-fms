@@ -34,6 +34,7 @@ export interface MasterItem {
   itemName: string;
   itemCode: string;
   uom: string;
+  inStock: number; // Added inStock
   remainingStock: number;
   minimumStock: number;
   maximumStock: number;
@@ -288,7 +289,7 @@ export interface BuildingRecord {
   buildingAge?: string;
   fenceCondition?: string;
   gateCondition?: string;
-  structureChecklist?: {
+  structureChecklist?: string[] | {
     tiang?: string[];
     atap?: string[];
     dinding?: string[];
@@ -305,6 +306,14 @@ export interface BuildingRecord {
     nearIndustry?: boolean;
     operationalHours?: string;
   };
+  
+  // Flat fields used in BuildingModal
+  boundaryFront?: string;
+  boundaryBack?: string;
+  boundaryRight?: string;
+  boundaryLeft?: string;
+  environmentType?: string[];
+  
   environmentConditions?: string[];
   renovationNeeded?: boolean;
   renovationCostEstimate?: string;
@@ -314,14 +323,23 @@ export interface BuildingRecord {
     gracePeriod?: string;
     items: { partition: boolean; paint: boolean; roof: string; lights: boolean; other: string };
   };
+  
+  // Flat fields for renovation
+  renovationItems?: string[];
+  renovationCostBearer?: string;
+  renovationGracePeriod?: string;
+
   rentCost?: string;
+  rentPeriod?: string;
   taxPPH?: string;
+  taxResponsibility?: string;
   notaryFee?: string;
   purchasePrice?: string;
   ownerName?: string;
   ownerPhone?: string;
   ownerAddress?: string;
   documentsAvailable?: string[];
+  
   businessNotes?: {
     deliveryTime?: string;
     dealersCount?: string;
@@ -329,6 +347,12 @@ export interface BuildingRecord {
     margin?: string;
     competitorPareto?: string;
   };
+  // Flat fields for business notes
+  estimatedTurnover?: string;
+  deliveryTimeDays?: string;
+  paretoDealers?: string;
+  staffComposition?: string;
+
   proposals?: BuildingProposal[];
   floorPlanImage?: string;
   totalMaintenanceCost?: string;
@@ -542,6 +566,7 @@ export interface BuildingProposal {
   renovationCostEstimate?: string;
   renovationTimeEstimate?: string;
   leaseNature?: string;
+  status?: string;
 }
 
 export interface PurchaseRecord {
