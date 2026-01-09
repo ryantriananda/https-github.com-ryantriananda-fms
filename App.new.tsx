@@ -276,25 +276,17 @@ export const App: React.FC = () => {
 
             // ATK Module
             case 'Request ATK':
-                return <RequestATKPage data={atkRequests} onSave={(d) => setAtkRequests(p => [...p, d as AssetRecord])} onImportClick={handleOpenImport} />;
+                return <RequestATKPage data={atkRequests} masterItems={masterAtk} deliveryLocations={deliveryLocations} onSave={(d) => setAtkRequests(p => [...p, d as AssetRecord])} onImportClick={handleOpenImport} />;
             case 'Stationery Request Approval':
-                return <ATKApprovalPage 
-                    data={atkRequests} 
-                    onApprove={(id, comment) => setAtkRequests(p => p.map(r => r.id === id ? { ...r, status: 'Approved' } : r))}
-                    onReject={(id, comment) => setAtkRequests(p => p.map(r => r.id === id ? { ...r, status: 'Rejected' } : r))}
-                />;
+                return <ATKApprovalPage data={atkRequests} onApprove={(d) => setAtkRequests(p => p.map(r => r.id === d.id ? { ...r, ...d } : r))} />;
             case 'Master ATK':
                 return <MasterATKPage masterItems={masterAtk} categories={MOCK_ATK_CATEGORY} uomList={MOCK_UOM_DATA} deliveryLocations={deliveryLocations} requestTypes={requestTypes} onSaveItem={(d) => setMasterAtk(p => [...p, d as MasterItem])} onSaveCategory={() => {}} onSaveDelivery={(d) => setDeliveryLocations(p => [...p, d as DeliveryLocationRecord])} onSaveRequestType={(d) => setRequestTypes(p => [...p, d as RequestTypeRecord])} onImportClick={handleOpenImport} />;
 
             // ARK Module
             case 'Daftar ARK':
-                return <RequestARKPage data={arkRequests} onSave={(d) => setArkRequests(p => [...p, d as AssetRecord])} onImportClick={handleOpenImport} />;
+                return <RequestARKPage data={arkRequests} masterItems={masterArk} deliveryLocations={deliveryLocations} onSave={(d) => setArkRequests(p => [...p, d as AssetRecord])} onImportClick={handleOpenImport} />;
             case 'Household Request Approval':
-                return <ARKApprovalPage 
-                    data={arkRequests} 
-                    onApprove={(id, comment) => setArkRequests(p => p.map(r => r.id === id ? { ...r, status: 'Approved' } : r))}
-                    onReject={(id, comment) => setArkRequests(p => p.map(r => r.id === id ? { ...r, status: 'Rejected' } : r))}
-                />;
+                return <ARKApprovalPage data={arkRequests} onApprove={(d) => setArkRequests(p => p.map(r => r.id === d.id ? { ...r, ...d } : r))} />;
             case 'Master ARK':
                 return <MasterARKPage masterItems={masterArk} categories={MOCK_ARK_CATEGORY} uomList={MOCK_UOM_DATA} deliveryLocations={deliveryLocations} requestTypes={requestTypes} onSaveItem={(d) => setMasterArk(p => [...p, d as MasterItem])} onSaveCategory={() => {}} onSaveDelivery={(d) => setDeliveryLocations(p => [...p, d as DeliveryLocationRecord])} onSaveRequestType={(d) => setRequestTypes(p => [...p, d as RequestTypeRecord])} onImportClick={handleOpenImport} />;
 

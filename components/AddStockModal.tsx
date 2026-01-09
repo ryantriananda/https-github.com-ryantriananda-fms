@@ -525,13 +525,27 @@ export const AddStockModal: React.FC<Props> = ({
             {mode === 'approve' ? (
                 <>
                     <button onClick={onClose} className="px-10 py-4 text-[11px] font-black uppercase tracking-widest text-black bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all">
-                        CLOSE
+                        BATAL
+                    </button>
+                    <button onClick={handleLocalReject} className="px-8 py-4 text-[11px] font-black uppercase tracking-widest text-red-500 bg-white border border-red-200 rounded-2xl hover:bg-red-50 transition-all flex items-center gap-2">
+                        <XCircle size={16} /> REJECT
+                    </button>
+                    <button onClick={handleLocalRevise} className="px-8 py-4 text-[11px] font-black uppercase tracking-widest text-blue-500 bg-white border border-blue-200 rounded-2xl hover:bg-blue-50 transition-all flex items-center gap-2">
+                        <RotateCcw size={16} /> REVISE
+                    </button>
+                    <button onClick={handleLocalApprove} className="px-10 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-black rounded-2xl hover:bg-gray-900 transition-all shadow-xl shadow-black/20 flex items-center gap-2">
+                        <CheckCircle2 size={16} /> APPROVE
                     </button>
                 </>
             ) : isViewMode ? (
-                <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-black rounded-2xl hover:bg-gray-900 transition-all shadow-xl shadow-black/20">
-                    TUTUP
-                </button>
+                <>
+                    <button onClick={onClose} className="px-10 py-4 text-[11px] font-black uppercase tracking-widest text-black bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all">
+                        BATAL
+                    </button>
+                    <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-black rounded-2xl hover:bg-gray-900 transition-all shadow-xl shadow-black/20">
+                        CLOSE
+                    </button>
+                </>
             ) : (
                 <>
                     <button onClick={onClose} className="px-10 py-4 text-[11px] font-black uppercase tracking-widest text-gray-400 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 hover:text-black transition-all">

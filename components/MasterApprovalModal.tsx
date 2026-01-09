@@ -264,7 +264,7 @@ export const MasterApprovalModal: React.FC<Props> = ({
                                                 ) : (
                                                     // Map Roles
                                                     roleList.length > 0 ? (
-                                                        roleList.map(r => <option key={r.id} value={r.name}>{r.name}</option>
+                                                        roleList.map(r => <option key={r.id} value={r.name}>{r.name}</option>)
                                                     ) : (
                                                         <>
                                                             <option value="Admin GA">Admin GA</option>

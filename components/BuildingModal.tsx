@@ -332,6 +332,7 @@ export const BuildingModal: React.FC<Props> = ({
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-12 custom-scrollbar bg-[#FBFBFB]">
+            <>
             {activeTab === 'INFORMASI UMUM' && (
                 <div className="space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -678,3 +679,15 @@ export const BuildingModal: React.FC<Props> = ({
                             <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-10">
                                 
                                 {/* 1. INFO UTAMA (Lokasi & Utilitas) */}
+                                
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+            </>
+        </div>
+      </div>
+    </div>
+  );
+};
