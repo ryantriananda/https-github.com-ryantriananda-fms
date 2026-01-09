@@ -95,7 +95,8 @@ export const AddStockModal: React.FC<Props> = ({
   useEffect(() => {
     if (isOpen) {
       setIsEditing(false);
-      setActiveTab('DETAILS');
+      // Default to WORKFLOW tab if in Approval mode
+      setActiveTab(mode === 'approve' && !isLogBook ? 'WORKFLOW' : 'DETAILS');
       setIsHistoryView(false);
       setInlineAction({ type: null, note: '' }); // Reset inline action
 
@@ -188,6 +189,11 @@ export const AddStockModal: React.FC<Props> = ({
           });
       }
       onClose();
+  };
+
+  const handleFooterAction = (action: 'Approve' | 'Reject' | 'Revise') => {
+      setActiveTab('WORKFLOW');
+      setInlineAction({ type: action, note: '' });
   };
 
   const handleStationeryRequestChange = (field: keyof StationeryRequestRecord, value: any) => setStationeryRequestForm(prev => ({ ...prev, [field]: value }));
@@ -319,6 +325,7 @@ export const AddStockModal: React.FC<Props> = ({
   // --- RENDER LOGBOOK FORM ---
   const renderLogBookForm = () => (
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {/* ... (Logbook form content remains the same) ... */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm h-full flex flex-col">
                   <SectionHeader icon={User} title="GUEST DETAILS" />
@@ -657,86 +664,58 @@ export const AddStockModal: React.FC<Props> = ({
                                  stationeryRequestForm.status === 'Revised' ? 'NEEDS REVISION' : 'PENDING REVIEW'}
                             </h4>
                             
-                            {/* Inline Actions for Approval - REPLACED POPUP LOGIC WITH INLINE ACCORDION */}
-                            {(stationeryRequestForm.status === 'Pending' || stationeryRequestForm.status === 'Waiting Approval') && isApprove && (
-                                <div className="mt-4 animate-in fade-in slide-in-from-top-2">
-                                    {!inlineAction.type ? (
-                                        <div className="flex flex-wrap gap-3">
-                                            <button 
-                                                onClick={() => setInlineAction({ type: 'Approve', note: '' })}
-                                                className="flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white rounded-xl shadow-lg shadow-green-200 hover:bg-green-600 transition-all active:scale-95"
-                                            >
-                                                <Check size={14} strokeWidth={3} />
-                                                <span className="text-[10px] font-black uppercase tracking-widest">APPROVE</span>
-                                            </button>
-                                            <button 
-                                                onClick={() => setInlineAction({ type: 'Revise', note: '' })}
-                                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl shadow-lg bg-blue-500 text-white shadow-blue-200 hover:bg-blue-600 transition-all active:scale-95"
-                                            >
-                                                <RotateCcw size={14} strokeWidth={3} />
-                                                <span className="text-[10px] font-black uppercase tracking-widest">REVISE</span>
-                                            </button>
-                                            <button 
-                                                onClick={() => setInlineAction({ type: 'Reject', note: '' })}
-                                                className="flex items-center gap-2 px-5 py-2.5 bg-red-500 text-white rounded-xl shadow-lg shadow-red-200 hover:bg-red-600 transition-all active:scale-95"
-                                            >
-                                                <XCircle size={14} strokeWidth={3} />
-                                                <span className="text-[10px] font-black uppercase tracking-widest">REJECT</span>
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200 animate-in slide-in-from-top-2">
-                                            <div className="flex justify-between items-center mb-3">
-                                                <h5 className={`text-[11px] font-black uppercase tracking-widest ${
-                                                    inlineAction.type === 'Approve' ? 'text-green-600' : 
-                                                    inlineAction.type === 'Reject' ? 'text-red-600' : 'text-blue-600'
-                                                }`}>
-                                                    Confirm {inlineAction.type}
-                                                </h5>
-                                                <button onClick={() => setInlineAction({ type: null, note: '' })} className="text-gray-400 hover:text-black"><X size={14} /></button>
-                                            </div>
-                                            
-                                            <textarea 
-                                                className="w-full bg-white border border-gray-200 rounded-xl p-3 text-[12px] font-medium text-black focus:ring-2 focus:ring-black/5 outline-none resize-none mb-3"
-                                                placeholder={inlineAction.type === 'Approve' ? "Tambahkan catatan (opsional)..." : "Wajib isi alasan..."}
-                                                rows={2}
-                                                value={inlineAction.note}
-                                                onChange={(e) => setInlineAction({...inlineAction, note: e.target.value})}
-                                                autoFocus
-                                            />
-                                            
-                                            <div className="flex justify-end gap-3">
-                                                <button 
-                                                    onClick={() => setInlineAction({ type: null, note: '' })}
-                                                    className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-gray-500 hover:text-black"
-                                                >
-                                                    Cancel
-                                                </button>
-                                                <button 
-                                                    onClick={handleInlineSubmit}
-                                                    disabled={(inlineAction.type === 'Reject' || inlineAction.type === 'Revise') && !inlineAction.note.trim()}
-                                                    className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase text-white shadow-md transition-all ${
-                                                        (inlineAction.type === 'Reject' || inlineAction.type === 'Revise') && !inlineAction.note.trim() 
-                                                        ? 'bg-gray-300 cursor-not-allowed' 
-                                                        : inlineAction.type === 'Approve' ? 'bg-green-600 hover:bg-green-700' 
-                                                        : inlineAction.type === 'Reject' ? 'bg-red-600 hover:bg-red-700' 
-                                                        : 'bg-blue-600 hover:bg-blue-700'
-                                                    }`}
-                                                >
-                                                    Confirm
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
+                            {/* Confirmation Input Box (Triggered by Footer Buttons) */}
+                            {(stationeryRequestForm.status?.toLowerCase() === 'pending' || stationeryRequestForm.status?.toLowerCase().includes('waiting')) && isApprove && inlineAction.type && (
+                                <div className="mt-4 animate-in fade-in slide-in-from-top-2 bg-gray-50 p-5 rounded-2xl border border-gray-200">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <h5 className={`text-[11px] font-black uppercase tracking-widest ${
+                                            inlineAction.type === 'Approve' ? 'text-green-600' : 
+                                            inlineAction.type === 'Reject' ? 'text-red-600' : 'text-blue-600'
+                                        }`}>
+                                            Confirm {inlineAction.type}
+                                        </h5>
+                                        <button onClick={() => setInlineAction({ type: null, note: '' })} className="text-gray-400 hover:text-black"><X size={14} /></button>
+                                    </div>
+                                    
+                                    <textarea 
+                                        className="w-full bg-white border border-gray-200 rounded-xl p-3 text-[12px] font-medium text-black focus:ring-2 focus:ring-black/5 outline-none resize-none mb-3"
+                                        placeholder={inlineAction.type === 'Approve' ? "Tambahkan catatan (opsional)..." : "Wajib isi alasan..."}
+                                        rows={2}
+                                        value={inlineAction.note}
+                                        onChange={(e) => setInlineAction({...inlineAction, note: e.target.value})}
+                                        autoFocus
+                                    />
+                                    
+                                    <div className="flex justify-end gap-3">
+                                        <button 
+                                            onClick={() => setInlineAction({ type: null, note: '' })}
+                                            className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-[10px] font-bold text-gray-500 hover:text-black"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button 
+                                            onClick={handleInlineSubmit}
+                                            disabled={(inlineAction.type === 'Reject' || inlineAction.type === 'Revise') && !inlineAction.note.trim()}
+                                            className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase text-white shadow-md transition-all ${
+                                                (inlineAction.type === 'Reject' || inlineAction.type === 'Revise') && !inlineAction.note.trim() 
+                                                ? 'bg-gray-300 cursor-not-allowed' 
+                                                : inlineAction.type === 'Approve' ? 'bg-green-600 hover:bg-green-700' 
+                                                : inlineAction.type === 'Reject' ? 'bg-red-600 hover:bg-red-700' 
+                                                : 'bg-blue-600 hover:bg-blue-700'
+                                            }`}
+                                        >
+                                            Confirm
+                                        </button>
+                                    </div>
                                 </div>
                             )}
 
-                            {/* Status Label for Non-Approvers */}
-                            {(stationeryRequestForm.status === 'Pending' || stationeryRequestForm.status === 'Waiting Approval') && !isApprove && (
+                            {/* Status Label for non-interaction */}
+                            {(stationeryRequestForm.status?.toLowerCase() === 'pending' || stationeryRequestForm.status?.toLowerCase().includes('waiting')) && !inlineAction.type && (
                                 <div className="mt-4">
-                                    <p className="text-[11px] text-orange-500 font-bold bg-orange-50 px-3 py-2 rounded-lg border border-orange-100 inline-block">
-                                        Waiting for GA approval...
-                                    </p>
+                                     <p className="text-[10px] text-orange-500 font-bold bg-orange-50 px-3 py-2 rounded-lg border border-orange-100 inline-block">
+                                        {isApprove ? 'Please select an action from the footer.' : 'Waiting for GA approval...'}
+                                     </p>
                                 </div>
                             )}
                         </div>
@@ -830,9 +809,36 @@ export const AddStockModal: React.FC<Props> = ({
             <div className="px-10 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
                 {mode === 'approve' ? (
                     <>
-                        <button onClick={onClose} className="px-10 py-4 text-[11px] font-black uppercase tracking-widest text-black bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all">
-                            CLOSE
+                        <button onClick={onClose} className="px-10 py-4 text-[11px] font-black uppercase tracking-widest text-gray-400 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all">
+                            BATAL
                         </button>
+                        {(stationeryRequestForm.status?.toLowerCase() === 'pending' || stationeryRequestForm.status?.toLowerCase().includes('waiting')) && (
+                            <>
+                                <button 
+                                    onClick={() => handleFooterAction('Reject')} 
+                                    className="px-10 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-[#EF4444] bg-white border border-[#EF4444] rounded-2xl hover:bg-[#FEF2F2] transition-all flex items-center gap-2"
+                                >
+                                    <XCircle size={16} strokeWidth={2.5} /> REJECT
+                                </button>
+                                <button 
+                                    onClick={() => handleFooterAction('Revise')} 
+                                    className="px-10 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-[#3B82F6] bg-white border border-[#3B82F6] rounded-2xl hover:bg-[#EFF6FF] transition-all flex items-center gap-2"
+                                >
+                                    <RotateCcw size={16} strokeWidth={2.5} /> REVISE
+                                </button>
+                                <button 
+                                    onClick={() => handleFooterAction('Approve')} 
+                                    className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-white bg-black rounded-2xl hover:bg-gray-900 shadow-2xl shadow-black/20 transition-all flex items-center gap-2 active:scale-95"
+                                >
+                                    <CheckCircle2 size={16} strokeWidth={2.5} /> APPROVE
+                                </button>
+                            </>
+                        )}
+                         {!['Pending', 'Waiting Approval'].includes(stationeryRequestForm.status || '') && (
+                             <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-black bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 transition-all">
+                                CLOSE
+                             </button>
+                        )}
                     </>
                 ) : isViewMode ? (
                     <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-black rounded-2xl hover:bg-gray-900 transition-all shadow-xl shadow-black/20">
