@@ -611,7 +611,7 @@ export const AddStockModal: React.FC<Props> = ({
           <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
               <SectionHeader icon={MessageSquare} title="KETERANGAN / REMARKS" />
               <textarea 
-                  className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-5 text-[13px] font-medium text-black outline-none focus:border-black placeholder:text-gray-300 resize-none transition-all shadow-sm"
+                  className="w-full bg-white border border-gray-200 rounded-2xl px-6 py-5 text-[13px] font-black text-black outline-none focus:border-black placeholder:text-gray-300 resize-none transition-all shadow-sm"
                   rows={3}
                   placeholder="Tulis catatan tambahan di sini..."
                   value={stationeryRequestForm.remarks}

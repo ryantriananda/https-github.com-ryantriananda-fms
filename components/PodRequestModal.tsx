@@ -110,7 +110,7 @@ export const PodRequestModal: React.FC<Props> = ({
   const Label = ({ children, icon: Icon }: { children?: React.ReactNode, icon?: any }) => (
     <div className="flex items-center gap-2 mb-2">
         {Icon && <Icon size={12} className="text-black" />}
-        <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">
+        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
             {children}
         </label>
     </div>

@@ -82,7 +82,7 @@ export const MaintenanceScheduleModal: React.FC<Props> = ({ isOpen, onClose, onS
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
                     {mode === 'create' ? 'Set Schedule' : 'Edit Schedule'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Maintenance Planner</p>
+                <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Maintenance Planner</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
@@ -114,14 +114,14 @@ export const MaintenanceScheduleModal: React.FC<Props> = ({ isOpen, onClose, onS
                 <div>
                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Location</label>
                     <div className="relative">
-                        <input type="text" disabled className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 pl-12 text-[12px] font-bold text-gray-500" value={form.location || ''} placeholder="Auto-filled" />
+                        <input type="text" disabled className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-gray-500" value={form.location || ''} placeholder="Auto-filled" />
                         <Building size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
                     </div>
                 </div>
                 <div>
                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Category</label>
                     <div className="relative">
-                        <input type="text" disabled className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 pl-12 text-[12px] font-bold text-gray-500" value={form.category || ''} placeholder="Auto-filled" />
+                        <input type="text" disabled className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-gray-500" value={form.category || ''} placeholder="Auto-filled" />
                         <Activity size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
                     </div>
                 </div>

@@ -134,7 +134,7 @@ export const DeliveryLocationModal: React.FC<Props> = ({ isOpen, onClose, onSave
 
         {/* Footer */}
         <div className="px-10 py-8 bg-white border-t border-gray-50 flex justify-center gap-4 shrink-0">
-          <button onClick={onClose} className="w-32 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-300 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 hover:text-gray-500 transition-all hover:border-gray-200">
+          <button onClick={onClose} className="w-32 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-300 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 hover:text-gray-500 transition-all">
             BATAL
           </button>
           {!isView && (

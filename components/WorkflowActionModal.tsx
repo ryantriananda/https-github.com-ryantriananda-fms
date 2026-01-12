@@ -71,7 +71,7 @@ export const WorkflowActionModal: React.FC<Props> = ({ isOpen, onClose, onSubmit
         {/* Body */}
         <div className="p-8 space-y-4">
             {entityName && (
-                <div className="bg-gray-50 px-4 py-3 rounded-xl border border-gray-100 mb-2">
+                <div className="bg-gray-50 px-4 py-3 rounded-xl border border-gray-200 mb-2">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-0.5">Item Reference</span>
                     <span className="text-[12px] font-black text-black line-clamp-1">{entityName}</span>
                 </div>
@@ -82,8 +82,8 @@ export const WorkflowActionModal: React.FC<Props> = ({ isOpen, onClose, onSubmit
                     {action === 'Approve' ? 'Catatan (Opsional)' : 'Komentar / Alasan'} <span className="text-red-500">*</span>
                 </label>
                 <textarea 
-                    className={`w-full bg-[#F8F9FA] border rounded-2xl px-5 py-4 text-[13px] font-medium text-black outline-none transition-all placeholder:text-gray-300 shadow-inner min-h-[120px] resize-none
-                        ${error ? 'border-red-300 focus:border-red-500' : 'border-gray-100 focus:border-black/20'}
+                    className={`w-full bg-[#F8F9FA] border rounded-2xl px-5 py-4 text-[13px] font-black text-black outline-none transition-all placeholder:text-gray-300 shadow-inner min-h-[120px] resize-none
+                        ${error ? 'border-red-300 focus:border-red-500' : 'border-gray-200 focus:border-black/20'}
                     `}
                     placeholder={action === 'Reject' ? "Contoh: Dokumen tidak lengkap, mohon lampirkan ulang..." : "Ketik catatan di sini..."}
                     value={comment}

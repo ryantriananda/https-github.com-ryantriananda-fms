@@ -47,7 +47,7 @@ export const PodCensusModal: React.FC<Props> = ({ isOpen, onClose, onSave, initi
   const isView = mode === 'view';
 
   const Label = ({ children }: { children?: React.ReactNode }) => (
-    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.1em] mb-1.5">
+    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1.5">
       {children}
     </label>
   );
@@ -204,7 +204,7 @@ export const PodCensusModal: React.FC<Props> = ({ isOpen, onClose, onSave, initi
                         <textarea 
                             disabled={isView}
                             rows={3}
-                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-medium text-black outline-none focus:border-black placeholder:text-gray-300 shadow-sm resize-none"
+                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-bold text-black outline-none focus:border-black placeholder:text-gray-300 shadow-sm resize-none"
                             placeholder="Catatan tambahan..."
                             value={form.keterangan || ''}
                             onChange={(e) => setForm({...form, keterangan: e.target.value})}

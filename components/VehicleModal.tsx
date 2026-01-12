@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { X, Save, Car, Shield, FileText, Briefcase, MapPin, DollarSign, UploadCloud, Trash2, Calendar, User, Info, CheckCircle2, Clock, GitBranch, Image as ImageIcon, Calculator, TrendingDown, TrendingUp } from 'lucide-react';
-import { VehicleRecord, GeneralMasterItem } from '../types';
+import { X, Save, Car, Shield, FileText, Briefcase, MapPin, DollarSign, UploadCloud, Trash2, Calendar, User, Info, CheckCircle2, Clock, GitBranch, Image as ImageIcon, Calculator, TrendingDown, TrendingUp, History } from 'lucide-react';
+import { VehicleRecord, GeneralMasterItem, ServiceRecord } from '../types';
 
 interface Props {
   isOpen: boolean;
@@ -13,6 +13,7 @@ interface Props {
   colorList?: GeneralMasterItem[];
   channelList?: GeneralMasterItem[];
   branchList?: GeneralMasterItem[];
+  serviceData?: ServiceRecord[];
 }
 
 type DocKeys = 'stnk' | 'kir' | 'front' | 'rear' | 'right' | 'left';
@@ -26,7 +27,8 @@ export const VehicleModal: React.FC<Props> = ({
     brandList = [],
     colorList = [],
     channelList = [],
-    branchList = []
+    branchList = [],
+    serviceData = []
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeUploadKey, setActiveUploadKey] = useState<DocKeys | null>(null);
@@ -166,7 +168,7 @@ export const VehicleModal: React.FC<Props> = ({
         <div className="w-1.5 h-6 bg-black rounded-full shadow-sm"></div>
         <div>
             <h3 className="text-[12px] font-black text-black uppercase tracking-[0.2em] leading-none">{title}</h3>
-            {sub && <p className="text-[9px] font-bold text-gray-400 uppercase mt-1.5 tracking-widest">{sub}</p>}
+            {sub && <p className="text-[10px] font-bold text-gray-400 uppercase mt-1.5 tracking-widest">{sub}</p>}
         </div>
       </div>
       {Icon && <div className="bg-black text-white p-2 rounded-xl shadow-lg"><Icon size={16} /></div>}
@@ -174,7 +176,7 @@ export const VehicleModal: React.FC<Props> = ({
   );
 
   const Label = ({ children, required }: { children?: React.ReactNode, required?: boolean }) => (
-    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5">
+    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5">
       {children} {required && <span className="text-red-500 font-black ml-0.5">*</span>}
     </label>
   );
@@ -185,7 +187,7 @@ export const VehicleModal: React.FC<Props> = ({
       <input 
         type={type} 
         disabled={isView || disabled}
-        className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-[12px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all placeholder:text-gray-200 shadow-sm"
+        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all placeholder:text-gray-300 shadow-sm"
         value={value || ''}
         placeholder={placeholder}
         onChange={(e) => setForm({...form, [field]: e.target.value})}
@@ -200,7 +202,7 @@ export const VehicleModal: React.FC<Props> = ({
         <div className="relative">
             <select
                 disabled={isView}
-                className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-[12px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 appearance-none shadow-sm transition-all cursor-pointer uppercase"
+                className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 appearance-none shadow-sm transition-all cursor-pointer uppercase"
                 value={value || ''}
                 onChange={(e) => setForm({ ...form, [field]: e.target.value })}
             >
@@ -224,7 +226,7 @@ export const VehicleModal: React.FC<Props> = ({
             <div 
                 onClick={() => handleUploadClick(uploadKey)}
                 className={`relative flex-1 border-2 border-dashed rounded-[1.5rem] flex flex-col items-center justify-center transition-all overflow-hidden bg-white min-h-[160px]
-                  ${preview ? 'border-gray-200' : 'border-gray-100 hover:border-black hover:bg-gray-50/50'}
+                  ${preview ? 'border-gray-200' : 'border-gray-200 hover:border-black hover:bg-gray-50/50'}
                   ${!isView ? 'cursor-pointer' : 'cursor-default'}
                 `}
             >
@@ -245,7 +247,7 @@ export const VehicleModal: React.FC<Props> = ({
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm border border-gray-100 transition-all mb-3 bg-white`}>
                           <Icon size={18} className="text-gray-300" />
                       </div>
-                      <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest leading-relaxed">
+                      <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest leading-relaxed">
                           {isView ? 'No Image' : 'Upload'}
                       </p>
                   </div>
@@ -255,7 +257,7 @@ export const VehicleModal: React.FC<Props> = ({
       );
   };
 
-  const tabs = ['INFORMASI', 'DOKUMEN', 'WORKFLOW'];
+  const tabs = ['INFORMASI', 'DOKUMEN', 'SERVICE HISTORY', 'WORKFLOW'];
 
   return (
     <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-4 overflow-hidden">
@@ -271,7 +273,7 @@ export const VehicleModal: React.FC<Props> = ({
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
                    {mode === 'edit' ? 'Perbarui Data Aset' : mode === 'view' ? 'Rincian Aset Kendaraan' : 'Input Data Aset Kendaraan'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Vehicle Asset & Database Management</p>
+                <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Vehicle Asset & Database Management</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
@@ -356,7 +358,7 @@ export const VehicleModal: React.FC<Props> = ({
                     <div>
                         <Label>Channel</Label>
                         <select 
-                            className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-[12px] font-black outline-none disabled:bg-gray-50 uppercase cursor-pointer"
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black outline-none disabled:bg-gray-50 uppercase cursor-pointer"
                             disabled={isView} 
                             value={form.channel || ''} 
                             onChange={e => setForm({...form, channel: e.target.value})}
@@ -370,7 +372,7 @@ export const VehicleModal: React.FC<Props> = ({
                     <div>
                         <Label>Dept / Cabang</Label>
                         <select 
-                            className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-[12px] font-black outline-none disabled:bg-gray-50 uppercase cursor-pointer"
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black outline-none disabled:bg-gray-50 uppercase cursor-pointer"
                             disabled={isView} 
                             value={form.cabang || ''} 
                             onChange={e => setForm({...form, cabang: e.target.value})}
@@ -413,7 +415,7 @@ export const VehicleModal: React.FC<Props> = ({
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-300">RP</span>
                         <input 
                             type="number" 
-                            className="w-full bg-white border border-gray-100 rounded-2xl pl-10 pr-6 py-4 text-[13px] font-black text-black focus:border-black outline-none shadow-sm transition-all"
+                            className="w-full bg-white border border-gray-200 rounded-2xl pl-10 pr-6 py-4 text-[13px] font-black text-black focus:border-black outline-none shadow-sm transition-all"
                             value={form.hargaBeli || ''}
                             onChange={(e) => setForm({...form, hargaBeli: e.target.value})}
                             disabled={isView}
@@ -434,7 +436,7 @@ export const VehicleModal: React.FC<Props> = ({
                             <Label>Metode Penyusutan</Label>
                             <select 
                                 disabled={isView}
-                                className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-[13px] font-black outline-none"
+                                className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black outline-none disabled:bg-gray-50"
                                 value={form.depreciationMethod}
                                 onChange={(e) => setForm({...form, depreciationMethod: e.target.value})}
                             >
@@ -447,7 +449,7 @@ export const VehicleModal: React.FC<Props> = ({
                             <div className="relative">
                                 <input 
                                     type="number" 
-                                    className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-[13px] font-black outline-none"
+                                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black outline-none disabled:bg-gray-50"
                                     value={form.usefulLife}
                                     onChange={(e) => setForm({...form, usefulLife: parseInt(e.target.value) || 0})}
                                     disabled={isView}
@@ -462,7 +464,7 @@ export const VehicleModal: React.FC<Props> = ({
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-300">RP</span>
                                 <input 
                                     type="number" 
-                                    className="w-full bg-white border border-gray-100 rounded-2xl pl-10 pr-6 py-4 text-[13px] font-black outline-none"
+                                    className="w-full bg-white border border-gray-200 rounded-2xl pl-10 pr-6 py-4 text-[13px] font-black outline-none disabled:bg-gray-50"
                                     value={form.residualValue}
                                     onChange={(e) => setForm({...form, residualValue: e.target.value})}
                                     disabled={isView}
@@ -506,7 +508,7 @@ export const VehicleModal: React.FC<Props> = ({
                             </div>
                             <div className="overflow-hidden rounded-xl border border-gray-100">
                                 <table className="w-full text-left">
-                                    <thead className="bg-gray-50 text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                                    <thead className="bg-gray-50 text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                         <tr>
                                             <th className="p-3">Periode</th>
                                             <th className="p-3 text-right">Beban Penyusutan</th>
@@ -567,6 +569,99 @@ export const VehicleModal: React.FC<Props> = ({
                           <UploadBox label="Tampak Belakang" uploadKey="rear" icon={ImageIcon} />
                           <UploadBox label="Samping Kanan" uploadKey="right" icon={ImageIcon} />
                           <UploadBox label="Samping Kiri" uploadKey="left" icon={ImageIcon} />
+                      </div>
+                  </div>
+              </div>
+          )}
+
+          {activeTab === 'SERVICE HISTORY' && (
+              <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+                      <div className="p-8 border-b border-gray-100">
+                          <div className="flex items-center gap-3">
+                              <History size={24} className="text-gray-400" />
+                              <div>
+                                  <h3 className="text-[16px] font-black text-black uppercase tracking-tight">Service History</h3>
+                                  <p className="text-[11px] text-gray-400 mt-1">Riwayat servis kendaraan {form.noPolisi || form.nama}</p>
+                              </div>
+                          </div>
+                      </div>
+                      
+                      <div className="p-8">
+                          {serviceData.length > 0 ? (
+                              <div className="space-y-4">
+                                  {serviceData.map((service) => (
+                                      <div key={service.id} className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                                          <div className="flex items-start justify-between mb-4">
+                                              <div className="flex items-center gap-4">
+                                                  <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center">
+                                                      <FileText size={20} />
+                                                  </div>
+                                                  <div>
+                                                      <h4 className="text-[14px] font-black text-black uppercase">Service #{service.id}</h4>
+                                                      <p className="text-[11px] text-gray-400">{service.tglRequest}</p>
+                                                  </div>
+                                              </div>
+                                              <div className="flex items-center gap-2">
+                                                  <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                                                      service.status === 'Completed' ? 'bg-green-50 text-green-600 border-green-200' :
+                                                      service.status === 'In Progress' ? 'bg-blue-50 text-blue-600 border-blue-200' :
+                                                      'bg-orange-50 text-orange-500 border-orange-200'
+                                                  }`}>
+                                                      {service.status}
+                                                  </span>
+                                              </div>
+                                          </div>
+                                          
+                                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                              <div>
+                                                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Vendor</span>
+                                                  <p className="text-[12px] font-black text-black">{service.vendor || '-'}</p>
+                                              </div>
+                                              <div>
+                                                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Jenis Servis</span>
+                                                  <p className="text-[12px] font-black text-black">{service.jenisServis || '-'}</p>
+                                              </div>
+                                              <div>
+                                                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">KM Kendaraan</span>
+                                                  <p className="text-[12px] font-black text-black">{service.kmKendaraan || '-'} KM</p>
+                                              </div>
+                                              <div>
+                                                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Estimasi Biaya</span>
+                                                  <p className="text-[12px] font-black text-black">Rp {service.estimasiBiaya || '0'}</p>
+                                              </div>
+                                          </div>
+                                          
+                                          {service.masalah && (
+                                              <div className="mb-4">
+                                                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Masalah</span>
+                                                  <p className="text-[12px] text-gray-600 mt-1">{service.masalah}</p>
+                                              </div>
+                                          )}
+                                          
+                                          {service.spareParts && service.spareParts.length > 0 && (
+                                              <div>
+                                                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">Spare Parts</span>
+                                                  <div className="space-y-2">
+                                                      {service.spareParts.map((part, index) => (
+                                                          <div key={index} className="flex items-center justify-between bg-white rounded-xl p-3 border border-gray-100">
+                                                              <span className="text-[11px] font-bold text-black">{part.name}</span>
+                                                              <span className="text-[11px] font-black text-gray-500">Qty: {part.qty} - Rp {part.price}</span>
+                                                          </div>
+                                                      ))}
+                                                  </div>
+                                              </div>
+                                          )}
+                                      </div>
+                                  ))}
+                              </div>
+                          ) : (
+                              <div className="text-center py-12">
+                                  <History size={48} className="text-gray-300 mx-auto mb-4" />
+                                  <p className="text-[12px] font-black text-gray-300 uppercase tracking-widest">Belum ada riwayat servis</p>
+                                  <p className="text-[10px] text-gray-400 mt-2">Riwayat servis akan muncul di sini setelah kendaraan diservis</p>
+                              </div>
+                          )}
                       </div>
                   </div>
               </div>

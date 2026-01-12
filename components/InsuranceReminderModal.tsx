@@ -110,7 +110,7 @@ export const InsuranceReminderModal: React.FC<Props> = ({
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
                     {mode === 'create' ? 'Add Insurance Reminder' : 'Edit Reminder'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Expiry Management</p>
+                <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Expiry Management</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
@@ -182,11 +182,11 @@ export const InsuranceReminderModal: React.FC<Props> = ({
                 <div className="grid grid-cols-2 gap-4">
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Asset No / Plat</label>
-                        <input type="text" disabled className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[11px] font-mono font-bold text-gray-500" value={form.assetNo || ''} placeholder="Auto" />
+                        <input type="text" disabled className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-gray-500" value={form.assetNo || ''} placeholder="Auto" />
                     </div>
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Location / Branch</label>
-                        <input type="text" disabled className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[11px] font-bold text-gray-500" value={form.buildingName || ''} placeholder="Auto" />
+                        <input type="text" disabled className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-gray-500" value={form.buildingName || ''} placeholder="Auto" />
                     </div>
                 </div>
             </div>

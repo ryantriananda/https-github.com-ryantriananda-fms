@@ -53,7 +53,7 @@ export const LockerModal: React.FC<Props> = ({ isOpen, onClose, onSave, initialD
   const isView = mode === 'view';
 
   const Label = ({ children }: { children?: React.ReactNode }) => (
-    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">
+    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">
       {children}
     </label>
   );

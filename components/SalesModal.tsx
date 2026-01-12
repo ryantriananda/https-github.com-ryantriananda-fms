@@ -212,7 +212,7 @@ export const SalesModal: React.FC<Props> = ({
     <div className="flex flex-col">
         <div className="flex items-center gap-1.5 mb-1">
             {Icon && <Icon size={10} className="text-gray-400" />}
-            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{label}</span>
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{label}</span>
         </div>
         <span className="text-[11px] font-black text-black truncate" title={value}>{value || '-'}</span>
     </div>
@@ -234,7 +234,7 @@ export const SalesModal: React.FC<Props> = ({
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
                     DETAIL PENJUALAN & LELANG
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">{assetType === 'VEHICLE' ? 'Vehicle Asset Disposal' : 'General Asset Disposal'}</p>
+                <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">{assetType === 'VEHICLE' ? 'Vehicle Asset Disposal' : 'General Asset Disposal'}</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
@@ -352,7 +352,7 @@ export const SalesModal: React.FC<Props> = ({
                                             <DetailItem label="No. BPKB" value={selectedVehicle.noBpkb} icon={FileText} />
                                             
                                             <div className="col-span-2 mt-1">
-                                                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">Masa Berlaku STNK</span>
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">Masa Berlaku STNK</span>
                                                 <div className="flex gap-2">
                                                     <span className="text-[10px] font-mono font-bold text-black bg-white px-2 py-1 rounded border border-gray-200 shadow-sm">{selectedVehicle.masaBerlaku1 || '-'} (1Y)</span>
                                                     <span className="text-[10px] font-mono font-bold text-black bg-white px-2 py-1 rounded border border-gray-200 shadow-sm">{selectedVehicle.masaBerlaku5 || '-'} (5Y)</span>

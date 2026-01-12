@@ -111,46 +111,49 @@ export const TaxKirModal: React.FC<Props> = ({
   );
 
   return (
-    <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center backdrop-blur-md p-4">
-      <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        <div className="px-8 py-5 bg-white border-b border-gray-100 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gray-50 rounded-lg">
-              <ShieldCheck size={18} className="text-black" />
+    <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-4 animate-in fade-in duration-200">
+      <div className="bg-[#FBFBFB] w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[95vh]">
+        <div className="px-12 py-8 bg-white border-b border-gray-100 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 bg-black rounded-[1.5rem] flex items-center justify-center text-white shadow-2xl shadow-black/20">
+              <ShieldCheck size={28} strokeWidth={2.5} />
             </div>
-            <h2 className="text-base font-black tracking-tight text-black uppercase">
-              {mode === 'create' ? 'Permintaan Pajak & KIR' : mode === 'edit' ? 'Edit Request Pajak/KIR' : 'Detail Pajak & KIR'}
-            </h2>
+            <div>
+              <h2 className="text-[20px] font-black text-black uppercase tracking-tight leading-none">
+                {mode === 'create' ? 'Permintaan Pajak & KIR' : mode === 'edit' ? 'Edit Pajak/KIR' : 'Detail Pajak & KIR'}
+              </h2>
+              <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Tax & KIR Management</p>
+            </div>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-black p-2 rounded-full bg-gray-50 transition-colors">
-            <X size={20} />
+          <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-3 rounded-full hover:bg-gray-50">
+            <X size={32} />
           </button>
         </div>
 
-        <div className="bg-white border-b border-gray-100 flex px-8 shrink-0 gap-6">
+        <div className="bg-white border-b border-gray-100 flex px-12 shrink-0 gap-8">
             {['DETAILS', 'DOKUMEN', 'WORKFLOW'].map(tab => (
                 <button 
                     key={tab}
                     onClick={() => setActiveTab(tab)} 
-                    className={`py-3 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all ${activeTab === tab ? 'border-black text-black' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+                    className={`py-5 text-[10px] font-black uppercase tracking-[0.2em] border-b-[4px] transition-all ${activeTab === tab ? 'border-black text-black' : 'border-transparent text-gray-300 hover:text-gray-500'}`}
                 >
                     {tab}
                 </button>
             ))}
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 bg-gray-50/30 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-12 bg-[#FBFBFB] custom-scrollbar">
           {activeTab === 'DETAILS' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* Identitas Unit */}
-            <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+            <div className="bg-white p-10 rounded-[2rem] border border-gray-100 shadow-sm space-y-8">
               <SectionHeader icon={Building} title="Informasi Kendaraan" />
               <div className="space-y-5">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Pilih Unit</label>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-2.5 tracking-[0.2em]">Pilih Unit</label>
                   <div className="relative">
                     <select 
-                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-black focus:border-black focus:ring-2 focus:ring-gray-100 outline-none disabled:bg-gray-50 transition-all appearance-none cursor-pointer"
+                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 transition-all appearance-none cursor-pointer shadow-sm"
                         value={form.noPolisi || ''}
                         onChange={handleVehicleChange}
                         disabled={isView}
@@ -163,15 +166,15 @@ export const TaxKirModal: React.FC<Props> = ({
                 </div>
                 
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Jenis Pengurusan</label>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-2.5 tracking-[0.2em]">Jenis Pengurusan</label>
                   <div className="flex gap-3">
                     {['Pajak STNK', 'KIR'].map(type => (
                         <button
                             key={type}
                             disabled={isView}
                             onClick={() => handleTypeChange(type)}
-                            className={`flex-1 py-3 text-xs font-black rounded-xl border transition-all ${
-                                form.jenis === type ? 'bg-black text-white border-black shadow-md' : 'bg-white text-gray-400 border-gray-200 hover:border-black hover:text-black'
+                            className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest rounded-2xl border transition-all ${
+                                form.jenis === type ? 'bg-black text-white border-black shadow-lg' : 'bg-white text-gray-400 border-gray-200 hover:border-black hover:text-black'
                             }`}
                         >
                             {type}
@@ -182,10 +185,10 @@ export const TaxKirModal: React.FC<Props> = ({
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Channel</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase mb-2.5 tracking-[0.2em]">Channel</label>
                         <div className="relative">
                             <select 
-                                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-black focus:border-black outline-none disabled:bg-gray-50 transition-all appearance-none cursor-pointer uppercase"
+                                className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 transition-all appearance-none cursor-pointer uppercase shadow-sm"
                                 value={form.channel || ''}
                                 onChange={(e) => setForm({...form, channel: e.target.value})}
                                 disabled={isView}
@@ -199,10 +202,10 @@ export const TaxKirModal: React.FC<Props> = ({
                         </div>
                     </div>
                     <div>
-                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Cabang</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase mb-2.5 tracking-[0.2em]">Cabang</label>
                         <div className="relative">
                             <select 
-                                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-black focus:border-black outline-none disabled:bg-gray-50 transition-all appearance-none cursor-pointer uppercase"
+                                className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 transition-all appearance-none cursor-pointer uppercase shadow-sm"
                                 value={form.cabang || ''}
                                 onChange={(e) => setForm({...form, cabang: e.target.value})}
                                 disabled={isView}
@@ -217,15 +220,13 @@ export const TaxKirModal: React.FC<Props> = ({
                 
                 {/* Conditional Due Dates Section - Now an Input Date */}
                 <div className="pt-4 border-t border-dashed border-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
-                     <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">
+                     <label className="block text-[10px] font-black text-gray-400 uppercase mb-2.5 tracking-[0.2em]">
                         {form.jenis === 'Pajak STNK' ? 'Jatuh Tempo Pajak (STNK)' : 'Jatuh Tempo KIR'}
                      </label>
                      <div className="relative">
                         <input 
                             type="date"
-                            className={`w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-black text-black focus:border-black outline-none transition-all shadow-sm ${
-                                form.jenis === 'Pajak STNK' ? 'focus:ring-2 focus:ring-blue-100' : 'focus:ring-2 focus:ring-purple-100'
-                            }`}
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none transition-all shadow-sm disabled:bg-gray-50"
                             value={form.jatuhTempo || ''}
                             onChange={(e) => setForm({...form, jatuhTempo: e.target.value})}
                             disabled={isView}
@@ -243,25 +244,25 @@ export const TaxKirModal: React.FC<Props> = ({
             </div>
 
             {/* Administrasi & Biaya */}
-            <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+            <div className="bg-white p-10 rounded-[2rem] border border-gray-100 shadow-sm space-y-8">
               <SectionHeader icon={DollarSign} title="Administrasi & Biaya" />
               <div className="space-y-5">
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Tgl Request</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase mb-2.5 tracking-[0.2em]">Tgl Request</label>
                         <input 
                             type="date" 
-                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-black focus:border-black focus:ring-2 focus:ring-gray-100 outline-none disabled:bg-gray-50 transition-all"
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 transition-all shadow-sm"
                             value={form.tglRequest || ''}
                             onChange={(e) => setForm({...form, tglRequest: e.target.value})}
                             disabled={isView}
                         />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Target Selesai</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase mb-2.5 tracking-[0.2em]">Target Selesai</label>
                         <input 
                             type="date" 
-                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-black focus:border-black focus:ring-2 focus:ring-gray-100 outline-none disabled:bg-gray-50 transition-all"
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 transition-all shadow-sm"
                             value={form.targetSelesai || ''}
                             onChange={(e) => setForm({...form, targetSelesai: e.target.value})}
                             disabled={isView}
@@ -269,10 +270,10 @@ export const TaxKirModal: React.FC<Props> = ({
                     </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Estimasi Biaya (Rp)</label>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-2.5 tracking-[0.2em]">Estimasi Biaya (Rp)</label>
                   <input 
                     type="number" 
-                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-black text-black focus:border-black focus:ring-2 focus:ring-gray-100 outline-none disabled:bg-gray-50 transition-all placeholder:text-gray-300"
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 transition-all placeholder:text-gray-300 shadow-sm"
                     value={form.estimasiBiaya || ''}
                     onChange={(e) => setForm({...form, estimasiBiaya: e.target.value})}
                     disabled={isView}
@@ -280,10 +281,10 @@ export const TaxKirModal: React.FC<Props> = ({
                   />
                 </div>
                 <div>
-                    <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Metode Pembayaran</label>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase mb-2.5 tracking-[0.2em]">Metode Pembayaran</label>
                     <div className="relative">
                         <select 
-                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-black focus:border-black focus:ring-2 focus:ring-gray-100 outline-none disabled:bg-gray-50 transition-all appearance-none cursor-pointer"
+                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 transition-all appearance-none cursor-pointer shadow-sm"
                             value={form.jenisPembayaran || ''}
                             onChange={(e) => setForm({...form, jenisPembayaran: e.target.value})}
                             disabled={isView}
@@ -302,7 +303,7 @@ export const TaxKirModal: React.FC<Props> = ({
 
           {activeTab === 'DOKUMEN' && (
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="bg-white p-10 rounded-[2rem] border border-gray-200 shadow-sm">
+                  <div className="bg-white p-10 rounded-[2rem] border border-gray-100 shadow-sm">
                       <SectionHeader icon={FileText} title={`Legal Document - ${form.jenis || 'Attachment'}`} />
                       <input type="file" ref={fileInputRef} className="hidden" accept="image/*,application/pdf" onChange={handleFileChange} />
                       
@@ -381,19 +382,19 @@ export const TaxKirModal: React.FC<Props> = ({
           )}
         </div>
 
-        <div className="px-8 py-6 bg-white border-t border-gray-100 flex gap-4">
+        <div className="px-12 py-6 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
           {!isView && (
             <>
-                <button onClick={onClose} className="flex-1 py-4 text-[11px] font-black text-gray-400 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:text-black transition-all uppercase tracking-widest">Batal</button>
+                <button onClick={onClose} className="px-8 py-4 rounded-2xl text-[12px] font-black uppercase tracking-wider text-gray-500 hover:bg-gray-100 transition-all">Batal</button>
                 <button 
                     onClick={() => onSave(form)} 
-                    className="flex-[2] py-4 text-[11px] font-black text-white bg-black rounded-xl shadow-xl shadow-black/10 hover:bg-gray-900 transition-all flex items-center justify-center gap-2 uppercase tracking-widest active:scale-95"
+                    className="px-8 py-4 rounded-2xl text-[12px] font-black uppercase tracking-wider bg-black text-white hover:bg-gray-800 transition-all shadow-xl shadow-black/20 flex items-center gap-3"
                 >
                     <Save size={16} /> {mode === 'create' ? 'Ajukan Permintaan' : 'Simpan Perubahan'}
                 </button>
             </>
           )}
-          {isView && <button onClick={onClose} className="w-full py-4 text-[11px] font-black text-black uppercase tracking-widest bg-gray-100 rounded-xl hover:bg-gray-200 transition-all">Tutup</button>}
+          {isView && <button onClick={onClose} className="px-8 py-4 rounded-2xl text-[12px] font-black uppercase tracking-wider text-gray-500 hover:bg-gray-100 transition-all">Tutup</button>}
         </div>
       </div>
     </div>

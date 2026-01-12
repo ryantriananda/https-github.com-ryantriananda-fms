@@ -417,7 +417,7 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
                                     ) : (
                                         <div className="flex flex-col items-center text-gray-400">
                                             <UploadCloud size={24} className="mb-2" />
-                                            <span className="text-[9px] font-black uppercase tracking-widest">Upload Photo</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest">Upload Photo</span>
                                         </div>
                                     )}
                                     <input type="file" ref={beforeInputRef} className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'before')} />
@@ -439,7 +439,7 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
                                     ) : (
                                         <div className="flex flex-col items-center text-gray-400">
                                             <UploadCloud size={24} className="mb-2" />
-                                            <span className="text-[9px] font-black uppercase tracking-widest">Upload Photo</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest">Upload Photo</span>
                                         </div>
                                     )}
                                     <input type="file" ref={afterInputRef} className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'after')} />
@@ -470,7 +470,7 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
                             
                             {/* Content */}
                             <div>
-                                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">{log.date}</span>
+                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">{log.date}</span>
                                 <h4 className="text-[12px] font-black text-black leading-tight mb-0.5">{log.action}</h4>
                                 <div className="text-[10px] text-gray-500 font-medium flex items-center gap-1.5">
                                     <User size={10} /> 
@@ -491,7 +491,7 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
 
         {/* Footer */}
         <div className="px-12 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
-          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
+          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-200 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
           {!isView && (
             <button 
                 onClick={() => onSave(form)} 

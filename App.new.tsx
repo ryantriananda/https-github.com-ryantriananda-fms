@@ -299,7 +299,7 @@ export const App: React.FC = () => {
 
             // Vehicle Module
             case 'Daftar Kendaraan':
-                return <VehicleListPage data={vehicles} brandList={MOCK_BRAND_DATA} colorList={MOCK_COLOR_DATA} channelList={MOCK_GENERAL_MASTER_DATA} branchList={MOCK_LOCATION_DATA} onSave={(d) => setVehicles(p => [...p, d as VehicleRecord])} onImportClick={handleOpenImport} />;
+                return <VehicleListPage data={vehicles} serviceData={vehicleServices} brandList={MOCK_BRAND_DATA} colorList={MOCK_COLOR_DATA} channelList={MOCK_GENERAL_MASTER_DATA} branchList={MOCK_LOCATION_DATA} onSave={(d) => setVehicles(p => [...p, d as VehicleRecord])} onImportClick={handleOpenImport} />;
             case 'Kontrak Kendaraan':
                 return <VehicleContractPage data={vehicleContracts} vehicleList={vehicles} onSave={(d) => setVehicleContracts(p => [...p, d as VehicleContractRecord])} onImportClick={handleOpenImport} />;
             case 'Servis':

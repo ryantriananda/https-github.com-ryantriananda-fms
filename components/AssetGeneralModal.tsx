@@ -259,7 +259,7 @@ export const AssetGeneralModal: React.FC<Props> = ({
         <div className="px-12 py-10 bg-white border-t border-gray-100 flex justify-end gap-6 shrink-0">
           <button 
             onClick={onClose} 
-            className="px-12 py-5 text-[11px] font-black uppercase tracking-[0.25em] text-gray-400 bg-white border border-gray-100 rounded-2xl hover:bg-gray-50 hover:text-black transition-all"
+            className="px-12 py-5 text-[11px] font-black uppercase tracking-[0.25em] text-gray-400 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 hover:text-black transition-all"
           >
             Cancel
           </button>

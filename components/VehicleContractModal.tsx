@@ -146,7 +146,7 @@ export const VehicleContractModal: React.FC<Props> = ({
             <div 
                 onClick={() => handleUploadClick(uploadKey)}
                 className={`relative flex-1 border-2 border-dashed rounded-[1.5rem] flex flex-col items-center justify-center transition-all overflow-hidden bg-white min-h-[160px]
-                  ${preview ? 'border-gray-200' : 'border-gray-100 hover:border-black hover:bg-gray-50/50'}
+                  ${preview ? 'border-gray-200' : 'border-gray-200 hover:border-black hover:bg-gray-50/50'}
                   ${!isView ? 'cursor-pointer' : 'cursor-default'}
                 `}
             >
@@ -167,7 +167,7 @@ export const VehicleContractModal: React.FC<Props> = ({
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm border border-gray-100 transition-all mb-3 bg-white`}>
                           <Icon size={18} className="text-gray-300" />
                       </div>
-                      <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest leading-relaxed">
+                      <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest leading-relaxed">
                           {isView ? 'No Image' : 'Upload'}
                       </p>
                   </div>
@@ -184,13 +184,13 @@ export const VehicleContractModal: React.FC<Props> = ({
       <div className="w-1.5 h-6 bg-black rounded-full shadow-sm"></div>
       <div>
           <h3 className="text-[12px] font-black text-black uppercase tracking-[0.2em] leading-none">{title}</h3>
-          {sub && <p className="text-[9px] font-bold text-gray-400 uppercase mt-1.5 tracking-widest">{sub}</p>}
+          {sub && <p className="text-[10px] font-bold text-gray-400 uppercase mt-1.5 tracking-widest">{sub}</p>}
       </div>
     </div>
   );
 
   const Label = ({ children, required }: { children?: React.ReactNode, required?: boolean }) => (
-    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5">
+    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5">
       {children} {required && <span className="text-red-500 font-black ml-0.5">*</span>}
     </label>
   );
@@ -202,7 +202,7 @@ export const VehicleContractModal: React.FC<Props> = ({
         <input 
             type={type} 
             disabled={isView || disabled}
-            className={`w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 ${Icon ? 'pl-11' : ''} text-[12px] font-black text-black focus:border-black outline-none transition-all placeholder:text-gray-200 shadow-sm ${disabled ? 'bg-gray-50 text-gray-500' : ''}`}
+            className={`w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 ${Icon ? 'pl-11' : ''} text-[13px] font-black text-black focus:border-black outline-none transition-all placeholder:text-gray-300 shadow-sm ${disabled ? 'bg-gray-50 text-gray-500' : ''}`}
             value={value || ''}
             placeholder={placeholder}
             onChange={(e) => setForm({...form, [field]: e.target.value})}
@@ -216,7 +216,7 @@ export const VehicleContractModal: React.FC<Props> = ({
       <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100/50">
           <div className="flex items-center gap-2 mb-1.5">
               {Icon && <Icon size={12} className="text-gray-400" />}
-              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{label}</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</span>
           </div>
           <p className="text-[12px] font-black text-black truncate" title={value}>{value || '-'}</p>
       </div>
@@ -237,7 +237,7 @@ export const VehicleContractModal: React.FC<Props> = ({
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
                    {mode === 'edit' ? 'Perbarui Kontrak' : mode === 'view' ? 'Rincian Kontrak' : 'Input Kontrak Baru'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Vehicle Lease Management</p>
+                <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Vehicle Lease Management</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
@@ -284,7 +284,7 @@ export const VehicleContractModal: React.FC<Props> = ({
                                 <div className="relative">
                                     <select 
                                         disabled={isView || mode === 'edit'}
-                                        className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-[12px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 appearance-none shadow-sm transition-all cursor-pointer"
+                                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 appearance-none shadow-sm transition-all cursor-pointer"
                                         value={form.noPolisi || ''}
                                         onChange={handleVehicleChange}
                                     >

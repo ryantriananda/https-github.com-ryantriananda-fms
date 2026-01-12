@@ -58,7 +58,7 @@ export const MasterRequestTypeModal: React.FC<Props> = ({
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
                     {mode === 'create' ? 'TAMBAH REQUEST TYPE' : 'EDIT REQUEST TYPE'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Master Data Configuration</p>
+                <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Master Data Configuration</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">

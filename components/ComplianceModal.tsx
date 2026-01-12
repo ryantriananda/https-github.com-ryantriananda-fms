@@ -101,7 +101,7 @@ export const ComplianceModal: React.FC<Props> = ({
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
                     {mode === 'create' ? 'Tambah Dokumen Legal' : mode === 'edit' ? 'Edit Dokumen' : 'Detail Dokumen'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Compliance Management</p>
+                <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Compliance Management</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
@@ -228,7 +228,7 @@ export const ComplianceModal: React.FC<Props> = ({
 
         {/* Footer */}
         <div className="px-10 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
-          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
+          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 border border-gray-200 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
           {!isView && (
             <button 
                 onClick={() => onSave(form)} 

@@ -170,13 +170,13 @@ export const UserModal: React.FC<Props> = ({
       <div className="w-1.5 h-6 bg-black rounded-full shadow-sm"></div>
       <div>
           <h3 className="text-[12px] font-black text-black uppercase tracking-[0.2em] leading-none">{title}</h3>
-          {sub && <p className="text-[9px] font-bold text-gray-400 uppercase mt-1.5 tracking-widest">{sub}</p>}
+          {sub && <p className="text-[10px] font-bold text-gray-400 uppercase mt-1.5 tracking-widest">{sub}</p>}
       </div>
     </div>
   );
 
   const Label = ({ children, required }: { children?: React.ReactNode, required?: boolean }) => (
-    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5">
+    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5">
       {children} {required && <span className="text-red-500 font-black ml-0.5">*</span>}
     </label>
   );
@@ -188,7 +188,7 @@ export const UserModal: React.FC<Props> = ({
         <input 
           type={type} 
           disabled={isView || disabled}
-          className={`w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 ${Icon ? 'pl-12' : ''} text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all placeholder:text-gray-200 shadow-sm`}
+          className={`w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 ${Icon ? 'pl-12' : ''} text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all placeholder:text-gray-300 shadow-sm`}
           value={value || ''}
           placeholder={placeholder}
           onChange={(e) => setForm({...form, [field]: e.target.value})}

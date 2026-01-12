@@ -98,7 +98,7 @@ export const ImportDataModal: React.FC<Props> = ({
                         </div>
                         <div>
                             <h4 className="text-[12px] font-black text-black uppercase tracking-tight">{templateName}</h4>
-                            <p className="text-[9px] font-bold text-gray-400 mt-0.5 uppercase tracking-wide">Format Standar untuk Import Data</p>
+                            <p className="text-[10px] font-bold text-gray-400 mt-0.5 uppercase tracking-wide">Format Standar untuk Import Data</p>
                         </div>
                     </div>
                     <button 
@@ -142,7 +142,7 @@ export const ImportDataModal: React.FC<Props> = ({
                             </div>
                             <p className="text-[12px] font-black text-black uppercase tracking-widest mb-1">{selectedFile.name}</p>
                             <p className="text-[10px] font-bold text-gray-400">{(selectedFile.size / 1024).toFixed(2)} KB</p>
-                            <p className="text-[9px] font-bold text-green-600 mt-3 uppercase tracking-widest bg-white/50 px-3 py-1 rounded-full">Click to change file</p>
+                            <p className="text-[10px] font-bold text-green-600 mt-3 uppercase tracking-widest bg-white/50 px-3 py-1 rounded-full">Click to change file</p>
                         </div>
                     ) : (
                         <div className="text-center p-8">
@@ -152,7 +152,7 @@ export const ImportDataModal: React.FC<Props> = ({
                             <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2">
                                 Click to Browse or Drag and Drop your file here
                             </p>
-                            <p className="text-[9px] font-bold text-gray-300 uppercase">Supported: .XLSX, .XLS (Max. 10MB)</p>
+                            <p className="text-[10px] font-bold text-gray-300 uppercase">Supported: .XLSX, .XLS (Max. 10MB)</p>
                         </div>
                     )}
                 </div>

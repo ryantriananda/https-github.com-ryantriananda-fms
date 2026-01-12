@@ -22,6 +22,7 @@ import {
 // Vehicle List Page
 interface VehicleListPageProps {
     data: VehicleRecord[];
+    serviceData: ServiceRecord[];
     brandList: GeneralMasterItem[];
     colorList: GeneralMasterItem[];
     channelList: GeneralMasterItem[];
@@ -31,7 +32,7 @@ interface VehicleListPageProps {
 }
 
 export const VehicleListPage: React.FC<VehicleListPageProps> = ({ 
-    data, brandList, colorList, channelList, branchList, onSave, onImportClick 
+    data, serviceData, brandList, colorList, channelList, branchList, onSave, onImportClick 
 }) => {
     const [activeTab, setActiveTab] = useState('SEMUA');
     const [modalState, setModalState] = useState<{ isOpen: boolean; mode: 'create' | 'edit' | 'view'; data?: VehicleRecord }>({ isOpen: false, mode: 'create' });
@@ -63,6 +64,7 @@ export const VehicleListPage: React.FC<VehicleListPageProps> = ({
                 colorList={colorList}
                 channelList={channelList}
                 branchList={branchList}
+                serviceData={modalState.data ? serviceData.filter(s => s.noPolisi === modalState.data!.noPolisi) : []}
             />
         </>
     );
@@ -144,6 +146,7 @@ export const ServicePage: React.FC<ServicePageProps> = ({ data, vehicleList, ven
                 mode={modalState.mode}
                 vehicleList={vehicleList}
                 vendorList={vendorList}
+                serviceHistory={data}
             />
         </>
     );

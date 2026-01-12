@@ -147,7 +147,7 @@ export const AddStockOpnameModal: React.FC<Props> = ({
   if (!isOpen) return null;
 
   const Label = ({ children }: { children?: React.ReactNode }) => (
-      <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
+      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
           {children}
       </label>
   );
@@ -166,7 +166,7 @@ export const AddStockOpnameModal: React.FC<Props> = ({
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
                     {mode === 'create' ? 'INITIALIZE STOCK OPNAME' : mode === 'approve' ? 'PERSETUJUAN STOCK OPNAME' : 'STOCK OPNAME DETAIL'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">
+                <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">
                     {mode === 'approve' ? 'REVIEW & VALIDASI HASIL OPNAME' : 'INVENTORY CONTROL SYSTEM'}
                 </p>
             </div>
