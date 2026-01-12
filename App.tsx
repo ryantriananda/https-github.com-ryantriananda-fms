@@ -33,7 +33,7 @@ import { SalesModal } from './components/SalesModal';
 
 // Building
 import { BuildingTable } from './components/BuildingTable';
-import { BuildingModal } from './components/BuildingModal';
+import { BuildingFormPage } from './components/BuildingFormPage'; 
 import { UtilityTable } from './components/UtilityTable';
 import { UtilityModal } from './components/UtilityModal';
 import { ReminderTable } from './components/ReminderTable'; // Compliance & General Reminder
@@ -229,6 +229,11 @@ export const App: React.FC = () => {
     mode: 'create'
   });
 
+  // --- BUILDING FORM PAGE STATE ---
+  const [buildingPageMode, setBuildingPageMode] = useState<'list' | 'form'>('list');
+  const [selectedBuildingData, setSelectedBuildingData] = useState<BuildingRecord | null>(null);
+  const [buildingFormMode, setBuildingFormMode] = useState<'create' | 'edit' | 'view'>('create');
+
   // --- IMPORT MODAL STATE ---
   const [importState, setImportState] = useState<{
       isOpen: boolean;
@@ -264,6 +269,29 @@ export const App: React.FC = () => {
   const handleNavigate = (item: string) => {
     setActiveItem(item);
     setActiveTab('SEMUA');
+    setBuildingPageMode('list'); // Reset building view when navigating
+  };
+
+  // --- BUILDING PAGE HANDLERS ---
+  const handleOpenBuildingForm = (mode: 'create' | 'edit' | 'view', data?: BuildingRecord) => {
+      setBuildingFormMode(mode);
+      setSelectedBuildingData(data || null);
+      setBuildingPageMode('form');
+  };
+
+  const handleCloseBuildingForm = () => {
+       setBuildingPageMode('list');
+       setSelectedBuildingData(null);
+  };
+
+  const handleSaveBuilding = (data: Partial<BuildingRecord>) => {
+      if (buildingFormMode === 'create') {
+          const newBuilding = { ...data, id: Date.now() } as BuildingRecord;
+          setBuildings(prev => [...prev, newBuilding]);
+      } else {
+          setBuildings(prev => prev.map(b => b.id === selectedBuildingData?.id ? { ...b, ...data } as BuildingRecord : b));
+      }
+      handleCloseBuildingForm();
   };
 
   // --- IMPORT LOGIC ---
@@ -500,7 +528,7 @@ export const App: React.FC = () => {
                 id: s.id, 
                 itemName: `Servis ${s.noPolisi}`, 
                 status: s.statusApproval, 
-                date: s.tglRequest,
+                date: s.tglRequest, 
                 transactionNumber: s.id,
                 type: 'Vehicle Service',
                 code: 'SRV'
@@ -981,24 +1009,44 @@ export const App: React.FC = () => {
 
       // --- BUILDING MODULE ---
       case 'Daftar Gedung':
+      case 'Branch Improvement': 
+          // --- FULL PAGE SWITCH LOGIC ---
+          if (buildingPageMode === 'form') {
+              return (
+                  <BuildingFormPage 
+                      onBack={handleCloseBuildingForm}
+                      onSave={handleSaveBuilding}
+                      initialData={selectedBuildingData}
+                      mode={buildingFormMode}
+                      buildingTypeList={MOCK_BUILDING_TYPE_DATA}
+                      existingBuildings={buildings}
+                  />
+              );
+          }
+
           return (
               <>
-                  <FilterBar tabs={['SEMUA', 'OWNED', 'RENTED']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('BUILDING', 'create')} customAddLabel="New Branch Req" onImportClick={handleOpenImport}/>
-                  <BuildingTable data={buildings} onView={(i) => openModal('BUILDING', 'view', i)} onEdit={(i) => openModal('BUILDING', 'edit', i)} />
+                  <FilterBar 
+                    tabs={['SEMUA', 'OWNED', 'RENTED']} 
+                    activeTab={activeTab} 
+                    onTabChange={setActiveTab} 
+                    onAddClick={() => handleOpenBuildingForm('create')} 
+                    customAddLabel={activeItem === 'Daftar Gedung' ? "New Branch Req" : "New Improvement"} 
+                    onImportClick={handleOpenImport}
+                  />
+                  <BuildingTable 
+                    data={buildings} 
+                    onView={(i) => handleOpenBuildingForm('view', i)} 
+                    onEdit={(i) => handleOpenBuildingForm('edit', i)} 
+                  />
               </>
           );
+          
       case 'Utility Monitoring':
           return (
               <>
                   <FilterBar tabs={['OVERVIEW', 'LISTRIK', 'AIR', 'INTERNET']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('UTILITY', 'create')} customAddLabel="Input Utility" onImportClick={handleOpenImport}/>
                   <UtilityTable data={utilities} onView={(i) => openModal('UTILITY', 'view', i)} onEdit={(i) => openModal('UTILITY', 'edit', i)} />
-              </>
-          );
-      case 'Branch Improvement':
-          return (
-              <>
-                  <FilterBar tabs={['SEMUA', 'PENDING', 'ON PROGRESS', 'COMPLETED']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('BUILDING', 'create')} customAddLabel="New Improvement" onImportClick={handleOpenImport} />
-                  <BuildingTable data={buildings} onView={(i) => openModal('BUILDING', 'view', i)} onEdit={(i) => openModal('BUILDING', 'edit', i)} />
               </>
           );
       case 'Compliance & Legal':
@@ -1332,7 +1380,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#FBFBFB] font-sans text-black">
+    <div className="flex h-screen bg-[#FBFBFB] font-sans text-black overflow-hidden">
       <Sidebar 
         activeItem={activeItem} 
         onNavigate={handleNavigate} 
@@ -1351,7 +1399,8 @@ export const App: React.FC = () => {
             onRoleChange={setUserRole} // PASS ROLE HANDLER
         />
         
-        <main className="flex-1 p-8 overflow-y-auto custom-scrollbar">
+        {/* Conditional class for Main Container: Remove padding if in Form Mode */}
+        <main className={`flex-1 flex flex-col ${buildingPageMode === 'form' ? 'p-0 overflow-hidden' : 'p-8 overflow-y-auto custom-scrollbar'}`}>
           {renderContent()}
         </main>
       </div>
@@ -1464,8 +1513,8 @@ export const App: React.FC = () => {
         assetType={modalState.extraData?.type || 'VEHICLE'}
       />
 
-      {/* Building Modals */}
-      <BuildingModal isOpen={modalState.isOpen && modalState.type === 'BUILDING'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} existingBuildings={buildings} buildingTypeList={MOCK_BUILDING_TYPE_DATA} />
+      {/* Building Modals - OLD MODAL DELETED/DEPRECATED */}
+      
       <UtilityModal isOpen={modalState.isOpen && modalState.type === 'UTILITY'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} />
       <ComplianceModal isOpen={modalState.isOpen && modalState.type === 'COMPLIANCE'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} />
       <BuildingMaintenanceModal isOpen={modalState.isOpen && modalState.type === 'BUILDING_MAINTENANCE'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} assetList={MOCK_BUILDING_ASSETS} />
