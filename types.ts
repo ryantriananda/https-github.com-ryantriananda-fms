@@ -34,6 +34,7 @@ export interface MasterItem {
   itemName: string;
   itemCode: string;
   uom: string;
+  inStock: number; // Added inStock
   remainingStock: number;
   minimumStock: number;
   maximumStock: number;
@@ -95,6 +96,8 @@ export interface VehicleRecord {
   pengguna?: string;
   noBpkb?: string;
   keteranganBpkb?: string;
+  noStnk?: string;
+  noKir?: string;
   masaBerlaku1?: string;
   masaBerlaku5?: string;
   masaBerlakuKir?: string;
@@ -112,6 +115,23 @@ export interface VehicleRecord {
   photoRight?: string;
   photoLeft?: string;
   tipeKendaraan?: string;
+  // NEW fields for Live Bidding
+  odometer?: string;
+  images?: Array<{
+    id: string;
+    url: string;
+    type: string;
+    caption: string;
+  }>;
+  documents?: Array<{
+    id: string;
+    name: string;
+    type: string;
+    url: string;
+    expiry?: string;
+  }>;
+  condition?: 'Baik' | 'Cukup' | 'Rusak';
+  conditionNotes?: string;
 }
 
 export interface VehicleContractRecord {
@@ -261,6 +281,16 @@ export interface BidderRegistration {
   agreedToTerms: boolean;
 }
 
+export interface RentalHistoryRecord {
+  id: string;
+  periodStart: string;
+  periodEnd: string;
+  lessorName: string;
+  annualCost: string;
+  notes?: string;
+  status: 'Active' | 'Completed' | 'Terminated';
+}
+
 export interface BuildingRecord {
   id: string | number;
   name: string;
@@ -272,31 +302,88 @@ export interface BuildingRecord {
   location: string;
   address: string;
   status: string;
+  
+  // PDF Point 1
   city?: string;
-  district?: string;
+  kabupaten?: string;
   province?: string;
+  
+  // PDF Point 2
+  phoneLineCount?: string;
+  phoneLineDetails?: {
+    canAdd: boolean;
+    costPerLine: string;
+    borneBy: 'Pemilik' | 'Penyewa';
+  };
+
+  // PDF Point 3
+  electricityDetails?: {
+    power: string;
+    source: 'PLN' | 'Swasta';
+  };
+  electricityPower?: string; // Keeping for backward compat
+
+  // PDF Point 4
+  waterSource?: string; // Pam/Pompa/Sumur/Atau
+
+  // PDF Point 5 (Dimensions)
+  landDimensions?: { length: string; width: string; total: string };
+  buildingDimensions?: { length: string; width: string; total: string };
+  yardDimensions?: { length: string; width: string; total: string };
+  
+  landArea?: string; // Backward compat
+  buildingArea?: string; // Backward compat
+  frontYardArea?: string; // Backward compat
+
+  fenceDetails?: {
+    material: string; // Tembok/Duri/Besi/Seng
+    condition: 'Baik' | 'Sedang' | 'Kurang';
+    height: string;
+    gateMaterial: string;
+    gateCondition: 'Baik' | 'Sedang' | 'Kurang';
+    gateHeight: string;
+  };
+
+  parkingDetails?: { hasParking: boolean; capacity: string };
+  
+  // PDF Point 5 & 6 (Security & Checklist)
+  securityChecklist?: string[]; // Security Area, CCTV, etc.
+  
+  // PDF Point 6 (Floors)
+  totalFloors?: string;
+  floorDimensions?: {
+    dasar: { l: string; w: string; area: string; photo?: string };
+    lt1: { l: string; w: string; area: string; photo?: string };
+    lt2: { l: string; w: string; area: string; photo?: string };
+    lt3: { l: string; w: string; area: string; photo?: string };
+    lt4: { l: string; w: string; area: string; photo?: string };
+  };
+
+  // PDF Point 7 (Materials)
+  materialChecklist?: string[]; 
+  buildingAge?: string; // <5, 5-10, etc.
+
+  // New Documentation Fields
+  photoFront?: string;
+  photoSide?: string;
+  photoRoad?: string;
+  photoInterior?: string;
+  floorPlanMaster?: string; // NEW: Floor Plan Layout
+  
+  // New Legal Documents
+  docSertifikat?: string;
+  docPBB?: string;
+  docIMB?: string;
+  docContract?: string;
+
+  // Legacy/Other Fields
   distanceToDealer?: string;
   roadCondition?: string;
-  electricityPower?: string;
-  waterSource?: string;
-  phoneLineCount?: string;
-  landArea?: string;
-  buildingArea?: string;
-  frontYardArea?: string;
-  totalFloors?: string;
   parkingCapacity?: string;
-  buildingAge?: string;
   fenceCondition?: string;
   gateCondition?: string;
-  structureChecklist?: {
-    tiang?: string[];
-    atap?: string[];
-    dinding?: string[];
-    lantai?: string[];
-    pintu?: string[];
-    jendela?: string[];
-    others?: string[];
-  };
+  structureChecklist?: any; // Deprecated by materialChecklist
+  
   locationContext?: {
     right?: string;
     left?: string;
@@ -305,6 +392,13 @@ export interface BuildingRecord {
     nearIndustry?: boolean;
     operationalHours?: string;
   };
+  
+  boundaryFront?: string;
+  boundaryBack?: string;
+  boundaryRight?: string;
+  boundaryLeft?: string;
+  environmentType?: string[];
+  
   environmentConditions?: string[];
   renovationNeeded?: boolean;
   renovationCostEstimate?: string;
@@ -314,14 +408,38 @@ export interface BuildingRecord {
     gracePeriod?: string;
     items: { partition: boolean; paint: boolean; roof: string; lights: boolean; other: string };
   };
+  
+  renovationItems?: string[];
+  renovationCostBearer?: string;
+  renovationGracePeriod?: string;
+
   rentCost?: string;
+  rentPeriod?: string; // e.g. "2 Tahun"
+  rentDeposit?: string;
   taxPPH?: string;
+  taxResponsibility?: string;
   notaryFee?: string;
+  
+  // Own Specifics
   purchasePrice?: string;
+  purchaseDate?: string;
+  certificateType?: 'SHM' | 'HGB' | 'Strata';
+  certificateNo?: string;
+  njop?: string;
+  pbbTax?: string;
+
+  // Financials
+  annualMaintenanceBudget?: string;
+  insuranceCost?: string;
+  
+  // Rental History
+  rentalHistory?: RentalHistoryRecord[];
+
   ownerName?: string;
   ownerPhone?: string;
   ownerAddress?: string;
   documentsAvailable?: string[];
+  
   businessNotes?: {
     deliveryTime?: string;
     dealersCount?: string;
@@ -329,6 +447,11 @@ export interface BuildingRecord {
     margin?: string;
     competitorPareto?: string;
   };
+  estimatedTurnover?: string;
+  deliveryTimeDays?: string;
+  paretoDealers?: string;
+  staffComposition?: string;
+
   proposals?: BuildingProposal[];
   floorPlanImage?: string;
   totalMaintenanceCost?: string;
@@ -542,6 +665,7 @@ export interface BuildingProposal {
   renovationCostEstimate?: string;
   renovationTimeEstimate?: string;
   leaseNature?: string;
+  status?: string;
 }
 
 export interface PurchaseRecord {

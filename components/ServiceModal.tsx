@@ -1,7 +1,6 @@
-
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { X, Save, Wrench, Plus, Trash2, Calendar, Clock, User, CheckCircle2, AlertCircle, FileText, PlayCircle, Info, Hash, MapPin, Tag, ShieldCheck, Camera, Image as ImageIcon, ArrowRight } from 'lucide-react';
-import { ServiceRecord, VehicleRecord, SparePart, GeneralMasterItem, VendorRecord } from '../types';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Wrench, Clock, CheckCircle2, AlertCircle, Camera, Plus, Trash2, ArrowRight, FileText, Car, DollarSign, User, Calendar, MapPin, Star, Package, PlayCircle } from 'lucide-react';
+import { ServiceRecord, VehicleRecord, VendorRecord, SparePart } from '../types';
 
 interface Props {
   isOpen: boolean;
@@ -9,42 +8,35 @@ interface Props {
   onSave: (data: Partial<ServiceRecord>) => void;
   initialData?: ServiceRecord | null;
   mode?: 'create' | 'edit' | 'view';
-  vehicleList: VehicleRecord[];
-  serviceTypeList?: GeneralMasterItem[];
+  vehicleList?: VehicleRecord[];
   vendorList?: VendorRecord[];
+  serviceHistory?: ServiceRecord[];
+  serviceTypeList?: string[];
 }
 
-export const ServiceModal: React.FC<Props> = ({ 
-    isOpen, 
-    onClose, 
-    onSave, 
-    initialData, 
-    mode = 'create',
-    vehicleList,
-    serviceTypeList = [],
-    vendorList = []
+export const ServiceModal: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  onSave,
+  initialData,
+  mode = 'create',
+  vehicleList = [],
+  vendorList = [],
+  serviceHistory = [],
+  serviceTypeList = ['Servis Berkala', 'Perbaikan', 'Ganti Oli', 'Ganti Ban', 'Tune Up', 'Body Repair', 'AC Service']
 }) => {
-  const [activeTab, setActiveTab] = useState('DETAILS');
   const [form, setForm] = useState<Partial<ServiceRecord>>({
-    noPolisi: '',
-    aset: '',
-    tglRequest: new Date().toISOString().split('T')[0],
-    vendor: '',
-    kmKendaraan: '',
-    masalah: '',
-    jenisServis: 'Servis Rutin',
+    status: 'Draft',
     statusApproval: 'Pending',
-    status: 'Scheduled',
-    spareParts: [],
-    photoBefore: '',
-    photoAfter: ''
+    tglRequest: new Date().toISOString().split('T')[0],
+    spareParts: []
   });
 
   const [parts, setParts] = useState<SparePart[]>([]);
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState<ServiceRecord | null>(null);
   
-  // Logic for Image Upload
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [activeUpload, setActiveUpload] = useState<{ type: 'general' | 'part', subType: 'before' | 'after', index?: number } | null>(null);
+  const beforeInputRef = useRef<HTMLInputElement>(null);
+  const afterInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -53,35 +45,55 @@ export const ServiceModal: React.FC<Props> = ({
         setParts(initialData.spareParts || []);
       } else {
         setForm({
-          noPolisi: '',
-          aset: '',
-          tglRequest: new Date().toISOString().split('T')[0],
-          vendor: '',
-          kmKendaraan: '',
-          masalah: '',
-          jenisServis: 'Servis Rutin',
+          status: 'Draft',
           statusApproval: 'Pending',
-          status: 'Scheduled',
-          spareParts: [],
-          photoBefore: '',
-          photoAfter: ''
+          tglRequest: new Date().toISOString().split('T')[0],
+          noPolisi: '',
+          vendor: '',
+          masalah: '',
+          jenisServis: '',
+          kmKendaraan: '',
+          estimasiBiaya: '',
+          spareParts: []
         });
         setParts([]);
       }
-      setActiveTab('DETAILS');
+      setSelectedHistoryItem(null);
     }
   }, [isOpen, initialData]);
 
-  const isView = mode === 'view';
-  const isNonRoutine = form.jenisServis === 'Perbaikan'; 
+  if (!isOpen) return null;
 
-  // Get Selected Vehicle Details
-  const selectedVehicle = useMemo(() => {
-      return vehicleList.find(v => v.noPolisi === form.noPolisi);
-  }, [form.noPolisi, vehicleList]);
+  const isView = mode === 'view';
+
+  const handleSave = () => {
+    const dataToSave: Partial<ServiceRecord> = {
+      ...form,
+      spareParts: parts
+    };
+    onSave(dataToSave);
+  };
+
+  const getSLABadge = () => {
+    if (!form.tglRequest) return null;
+    const requestDate = new Date(form.tglRequest);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (form.status === 'Completed') {
+      return <span className="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider bg-green-100 text-green-700">Completed</span>;
+    }
+    if (diffDays > 7) {
+      return <span className="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-600">Overdue &gt;7 Days</span>;
+    }
+    if (diffDays > 3) {
+      return <span className="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-100 text-orange-600">Warning &gt;3 Days</span>;
+    }
+    return <span className="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-600">On Track</span>;
+  };
 
   const addPart = () => {
-    setParts([...parts, { name: '', qty: 1, price: '0', imageBefore: '', imageAfter: '' }]);
+    setParts([...parts, { name: '', qty: 1, price: '' }]);
   };
 
   const removePart = (index: number) => {
@@ -89,545 +101,523 @@ export const ServiceModal: React.FC<Props> = ({
   };
 
   const updatePart = (index: number, field: keyof SparePart, value: any) => {
-    const newParts = [...parts];
-    newParts[index] = { ...newParts[index], [field]: value };
-    setParts(newParts);
+    const updated = [...parts];
+    updated[index] = { ...updated[index], [field]: value };
+    setParts(updated);
   };
 
-  // Generalized Image Upload Handler
-  const handleUploadClick = (type: 'general' | 'part', subType: 'before' | 'after', index?: number) => {
-      if (!isView) {
-          setActiveUpload({ type, subType, index });
-          fileInputRef.current?.click();
-      }
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'before' | 'after') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if (type === 'before') {
+          setForm(prev => ({ ...prev, photoBefore: ev.target?.result as string }));
+        } else {
+          setForm(prev => ({ ...prev, photoAfter: ev.target?.result as string }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file && activeUpload) {
-          const reader = new FileReader();
-          reader.onload = (ev) => {
-              const result = ev.target?.result as string;
-              
-              if (activeUpload.type === 'general') {
-                  if (activeUpload.subType === 'before') setForm(prev => ({ ...prev, photoBefore: result }));
-                  else setForm(prev => ({ ...prev, photoAfter: result }));
-              } else if (activeUpload.type === 'part' && typeof activeUpload.index === 'number') {
-                  const newParts = [...parts];
-                  if (activeUpload.subType === 'before') newParts[activeUpload.index].imageBefore = result;
-                  else newParts[activeUpload.index].imageAfter = result;
-                  setParts(newParts);
-              }
-          };
-          reader.readAsDataURL(file);
-      }
-      e.target.value = ''; // Reset
+  const selectedVehicle = vehicleList.find(v => v.noPolisi === form.noPolisi);
+
+  const formatCurrency = (value: string | number | undefined) => {
+    if (!value) return '-';
+    const num = typeof value === 'string' ? parseFloat(value.replace(/[^0-9]/g, '')) : value;
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
   };
 
-  const removeImage = (e: React.MouseEvent, type: 'general' | 'part', subType: 'before' | 'after', index?: number) => {
-      e.stopPropagation();
-      if (type === 'general') {
-          if (subType === 'before') setForm(prev => ({ ...prev, photoBefore: '' }));
-          else setForm(prev => ({ ...prev, photoAfter: '' }));
-      } else if (type === 'part' && typeof index === 'number') {
-          const newParts = [...parts];
-          if (subType === 'before') newParts[index].imageBefore = '';
-          else newParts[index].imageAfter = '';
-          setParts(newParts);
-      }
+  const formatDate = (date: string | undefined) => {
+    if (!date) return '-';
+    return new Date(date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
-  const totalBiaya = useMemo(() => {
-    return parts.reduce((acc, curr) => {
-      const priceStr = curr.price.toString().replace(/[^0-9]/g, '');
-      const price = parseInt(priceStr) || 0;
-      return acc + (curr.qty * price);
-    }, 0);
-  }, [parts]);
-
-  const handleSave = () => {
-    onSave({ ...form, spareParts: parts, estimasiBiaya: totalBiaya.toString() });
-    onClose();
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'completed': return 'bg-green-100 text-green-700';
+      case 'in progress': return 'bg-blue-100 text-blue-700';
+      case 'pending': case 'draft': return 'bg-gray-100 text-gray-600';
+      case 'cancelled': return 'bg-red-100 text-red-600';
+      default: return 'bg-gray-100 text-gray-600';
+    }
   };
 
-  const getLogs = () => {
-      const logs = [
-          { id: 1, date: form.tglRequest, user: 'System', role: 'System', action: 'Request Created', status: 'Draft', icon: FileText, color: 'text-gray-400', bg: 'bg-gray-100' },
-      ];
-      if (form.statusApproval === 'Pending' || form.statusApproval === 'Pending Approval') {
-           logs.push({ id: 2, date: form.tglRequest, user: 'Ibnu Faisal', role: 'Facility Staff', action: 'Submitted for Approval', status: 'Pending', icon: Clock, color: 'text-orange-500', bg: 'bg-orange-100' });
-      }
-      if (form.statusApproval === 'Approved') {
-          logs.push({ id: 2, date: form.tglRequest, user: 'Ibnu Faisal', role: 'Facility Staff', action: 'Submitted', status: 'Pending', icon: Clock, color: 'text-gray-400', bg: 'bg-gray-50' });
-          logs.push({ id: 3, date: 'Next Day', user: 'Budi Santoso', role: 'Manager', action: 'Approved Request', status: 'Approved', icon: CheckCircle2, color: 'text-green-500', bg: 'bg-green-100' });
-      } else if (form.statusApproval === 'Rejected') {
-          logs.push({ id: 3, date: 'Next Day', user: 'Budi Santoso', role: 'Manager', action: 'Rejected Request', status: 'Rejected', icon: AlertCircle, color: 'text-red-500', bg: 'bg-red-100' });
-      }
-      if (form.status === 'In Progress' || form.status === 'On Progress') {
-           logs.push({ id: 4, date: 'Processing', user: form.vendor || 'Vendor', role: 'Mechanic', action: 'Service Started', status: 'In Progress', icon: PlayCircle, color: 'text-blue-600', bg: 'bg-blue-50' });
-      }
-      if (form.status === 'Completed' || form.status === 'Selesai') {
-           if (!logs.find(l => l.status === 'In Progress')) {
-                logs.push({ id: 4, date: 'Processing', user: form.vendor || 'Vendor', role: 'Mechanic', action: 'Service Started', status: 'In Progress', icon: PlayCircle, color: 'text-gray-400', bg: 'bg-gray-50' });
-           }
-           logs.push({ id: 5, date: 'Finished', user: form.vendor || 'Vendor', role: 'Mechanic', action: 'Service Completed', status: 'Completed', icon: CheckCircle2, color: 'text-green-700', bg: 'bg-green-100' });
-      }
-      return logs.reverse();
-  };
-
-  if (!isOpen) return null;
-
-  const Label = ({ children }: { children?: React.ReactNode }) => (
-    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">
-      {children}
+  // ============================================
+  // STANDARDIZED UI COMPONENTS
+  // ============================================
+  
+  const Label = ({ children, required }: { children?: React.ReactNode; required?: boolean }) => (
+    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5">
+      {children} {required && <span className="text-red-500 font-black ml-0.5">*</span>}
     </label>
   );
 
-  const DetailItem = ({ label, value, icon: Icon, isDate = false }: { label: string, value?: string, icon?: any, isDate?: boolean }) => (
-      <div className="flex flex-col">
-          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-0.5 flex items-center gap-1">
-              {Icon && <Icon size={10} />} {label}
-          </span>
-          <span className={`text-[11px] font-black text-black leading-tight ${isDate ? 'font-mono' : ''} truncate`} title={value}>
-              {value || '-'}
-          </span>
-      </div>
+  const InputField = ({ label, value, field, type = "text", disabled = false, placeholder = "", className = "", required = false }: any) => (
+    <div className={className}>
+      <Label required={required}>{label}</Label>
+      <input
+        type={type}
+        disabled={isView || disabled}
+        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all placeholder:text-gray-300 shadow-sm"
+        value={value || ''}
+        placeholder={placeholder}
+        onChange={(e) => setForm({ ...form, [field]: e.target.value })}
+      />
+    </div>
   );
 
-  // Helper for thumbnail upload button
-  const UploadThumbnail = ({ image, onClick, onRemove, label }: { image?: string, onClick: () => void, onRemove: (e: React.MouseEvent) => void, label: string }) => (
-      <div 
-          onClick={onClick}
-          className={`relative w-16 h-16 border border-dashed rounded-lg flex flex-col items-center justify-center transition-all group overflow-hidden bg-white
-              ${image ? 'border-gray-200' : 'border-gray-300 hover:border-black hover:bg-gray-50'}
-              ${!isView ? 'cursor-pointer' : ''}
-          `}
-          title={label}
+  const SelectField = ({ label, value, field, options, required = false, disabled = false }: any) => (
+    <div>
+      <Label required={required}>{label}</Label>
+      <select
+        disabled={isView || disabled}
+        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 disabled:text-gray-400 shadow-sm cursor-pointer appearance-none"
+        value={value || ''}
+        onChange={(e) => setForm({ ...form, [field]: e.target.value })}
       >
-          {image ? (
-              <>
-                  <img src={image} alt={label} className="w-full h-full object-cover" />
-                  {!isView && (
-                      <button 
-                          onClick={onRemove}
-                          className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                          <X size={10} />
-                      </button>
-                  )}
-              </>
-          ) : (
-              <>
-                  <Camera size={14} className="text-gray-300 mb-1" />
-                  <span className="text-[7px] font-black text-gray-300 uppercase">{label}</span>
-              </>
-          )}
-      </div>
+        <option value="">-- Pilih --</option>
+        {options.map((opt: any) => (
+          <option key={opt.value || opt} value={opt.value || opt}>
+            {opt.label || opt}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 
-  const tabs = ['DETAILS', 'DOKUMEN', 'WORKFLOW'];
+  const ReadOnlyField = ({ label, value }: { label: string; value: string }) => (
+    <div>
+      <Label>{label}</Label>
+      <div className="bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black">{value || '-'}</div>
+    </div>
+  );
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-4">
-      <div className="bg-[#FBFBFB] w-full max-w-[1200px] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[95vh] animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center backdrop-blur-sm p-4 animate-in fade-in duration-200">
+      <div className="bg-[#FBFBFB] w-full max-w-6xl rounded-[3rem] shadow-2xl overflow-hidden flex flex-col transform transition-all scale-100 max-h-[95vh]">
         
-        {/* Header */}
-        <div className="px-10 py-8 bg-white border-b border-gray-100 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-5">
-            <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center text-white shadow-xl shadow-black/20">
-                <Wrench size={20} strokeWidth={2.5} />
+        {/* ============================================ */}
+        {/* HEADER - STANDARDIZED */}
+        {/* ============================================ */}
+        <div className="px-12 py-8 bg-white flex items-center justify-between shrink-0 border-b border-gray-100">
+          <div className="flex items-center gap-6">
+            <div className="w-16 h-16 bg-black rounded-[1.5rem] flex items-center justify-center text-white shadow-2xl shadow-black/20">
+              <Wrench size={28} strokeWidth={2.5} />
             </div>
             <div>
-                <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
-                    {mode === 'create' ? 'Input Catatan Pemeliharaan' : 'Detail Pemeliharaan'}
-                </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Vehicle Maintenance Log</p>
+              <h2 className="text-[20px] font-black text-black uppercase tracking-tight leading-none">
+                {mode === 'create' ? 'Input Servis Kendaraan' : mode === 'edit' ? 'Update Servis' : 'Detail Servis'}
+              </h2>
+              <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Vehicle Service Management</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-gray-300 hover:text-black transition-colors p-2 rounded-full hover:bg-gray-50">
-            <X size={28} strokeWidth={2.5} />
-          </button>
+          <div className="flex items-center gap-4">
+            {getSLABadge()}
+            <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-3 rounded-full hover:bg-gray-50">
+              <X size={32} />
+            </button>
+          </div>
         </div>
 
-        {/* Tabs */}
-        <div className="bg-white border-b border-gray-100 flex px-10 shrink-0 gap-8">
-            {tabs.map(tab => (
-                <button 
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`py-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all border-b-[3px] 
-                        ${activeTab === tab ? 'border-black text-black' : 'border-transparent text-gray-300 hover:text-gray-500'}`}
-                >
-                    {tab}
-                </button>
-            ))}
-        </div>
-
-        {/* Content Body */}
-        <div className="flex-1 overflow-y-auto p-12 custom-scrollbar bg-[#FBFBFB]">
+        {/* ============================================ */}
+        {/* CONTENT - 3 COLUMN LAYOUT */}
+        {/* ============================================ */}
+        <div className="flex-1 overflow-hidden flex flex-col lg:flex-row bg-[#FBFBFB]">
           
-          <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={onFileChange} />
+          {/* Left/Center Column: Form or Detail View */}
+          <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
+            {selectedHistoryItem ? (
+              // ============================================
+              // DETAIL VIEW - History Item Selected
+              // ============================================
+              <div className="space-y-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <FileText size={16} className="text-black" />
+                    <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Detail History Servis</h3>
+                  </div>
+                  <button
+                    onClick={() => setSelectedHistoryItem(null)}
+                    className="text-[11px] font-bold text-gray-500 hover:text-black transition-colors flex items-center gap-2"
+                  >
+                    <ArrowRight size={14} className="rotate-180" /> Kembali ke Form
+                  </button>
+                </div>
 
-          {/* TAB: DETAILS */}
-          {activeTab === 'DETAILS' && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2">
-                <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm space-y-8">
-                <div className="flex items-center gap-3 mb-4">
-                    <div className="w-1.5 h-6 bg-black rounded-full"></div>
-                    <h3 className="text-[12px] font-black text-black uppercase tracking-[0.2em]">Data Unit Kendaraan</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                  <ReadOnlyField label="No. Polisi" value={selectedHistoryItem.noPolisi || '-'} />
+                  <ReadOnlyField label="Tanggal Request" value={formatDate(selectedHistoryItem.tglRequest)} />
+                  <ReadOnlyField label="Jenis Servis" value={selectedHistoryItem.jenisServis || '-'} />
+                  <ReadOnlyField label="Vendor" value={selectedHistoryItem.vendor || '-'} />
+                  <ReadOnlyField label="KM Kendaraan" value={selectedHistoryItem.kmKendaraan || '-'} />
+                  <ReadOnlyField label="Estimasi Biaya" value={formatCurrency(selectedHistoryItem.estimasiBiaya)} />
+                  
+                  <div className="md:col-span-2">
+                    <Label>Masalah / Keluhan</Label>
+                    <div className="bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black min-h-[80px]">
+                      {selectedHistoryItem.masalah || '-'}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label>Status</Label>
+                    <span className={`inline-block px-4 py-2 rounded-full text-[10px] font-black uppercase ${getStatusColor(selectedHistoryItem.status)}`}>
+                      {selectedHistoryItem.status}
+                    </span>
+                  </div>
+                  <div>
+                    <Label>Rating</Label>
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          size={18}
+                          className={star <= (selectedHistoryItem.rating || 0) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Spare Parts Table */}
+                {selectedHistoryItem.spareParts && selectedHistoryItem.spareParts.length > 0 && (
+                  <div className="mt-8">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Package size={16} className="text-black" />
+                      <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Spare Parts</h3>
+                    </div>
+                    <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+                      <table className="w-full text-[12px]">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="text-left px-5 py-3 font-black text-gray-500 uppercase text-[10px] tracking-wider">Nama Part</th>
+                            <th className="text-center px-5 py-3 font-black text-gray-500 uppercase text-[10px] tracking-wider">Qty</th>
+                            <th className="text-right px-5 py-3 font-black text-gray-500 uppercase text-[10px] tracking-wider">Harga</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedHistoryItem.spareParts.map((part, idx) => (
+                            <tr key={idx} className="border-t border-gray-100">
+                              <td className="px-5 py-4 font-bold text-black">{part.name}</td>
+                              <td className="px-5 py-4 text-center text-gray-600">{part.qty}</td>
+                              <td className="px-5 py-4 text-right font-bold text-black">{formatCurrency(part.price)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* Photo Evidence */}
+                <div className="grid grid-cols-2 gap-8 mt-8">
+                  <div>
+                    <Label>Foto Before</Label>
+                    {selectedHistoryItem.photoBefore ? (
+                      <img src={selectedHistoryItem.photoBefore} alt="Before" className="w-full h-48 object-cover rounded-2xl border border-gray-200 shadow-sm" />
+                    ) : (
+                      <div className="w-full h-48 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400 text-[11px] border border-gray-200">
+                        <Camera size={24} className="mr-2 text-gray-300" /> No Image
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Label>Foto After</Label>
+                    {selectedHistoryItem.photoAfter ? (
+                      <img src={selectedHistoryItem.photoAfter} alt="After" className="w-full h-48 object-cover rounded-2xl border border-gray-200 shadow-sm" />
+                    ) : (
+                      <div className="w-full h-48 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400 text-[11px] border border-gray-200">
+                        <Camera size={24} className="mr-2 text-gray-300" /> No Image
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              // ============================================
+              // INPUT FORM
+              // ============================================
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                
+                {/* Vehicle Information Section */}
+                <div className="md:col-span-2">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Car size={16} className="text-black" />
+                    <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Informasi Kendaraan</h3>
+                  </div>
+                </div>
+
+                <SelectField
+                  label="No. Polisi"
+                  value={form.noPolisi}
+                  field="noPolisi"
+                  required
+                  options={vehicleList.map(v => ({ value: v.noPolisi, label: `${v.noPolisi} - ${v.nama}` }))}
+                />
+                <InputField
+                  label="Nama Kendaraan"
+                  value={selectedVehicle?.nama || ''}
+                  field=""
+                  disabled
+                />
+                <InputField
+                  label="Channel"
+                  value={selectedVehicle?.channel || form.channel || ''}
+                  field="channel"
+                  disabled
+                />
+                <InputField
+                  label="Cabang"
+                  value={selectedVehicle?.cabang || form.cabang || ''}
+                  field="cabang"
+                  disabled
+                />
+
+                {/* Service Details Section */}
+                <div className="md:col-span-2 mt-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Wrench size={16} className="text-black" />
+                    <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Detail Servis</h3>
+                  </div>
+                </div>
+
+                <InputField
+                  label="Tanggal Request"
+                  value={form.tglRequest}
+                  field="tglRequest"
+                  type="date"
+                  required
+                />
+                <SelectField
+                  label="Jenis Servis"
+                  value={form.jenisServis}
+                  field="jenisServis"
+                  required
+                  options={serviceTypeList}
+                />
+                <SelectField
+                  label="Vendor"
+                  value={form.vendor}
+                  field="vendor"
+                  options={vendorList.map(v => ({ value: v.vendorName, label: v.vendorName }))}
+                />
+                <InputField
+                  label="KM Kendaraan"
+                  value={form.kmKendaraan}
+                  field="kmKendaraan"
+                  placeholder="Masukkan KM saat ini"
+                />
+                
+                <div className="md:col-span-2">
+                  <Label required>Masalah / Keluhan</Label>
+                  <textarea
+                    disabled={isView}
+                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 disabled:text-gray-400 transition-all placeholder:text-gray-300 shadow-sm min-h-[100px] resize-none"
+                    value={form.masalah || ''}
+                    placeholder="Jelaskan masalah atau keluhan kendaraan..."
+                    onChange={(e) => setForm({ ...form, masalah: e.target.value })}
+                  />
                 </div>
                 
-                <div className="grid grid-cols-1 gap-8">
-                    {/* Vehicle & Category */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <Label>Pilih Unit</Label>
-                            <div className="relative">
-                                <select 
-                                className="w-full border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black bg-white focus:border-black outline-none appearance-none shadow-sm cursor-pointer"
-                                value={form.noPolisi}
-                                onChange={(e) => {
-                                    const v = vehicleList.find(x => x.noPolisi === e.target.value);
-                                    setForm({...form, noPolisi: e.target.value, aset: v?.nama});
-                                }}
-                                disabled={isView}
-                                >
-                                <option value="">(Pilih Unit)</option>
-                                {vehicleList.map(v => <option key={v.id} value={v.noPolisi}>{v.noPolisi} - {v.nama}</option>)}
-                                </select>
-                            </div>
-                            
-                            {selectedVehicle && (
-                                <div className="mt-6 bg-gray-50 rounded-[1.5rem] p-6 border border-gray-100 animate-in fade-in slide-in-from-top-2">
-                                    <div className="grid grid-cols-3 gap-y-6 gap-x-4">
-                                        <DetailItem label="Merek / Brand" value={selectedVehicle.merek} icon={Tag} />
-                                        <DetailItem label="Tipe Kendaraan" value={selectedVehicle.tipeKendaraan} />
-                                        <DetailItem label="Model" value={selectedVehicle.model} />
-                                        <DetailItem label="Tahun" value={selectedVehicle.tahunPembuatan} icon={Calendar} />
-                                        <DetailItem label="Warna" value={selectedVehicle.warna} />
-                                        <DetailItem label="Silinder (CC)" value={selectedVehicle.isiSilinder} />
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                        <div>
-                            <Label>Kategori Pemeliharaan</Label>
-                            <div className="relative">
-                                <select
-                                    className="w-full border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black bg-white focus:border-black outline-none appearance-none shadow-sm cursor-pointer uppercase"
-                                    disabled={isView}
-                                    value={form.jenisServis || ''}
-                                    onChange={(e) => setForm({...form, jenisServis: e.target.value})}
-                                >
-                                    <option value="">(Pilih Kategori)</option>
-                                    {serviceTypeList.map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
-                                    {!serviceTypeList.length && (
-                                        <>
-                                            <option value="Servis Rutin">Servis Rutin</option>
-                                            <option value="Perbaikan">Perbaikan</option>
-                                        </>
-                                    )}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                <InputField
+                  label="Estimasi Biaya"
+                  value={form.estimasiBiaya}
+                  field="estimasiBiaya"
+                  placeholder="Rp 0"
+                />
+                <InputField
+                  label="Teknisi"
+                  value={form.technician}
+                  field="technician"
+                  placeholder="Nama teknisi"
+                />
 
-                    {/* Odometer & Vendor */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <Label>Odometer (KM)</Label>
-                        <input 
-                        type="text"
-                        className="w-full border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black placeholder:text-gray-300 focus:border-black outline-none shadow-sm"
-                        value={form.kmKendaraan}
-                        onChange={(e) => setForm({...form, kmKendaraan: e.target.value})}
-                        disabled={isView}
-                        placeholder="0"
-                        />
-                    </div>
-                    <div>
-                        <Label>Bengkel / Rekanan</Label>
-                        <div className="relative">
-                            <input 
-                                list="vendor-list"
-                                type="text"
-                                className="w-full border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black placeholder:text-gray-300 focus:border-black outline-none shadow-sm"
-                                value={form.vendor}
-                                onChange={(e) => setForm({...form, vendor: e.target.value})}
-                                disabled={isView}
-                                placeholder="Nama Bengkel"
-                            />
-                            <datalist id="vendor-list">
-                                {vendorList.filter(v => v.type === 'Service' || v.type === 'Both').map(v => (
-                                    <option key={v.id} value={v.vendorName}>{v.vendorName}</option>
-                                ))}
-                            </datalist>
-                        </div>
-                    </div>
-                    </div>
-
-                    <div>
-                    <Label>Deskripsi Masalah</Label>
-                    <textarea 
-                        className="w-full border border-gray-200 rounded-3xl px-6 py-5 text-[13px] font-medium min-h-[120px] focus:border-black outline-none transition-all placeholder:text-gray-300 shadow-sm resize-none bg-gray-50/50"
-                        value={form.masalah}
-                        onChange={(e) => setForm({...form, masalah: e.target.value})}
-                        disabled={isView}
-                        placeholder="Deskripsikan keluhan atau detail servis..."
-                    />
-                    </div>
-                </div>
-                </div>
-
-                <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
-                <div className="flex items-center justify-between mb-8">
+                {/* Spare Parts Section */}
+                <div className="md:col-span-2 mt-6">
+                  <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-6 bg-black rounded-full"></div>
-                    <h3 className="text-[12px] font-black text-black uppercase tracking-[0.2em]">Rincian Suku Cadang</h3>
+                      <Package size={16} className="text-black" />
+                      <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Spare Parts</h3>
                     </div>
                     {!isView && (
-                    <button 
+                      <button
                         onClick={addPart}
-                        className="bg-black text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-black/10"
-                    >
-                        <Plus size={14} strokeWidth={3} /> Tambah Item
-                    </button>
+                        className="flex items-center gap-2 text-[11px] font-bold text-black hover:text-gray-600 transition-colors bg-gray-100 px-4 py-2 rounded-xl hover:bg-gray-200"
+                      >
+                        <Plus size={14} /> Tambah Part
+                      </button>
                     )}
+                  </div>
+                  
+                  {parts.length === 0 ? (
+                    <div className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl p-10 text-center">
+                      <Package size={36} className="mx-auto text-gray-300 mb-3" />
+                      <p className="text-[12px] text-gray-400 font-bold">Belum ada spare part ditambahkan</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {parts.map((part, index) => (
+                        <div key={index} className="bg-white border border-gray-200 rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+                          <input
+                            type="text"
+                            placeholder="Nama Part"
+                            disabled={isView}
+                            className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-bold text-black focus:border-black outline-none disabled:bg-gray-100 placeholder:text-gray-300"
+                            value={part.name}
+                            onChange={(e) => updatePart(index, 'name', e.target.value)}
+                          />
+                          <input
+                            type="number"
+                            placeholder="Qty"
+                            disabled={isView}
+                            className="w-20 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-bold text-black focus:border-black outline-none disabled:bg-gray-100 text-center"
+                            value={part.qty}
+                            onChange={(e) => updatePart(index, 'qty', parseInt(e.target.value) || 0)}
+                          />
+                          <input
+                            type="text"
+                            placeholder="Harga"
+                            disabled={isView}
+                            className="w-32 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-bold text-black focus:border-black outline-none disabled:bg-gray-100"
+                            value={part.price}
+                            onChange={(e) => updatePart(index, 'price', e.target.value)}
+                          />
+                          {!isView && (
+                            <button onClick={() => removePart(index)} className="text-red-400 hover:text-red-600 transition-colors p-2 hover:bg-red-50 rounded-xl">
+                              <Trash2 size={18} />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                    <thead>
-                        <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100">
-                        <th className="pb-4 px-2">ITEM DESCRIPTION</th>
-                        <th className="pb-4 px-2 text-center w-24">QTY</th>
-                        <th className="pb-4 px-2 text-right w-40">PRICE (IDR)</th>
-                        <th className="pb-4 px-2 text-right w-40">SUBTOTAL</th>
-                        {isNonRoutine && <th className="pb-4 px-2 text-center w-40">DOKUMENTASI</th>}
-                        {!isView && <th className="pb-4 w-12"></th>}
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                        {parts.map((part, idx) => {
-                        const priceStr = part.price.toString().replace(/[^0-9]/g, '');
-                        const price = parseInt(priceStr) || 0;
-                        const subtotal = part.qty * price;
-                        return (
-                            <tr key={idx} className="group">
-                            <td className="py-4 px-2">
-                                <input 
-                                type="text"
-                                className="w-full border-none p-0 text-[13px] font-bold text-black focus:ring-0 placeholder:text-gray-300 bg-transparent"
-                                value={part.name}
-                                onChange={(e) => updatePart(idx, 'name', e.target.value)}
-                                disabled={isView}
-                                placeholder="Part Name"
-                                />
-                            </td>
-                            <td className="py-4 px-2">
-                                <input 
-                                type="number"
-                                className="w-full border-none p-0 text-[13px] font-black text-center focus:ring-0 bg-transparent"
-                                value={part.qty}
-                                onChange={(e) => updatePart(idx, 'qty', parseInt(e.target.value) || 0)}
-                                disabled={isView}
-                                />
-                            </td>
-                            <td className="py-4 px-2 text-right">
-                                <input 
-                                type="text"
-                                className="w-full border-none p-0 text-[13px] font-black text-right focus:ring-0 bg-transparent"
-                                value={part.price}
-                                onChange={(e) => updatePart(idx, 'price', e.target.value)}
-                                disabled={isView}
-                                placeholder="0"
-                                />
-                            </td>
-                            <td className="py-4 px-2 text-right font-black text-[13px] text-black">
-                                {subtotal.toLocaleString('id-ID')}
-                            </td>
-                            
-                            {/* Image Upload Column for Non-Routine Parts */}
-                            {isNonRoutine && (
-                                <td className="py-4 px-2 text-center">
-                                    <div className="flex gap-2 justify-center">
-                                        <UploadThumbnail 
-                                            image={part.imageBefore} 
-                                            onClick={() => handleUploadClick('part', 'before', idx)} 
-                                            onRemove={(e) => removeImage(e, 'part', 'before', idx)}
-                                            label="BEFORE" 
-                                        />
-                                        <div className="flex flex-col justify-center text-gray-300"><ArrowRight size={12}/></div>
-                                        <UploadThumbnail 
-                                            image={part.imageAfter} 
-                                            onClick={() => handleUploadClick('part', 'after', idx)}
-                                            onRemove={(e) => removeImage(e, 'part', 'after', idx)}
-                                            label="AFTER" 
-                                        />
-                                    </div>
-                                </td>
-                            )}
-
-                            {!isView && (
-                                <td className="py-4 px-2 text-right">
-                                <button onClick={() => removePart(idx)} className="text-gray-200 hover:text-red-500 transition-colors p-1 rounded hover:bg-red-50">
-                                    <Trash2 size={16} />
-                                </button>
-                                </td>
-                            )}
-                            </tr>
-                        );
-                        })}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                        <td colSpan={3} className="pt-8 pb-2 text-right">
-                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">ESTIMATED TOTAL COST</span>
-                        </td>
-                        <td className="pt-8 pb-2 text-right">
-                            <span className="text-[18px] font-black text-black">Rp {totalBiaya.toLocaleString('id-ID')}</span>
-                        </td>
-                        {isNonRoutine && <td className="pt-8"></td>}
-                        {!isView && <td className="pt-8"></td>}
-                        </tr>
-                    </tfoot>
-                    </table>
-                </div>
-                </div>
-            </div>
-          )}
-
-          {/* TAB: DOKUMEN (General Service Evidence) */}
-          {activeTab === 'DOKUMEN' && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2">
-                  <div className="bg-white p-10 rounded-[2rem] border border-gray-100 shadow-sm min-h-[400px]">
-                      <div className="flex items-center gap-3 mb-8 border-b border-gray-100 pb-4">
-                          <ImageIcon size={18} className="text-black"/>
-                          <h3 className="text-[12px] font-black text-black uppercase tracking-widest">DOKUMENTASI UMUM PERBAIKAN</h3>
+                {/* Photo Evidence Section */}
+                <div className="md:col-span-2 mt-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Camera size={16} className="text-black" />
+                    <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Dokumentasi</h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-8">
+                    <div>
+                      <Label>Foto Before</Label>
+                      <input type="file" ref={beforeInputRef} className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'before')} />
+                      <div
+                        onClick={() => !isView && beforeInputRef.current?.click()}
+                        className={`w-full h-48 bg-white border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center transition-all ${isView ? 'cursor-default' : 'cursor-pointer hover:border-black hover:bg-gray-50'}`}
+                      >
+                        {form.photoBefore ? (
+                          <img src={form.photoBefore} alt="Before" className="w-full h-full object-cover rounded-2xl" />
+                        ) : (
+                          <>
+                            <Camera size={28} className="text-gray-300 mb-2" />
+                            <span className="text-[11px] text-gray-400 font-bold">Upload Foto Before</span>
+                          </>
+                        )}
                       </div>
-                      
-                      {isNonRoutine ? (
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                              <div className="flex flex-col items-center gap-4">
-                                  <Label>FOTO SEBELUM (BEFORE)</Label>
-                                  <div 
-                                      onClick={() => handleUploadClick('general', 'before')}
-                                      className={`w-full h-64 border-2 border-dashed rounded-3xl flex flex-col items-center justify-center bg-gray-50 overflow-hidden transition-all group
-                                          ${!isView ? 'cursor-pointer hover:border-black hover:bg-gray-100' : ''}
-                                          ${form.photoBefore ? 'border-green-200' : 'border-gray-200'}
-                                      `}
-                                  >
-                                      {form.photoBefore ? (
-                                          <div className="relative w-full h-full">
-                                              <img src={form.photoBefore} className="w-full h-full object-cover" alt="Before" />
-                                              {!isView && (
-                                                  <button 
-                                                      onClick={(e) => removeImage(e, 'general', 'before')} 
-                                                      className="absolute top-4 right-4 bg-white text-red-500 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                                                  >
-                                                      <X size={16}/>
-                                                  </button>
-                                              )}
-                                          </div>
-                                      ) : (
-                                          <div className="flex flex-col items-center text-gray-400">
-                                              <Camera size={32} className="mb-2" />
-                                              <span className="text-[10px] font-black uppercase tracking-widest">UPLOAD FOTO</span>
-                                          </div>
-                                      )}
-                                  </div>
-                              </div>
-
-                              <div className="flex flex-col items-center gap-4">
-                                  <Label>FOTO SESUDAH (AFTER)</Label>
-                                  <div 
-                                      onClick={() => handleUploadClick('general', 'after')}
-                                      className={`w-full h-64 border-2 border-dashed rounded-3xl flex flex-col items-center justify-center bg-gray-50 overflow-hidden transition-all group
-                                          ${!isView ? 'cursor-pointer hover:border-black hover:bg-gray-100' : ''}
-                                          ${form.photoAfter ? 'border-green-200' : 'border-gray-200'}
-                                      `}
-                                  >
-                                      {form.photoAfter ? (
-                                          <div className="relative w-full h-full">
-                                              <img src={form.photoAfter} className="w-full h-full object-cover" alt="After" />
-                                              {!isView && (
-                                                  <button 
-                                                      onClick={(e) => removeImage(e, 'general', 'after')} 
-                                                      className="absolute top-4 right-4 bg-white text-red-500 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                                                  >
-                                                      <X size={16}/>
-                                                  </button>
-                                              )}
-                                          </div>
-                                      ) : (
-                                          <div className="flex flex-col items-center text-gray-400">
-                                              <Camera size={32} className="mb-2" />
-                                              <span className="text-[10px] font-black uppercase tracking-widest">UPLOAD FOTO</span>
-                                          </div>
-                                      )}
-                                  </div>
-                              </div>
-                          </div>
-                      ) : (
-                          <div className="text-center py-20 opacity-50 border-2 border-dashed border-gray-100 rounded-3xl">
-                              <Info size={40} className="mx-auto text-gray-300 mb-4" />
-                              <p className="text-[11px] font-black uppercase tracking-widest text-gray-400">Dokumentasi wajib hanya untuk kategori Perbaikan</p>
-                              <p className="text-[9px] text-gray-300 mt-2">Untuk servis rutin, silakan upload bukti pada nota/invoice jika diperlukan.</p>
-                          </div>
-                      )}
+                    </div>
+                    <div>
+                      <Label>Foto After</Label>
+                      <input type="file" ref={afterInputRef} className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'after')} />
+                      <div
+                        onClick={() => !isView && afterInputRef.current?.click()}
+                        className={`w-full h-48 bg-white border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center transition-all ${isView ? 'cursor-default' : 'cursor-pointer hover:border-black hover:bg-gray-50'}`}
+                      >
+                        {form.photoAfter ? (
+                          <img src={form.photoAfter} alt="After" className="w-full h-full object-cover rounded-2xl" />
+                        ) : (
+                          <>
+                            <Camera size={28} className="text-gray-300 mb-2" />
+                            <span className="text-[11px] text-gray-400 font-bold">Upload Foto After</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
+                </div>
               </div>
-          )}
+            )}
+          </div>
 
-          {/* TAB: WORKFLOW (Activity Log) */}
-          {activeTab === 'WORKFLOW' && (
-              <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-2">
-                  <div className="bg-white p-12 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden">
-                        <div className="flex items-center gap-3 mb-10 pb-4 border-b border-gray-100">
-                            <Clock size={18} className="text-black"/>
-                            <h3 className="text-[12px] font-black text-black uppercase tracking-[0.2em]">Activity Log</h3>
-                        </div>
-
-                        <div className="space-y-10 relative z-10">
-                            {/* Vertical Line */}
-                            <div className="absolute left-[19px] top-4 bottom-4 w-[2px] bg-gray-100"></div>
-                            
-                            {getLogs().map((log, index) => (
-                                <div key={index} className="relative pl-12 group">
-                                    <div className={`absolute left-0 top-0 w-10 h-10 rounded-full flex items-center justify-center border-4 border-white shadow-sm z-10 ${log.bg} group-hover:scale-110 transition-transform`}>
-                                        <log.icon size={16} className={log.color} />
-                                    </div>
-                                    <div>
-                                        <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">{log.date}</span>
-                                        <h4 className="text-[13px] font-black text-black leading-tight mb-0.5">{log.action}</h4>
-                                        <div className="text-[10px] text-gray-500 font-medium flex items-center gap-1.5 mt-1">
-                                            <User size={10} /> 
-                                            <span className="font-bold">{log.user}</span> 
-                                            <span className="text-gray-300">•</span>
-                                            <span>{log.role}</span>
-                                        </div>
-                                        <div className={`inline-block mt-3 px-3 py-1 rounded text-[9px] font-black uppercase tracking-wider ${log.bg} ${log.color}`}>
-                                            {log.status}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+          {/* ============================================ */}
+          {/* RIGHT SIDEBAR - SERVICE HISTORY */}
+          {/* ============================================ */}
+          <div className="w-full lg:w-[350px] bg-white border-l border-gray-100 flex flex-col shrink-0">
+            <div className="p-6 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <Clock size={16} className="text-black" />
+                <h3 className="text-[11px] font-black text-black uppercase tracking-widest">History Servis</h3>
+              </div>
+              <p className="text-[10px] text-gray-400 mt-1.5 font-bold">Riwayat servis kendaraan ini</p>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+              {serviceHistory.length === 0 ? (
+                <div className="text-center py-16">
+                  <Wrench size={36} className="mx-auto text-gray-200 mb-3" />
+                  <p className="text-[11px] text-gray-400 font-bold">Belum ada history servis</p>
+                </div>
+              ) : (
+                serviceHistory.map((history) => (
+                  <div
+                    key={history.id}
+                    onClick={() => setSelectedHistoryItem(history)}
+                    className={`p-4 rounded-2xl border-2 cursor-pointer transition-all hover:shadow-lg ${
+                      selectedHistoryItem?.id === history.id
+                        ? 'bg-black text-white border-black shadow-xl shadow-black/20'
+                        : 'bg-gray-50 border-gray-200 hover:border-black'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className={`text-[10px] font-black uppercase tracking-wider ${selectedHistoryItem?.id === history.id ? 'text-gray-400' : 'text-gray-400'}`}>
+                        {formatDate(history.tglRequest)}
+                      </span>
+                      <span className={`px-2 py-1 rounded-full text-[9px] font-bold uppercase ${
+                        selectedHistoryItem?.id === history.id
+                          ? 'bg-white/20 text-white'
+                          : getStatusColor(history.status)
+                      }`}>
+                        {history.status}
+                      </span>
+                    </div>
+                    <p className={`text-[12px] font-black mb-1 ${selectedHistoryItem?.id === history.id ? 'text-white' : 'text-black'}`}>
+                      {history.jenisServis || 'Servis'}
+                    </p>
+                    <p className={`text-[11px] truncate ${selectedHistoryItem?.id === history.id ? 'text-gray-300' : 'text-gray-500'}`}>
+                      {history.masalah || '-'}
+                    </p>
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t ${selectedHistoryItem?.id === history.id ? 'border-white/20' : 'border-gray-200'}">
+                      <span className={`text-[10px] font-bold ${selectedHistoryItem?.id === history.id ? 'text-gray-300' : 'text-gray-400'}`}>
+                        {history.vendor || '-'}
+                      </span>
+                      <ArrowRight size={14} className={selectedHistoryItem?.id === history.id ? 'text-white' : 'text-gray-400'} />
+                    </div>
                   </div>
-              </div>
-          )}
-
+                ))
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Footer */}
-        <div className="px-10 py-8 border-t border-gray-100 flex justify-end gap-4 bg-white shrink-0">
-          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-black transition-all bg-gray-50 hover:bg-gray-100 rounded-2xl active:scale-95">Cancel</button>
+        {/* ============================================ */}
+        {/* FOOTER - STANDARDIZED */}
+        {/* ============================================ */}
+        <div className="px-12 py-6 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
+          <button
+            onClick={onClose}
+            className="px-8 py-4 rounded-2xl text-[12px] font-black uppercase tracking-wider text-gray-500 hover:bg-gray-100 transition-all"
+          >
+            {isView ? 'Tutup' : 'Batal'}
+          </button>
           {!isView && (
-            <button 
-                onClick={handleSave} 
-                className="bg-black text-white px-16 py-4 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] hover:bg-gray-800 transition-all active:scale-95 shadow-2xl shadow-black/20 flex items-center gap-3"
+            <button
+              onClick={handleSave}
+              className="px-8 py-4 rounded-2xl text-[12px] font-black uppercase tracking-wider bg-black text-white hover:bg-gray-800 transition-all shadow-xl shadow-black/20"
             >
-                <Save size={18} strokeWidth={2.5} /> Save Report
+              Simpan
             </button>
           )}
         </div>
@@ -635,3 +625,5 @@ export const ServiceModal: React.FC<Props> = ({
     </div>
   );
 };
+
+export default ServiceModal;

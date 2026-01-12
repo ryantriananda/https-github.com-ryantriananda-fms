@@ -90,7 +90,7 @@ export const TaxKirTable: React.FC<Props> = ({ data, onEdit, onView, onDelete, o
                     <div className="flex items-center justify-center gap-2">
                         <button onClick={(e) => { e.stopPropagation(); onView?.(item); }} className="p-2 text-gray-300 hover:text-black transition-all bg-white hover:bg-gray-50 rounded-xl"><Eye size={16} /></button>
                         <button onClick={(e) => { e.stopPropagation(); onEdit?.(item); }} className="p-2 text-gray-300 hover:text-blue-600 transition-all bg-white hover:bg-blue-50 rounded-xl"><Pencil size={16} /></button>
-                        <button onClick={(e) => { e.stopPropagation(); onDelete?.(item.id.toString()); }} className="p-2 text-gray-300 hover:text-red-500 transition-all bg-white hover:bg-red-50 rounded-xl"><Trash2 size={16} /></button>
+                        <button onClick={(e) => { e.stopPropagation(); onDelete?.(item.id); }} className="p-2 text-gray-300 hover:text-red-500 transition-all bg-white hover:bg-red-50 rounded-xl"><Trash2 size={16} /></button>
                     </div>
                 </td>
               </tr>

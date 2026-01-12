@@ -413,7 +413,7 @@ export const InsuranceModal: React.FC<Props> = ({
 
         {/* Footer */}
         <div className="px-12 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
-          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
+          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-200 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
           {!isView && (
             <button 
                 onClick={() => onSave(form)} 

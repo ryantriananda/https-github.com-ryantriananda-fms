@@ -18,6 +18,7 @@ import { MasterItemModal } from './components/MasterItemModal';
 // Vehicle
 import { VehicleTable } from './components/VehicleTable';
 import { VehicleModal } from './components/VehicleModal';
+import { VehicleFormPage } from './pages/VehicleFormPage';
 import { VehicleContractTable } from './components/VehicleContractTable';
 import { VehicleContractModal } from './components/VehicleContractModal';
 import { ServiceTable } from './components/ServiceTable';
@@ -33,7 +34,9 @@ import { SalesModal } from './components/SalesModal';
 
 // Building
 import { BuildingTable } from './components/BuildingTable';
-import { BuildingModal } from './components/BuildingModal';
+import { BuildingFormPage } from './components/BuildingFormPage'; 
+import { BuildingAssetTable } from './components/BuildingAssetTable';
+import { BuildingAssetItemModal } from './components/BuildingAssetItemModal';
 import { UtilityTable } from './components/UtilityTable';
 import { UtilityModal } from './components/UtilityModal';
 import { ReminderTable } from './components/ReminderTable'; // Compliance & General Reminder
@@ -75,7 +78,6 @@ import { ImportDataModal } from './components/ImportDataModal';
 
 // Daily Ops & Admin
 import { LogBookTable } from './components/LogBookTable';
-import { LogBookModal } from './components/LogBookModal'; // New dedicated modal
 import { TimesheetTable } from './components/TimesheetTable';
 import { TimesheetModal } from './components/TimesheetModal';
 import { VendorTable } from './components/VendorTable';
@@ -230,6 +232,16 @@ export const App: React.FC = () => {
     mode: 'create'
   });
 
+  // --- BUILDING FORM PAGE STATE ---
+  const [buildingPageMode, setBuildingPageMode] = useState<'list' | 'form'>('list');
+  const [selectedBuildingData, setSelectedBuildingData] = useState<BuildingRecord | null>(null);
+  const [buildingFormMode, setBuildingFormMode] = useState<'create' | 'edit' | 'view'>('create');
+
+  // --- VEHICLE FORM PAGE STATE ---
+  const [vehiclePageMode, setVehiclePageMode] = useState<'list' | 'form'>('list');
+  const [selectedVehicleData, setSelectedVehicleData] = useState<VehicleRecord | null>(null);
+  const [vehicleFormMode, setVehicleFormMode] = useState<'create' | 'edit' | 'view'>('create');
+
   // --- IMPORT MODAL STATE ---
   const [importState, setImportState] = useState<{
       isOpen: boolean;
@@ -265,6 +277,69 @@ export const App: React.FC = () => {
   const handleNavigate = (item: string) => {
     setActiveItem(item);
     setActiveTab('SEMUA');
+    setBuildingPageMode('list'); // Reset building view when navigating
+    setVehiclePageMode('list'); // Reset vehicle view when navigating
+  };
+
+  // --- BUILDING PAGE HANDLERS ---
+  const handleOpenBuildingForm = (mode: 'create' | 'edit' | 'view', data?: BuildingRecord) => {
+      setBuildingFormMode(mode);
+      setSelectedBuildingData(data || null);
+      setBuildingPageMode('form');
+  };
+
+  const handleCloseBuildingForm = () => {
+       setBuildingPageMode('list');
+       setSelectedBuildingData(null);
+  };
+
+  const handleSaveBuilding = (data: Partial<BuildingRecord>) => {
+      if (buildingFormMode === 'create') {
+          const newBuilding = { ...data, id: Date.now() } as BuildingRecord;
+          setBuildings(prev => [...prev, newBuilding]);
+      } else {
+          setBuildings(prev => prev.map(b => b.id === selectedBuildingData?.id ? { ...b, ...data } as BuildingRecord : b));
+      }
+      handleCloseBuildingForm();
+  };
+
+  // --- VEHICLE PAGE HANDLERS ---
+  const handleOpenVehicleForm = (mode: 'create' | 'edit' | 'view', data?: VehicleRecord) => {
+      console.log('🚗 Opening Vehicle Form:', mode, data);
+      setVehicleFormMode(mode);
+      setSelectedVehicleData(data || null);
+      setVehiclePageMode('form');
+      console.log('🚗 Vehicle Page Mode set to: form');
+  };
+
+  const handleCloseVehicleForm = () => {
+       setVehiclePageMode('list');
+       setSelectedVehicleData(null);
+  };
+
+  const handleSaveVehicle = (data: Partial<VehicleRecord>) => {
+      if (vehicleFormMode === 'create') {
+          const newVehicle = { ...data, id: Date.now() } as VehicleRecord;
+          setVehicles(prev => [...prev, newVehicle]);
+      } else {
+          setVehicles(prev => prev.map(v => v.id === selectedVehicleData?.id ? { ...v, ...data } as VehicleRecord : v));
+      }
+      handleCloseVehicleForm();
+  };
+
+  const handleSaveBuildingAsset = (data: Partial<BuildingAssetRecord>) => {
+      setBuildingAssets(prev => {
+          const index = prev.findIndex(a => a.id === data.id);
+          if (index >= 0) {
+              const updated = [...prev];
+              updated[index] = { ...updated[index], ...data } as BuildingAssetRecord;
+              return updated;
+          } else {
+              const newAsset = { ...data, id: `BA-${Date.now()}`, assetCode: `AST-${Date.now()}` } as BuildingAssetRecord;
+              return [...prev, newAsset];
+          }
+      });
+      closeModal();
   };
 
   // --- IMPORT LOGIC ---
@@ -436,6 +511,30 @@ export const App: React.FC = () => {
       }
   };
 
+  // --- HANDLER FOR STATIONERY REQUEST (ATK/ARK) CRUD ---
+  const handleSaveStationeryRequest = (data: Partial<AssetRecord>) => {
+      const isArk = modalState.type.includes('ARK');
+      const setList = isArk ? setArkRequests : setAtkRequests;
+
+      if (modalState.mode === 'create') {
+          const newReq: AssetRecord = {
+              id: Date.now(),
+              transactionNumber: `TRX/${isArk ? 'ARK' : 'ATK'}/${new Date().getFullYear()}/${Math.floor(Math.random() * 1000)}`,
+              employee: { name: 'User', role: 'Staff' },
+              category: isArk ? 'Cleaning' : 'ATK',
+              itemName: data.itemName || 'New Item',
+              qty: data.qty || 1,
+              date: new Date().toISOString().split('T')[0],
+              status: 'Pending',
+              ...data
+          } as AssetRecord;
+          setList(prev => [newReq, ...prev]);
+      } else if ((modalState.mode === 'edit' || modalState.mode === 'approve') && data.id) {
+          setList(prev => prev.map(item => item.id === data.id ? { ...item, ...data } as AssetRecord : item));
+      }
+      closeModal();
+  };
+
   // --- RENDER CONTENT ---
   const renderContent = () => {
     switch (activeItem) {
@@ -477,7 +576,7 @@ export const App: React.FC = () => {
                 id: s.id, 
                 itemName: `Servis ${s.noPolisi}`, 
                 status: s.statusApproval, 
-                date: s.tglRequest,
+                date: s.tglRequest, 
                 transactionNumber: s.id,
                 type: 'Vehicle Service',
                 code: 'SRV'
@@ -907,10 +1006,41 @@ export const App: React.FC = () => {
 
       // --- VEHICLE MODULE ---
       case 'Daftar Kendaraan':
+          console.log('🚗 Daftar Kendaraan - vehiclePageMode:', vehiclePageMode);
+          // --- FULL PAGE SWITCH LOGIC ---
+          if (vehiclePageMode === 'form') {
+              console.log('✅ Rendering VehicleFormPage');
+              return (
+                  <VehicleFormPage 
+                      onBack={handleCloseVehicleForm}
+                      onSave={handleSaveVehicle}
+                      initialData={selectedVehicleData || undefined}
+                      mode={vehicleFormMode}
+                      brandList={MOCK_BRAND_DATA}
+                      colorList={MOCK_COLOR_DATA}
+                      channelList={MOCK_GENERAL_MASTER_DATA.filter(m => m.category === 'Channel')}
+                      branchList={MOCK_LOCATION_DATA}
+                      serviceData={vehicleServices.filter(s => s.vehicleId === selectedVehicleData?.id) || []}
+                  />
+              );
+          }
+
+          console.log('📋 Rendering VehicleTable');
           return (
               <>
-                  <FilterBar tabs={['SEMUA', 'AVAILABLE', 'IN USE', 'SERVICE']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('VEHICLE', 'create')} customAddLabel="Request Vehicle" onImportClick={handleOpenImport}/>
-                  <VehicleTable data={vehicles} onView={(i) => openModal('VEHICLE', 'view', i)} onEdit={(i) => openModal('VEHICLE', 'edit', i)} />
+                  <FilterBar 
+                      tabs={['SEMUA', 'AVAILABLE', 'IN USE', 'SERVICE']} 
+                      activeTab={activeTab} 
+                      onTabChange={setActiveTab} 
+                      onAddClick={() => handleOpenVehicleForm('create')} 
+                      customAddLabel="Request Vehicle" 
+                      onImportClick={handleOpenImport}
+                  />
+                  <VehicleTable 
+                      data={vehicles} 
+                      onView={(i) => handleOpenVehicleForm('view', i)} 
+                      onEdit={(i) => handleOpenVehicleForm('edit', i)} 
+                  />
               </>
           );
       case 'Kontrak Kendaraan':
@@ -958,24 +1088,44 @@ export const App: React.FC = () => {
 
       // --- BUILDING MODULE ---
       case 'Daftar Gedung':
+      case 'Branch Improvement': 
+          // --- FULL PAGE SWITCH LOGIC ---
+          if (buildingPageMode === 'form') {
+              return (
+                  <BuildingFormPage 
+                      onBack={handleCloseBuildingForm}
+                      onSave={handleSaveBuilding}
+                      initialData={selectedBuildingData}
+                      mode={buildingFormMode}
+                      buildingTypeList={MOCK_BUILDING_TYPE_DATA}
+                      existingBuildings={buildings}
+                  />
+              );
+          }
+
           return (
               <>
-                  <FilterBar tabs={['SEMUA', 'OWNED', 'RENTED']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('BUILDING', 'create')} customAddLabel="New Branch Req" onImportClick={handleOpenImport}/>
-                  <BuildingTable data={buildings} onView={(i) => openModal('BUILDING', 'view', i)} onEdit={(i) => openModal('BUILDING', 'edit', i)} />
+                  <FilterBar 
+                    tabs={['SEMUA', 'OWNED', 'RENTED']} 
+                    activeTab={activeTab} 
+                    onTabChange={setActiveTab} 
+                    onAddClick={() => handleOpenBuildingForm('create')} 
+                    customAddLabel={activeItem === 'Daftar Gedung' ? "New Branch Req" : "New Improvement"} 
+                    onImportClick={handleOpenImport}
+                  />
+                  <BuildingTable 
+                    data={buildings} 
+                    onView={(i) => handleOpenBuildingForm('view', i)} 
+                    onEdit={(i) => handleOpenBuildingForm('edit', i)} 
+                  />
               </>
           );
+          
       case 'Utility Monitoring':
           return (
               <>
                   <FilterBar tabs={['OVERVIEW', 'LISTRIK', 'AIR', 'INTERNET']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('UTILITY', 'create')} customAddLabel="Input Utility" onImportClick={handleOpenImport}/>
                   <UtilityTable data={utilities} onView={(i) => openModal('UTILITY', 'view', i)} onEdit={(i) => openModal('UTILITY', 'edit', i)} />
-              </>
-          );
-      case 'Branch Improvement':
-          return (
-              <>
-                  <FilterBar tabs={['SEMUA', 'PENDING', 'ON PROGRESS', 'COMPLETED']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('BUILDING', 'create')} customAddLabel="New Improvement" onImportClick={handleOpenImport} />
-                  <BuildingTable data={buildings} onView={(i) => openModal('BUILDING', 'view', i)} onEdit={(i) => openModal('BUILDING', 'edit', i)} />
               </>
           );
       case 'Compliance & Legal':
@@ -990,7 +1140,7 @@ export const App: React.FC = () => {
       case 'Asset HC':
       case 'Asset IT':
       case 'Customer Service':
-          const filteredGA = generalAssets.filter(g => g.assetCategory?.includes(activeItem.split(' ')[1]));
+          const filteredGA = generalAssets.filter(g => activeItem === 'General Asset' ? true : g.assetCategory?.includes(activeItem.split(' ')[1]));
           return (
               <>
                   <FilterBar tabs={['SEMUA', 'OWN', 'RENT', 'DISPOSED']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('GENERAL_ASSET', 'create')} customAddLabel={`Request ${activeItem}`} onImportClick={handleOpenImport}/>
@@ -1161,7 +1311,6 @@ export const App: React.FC = () => {
                     activeTab={activeTab} 
                     onTabChange={setActiveTab} 
                     hideAdd={true} 
-                    onAddClick={() => {}}
                   />
                   <LockerRequestTable 
                     data={lockerRequests.filter(r => {
@@ -1207,11 +1356,11 @@ export const App: React.FC = () => {
           return (
               <>
                   <FilterBar 
-                      tabs={['SEMUA', 'VISITOR', 'SUPPLIER', 'INTERNAL', 'OTHERS']} 
+                      tabs={['SEMUA', 'VISITOR', 'SUPPLIER', 'INTERNAL']} 
                       activeTab={activeTab} 
                       onTabChange={setActiveTab} 
                       onAddClick={() => openModal('LOGBOOK', 'create')} 
-                      customAddLabel="INPUT TAMU" 
+                      customAddLabel="Input Tamu" 
                       onImportClick={handleOpenImport}
                   />
                   <LogBookTable 
@@ -1310,26 +1459,33 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#FBFBFB] font-sans text-black">
-      <Sidebar 
-        activeItem={activeItem} 
-        onNavigate={handleNavigate} 
-        isCollapsed={isSidebarCollapsed} 
-        onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-        isMobileOpen={isMobileMenuOpen}
-        onCloseMobile={() => setIsMobileMenuOpen(false)}
-        userRole={userRole} // PASS ROLE
-      />
-      
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarCollapsed ? 'lg:ml-[90px]' : 'lg:ml-[280px]'}`}>
-        <TopBar 
-            breadcrumbs={['Home', activeItem]} 
-            onMenuClick={() => setIsMobileMenuOpen(true)}
-            userRole={userRole}
-            onRoleChange={setUserRole} // PASS ROLE HANDLER
+    <div className="flex h-screen bg-[#FBFBFB] font-sans text-black overflow-hidden">
+      {/* Hide Sidebar when in full page form mode */}
+      {buildingPageMode !== 'form' && vehiclePageMode !== 'form' && (
+        <Sidebar 
+          activeItem={activeItem} 
+          onNavigate={handleNavigate} 
+          isCollapsed={isSidebarCollapsed} 
+          onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          isMobileOpen={isMobileMenuOpen}
+          onCloseMobile={() => setIsMobileMenuOpen(false)}
+          userRole={userRole} // PASS ROLE
         />
+      )}
+      
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${buildingPageMode === 'form' || vehiclePageMode === 'form' ? '' : isSidebarCollapsed ? 'lg:ml-[90px]' : 'lg:ml-[280px]'}`}>
+        {/* Hide TopBar when in full page form mode */}
+        {buildingPageMode !== 'form' && vehiclePageMode !== 'form' && (
+          <TopBar 
+              breadcrumbs={['Home', activeItem]} 
+              onMenuClick={() => setIsMobileMenuOpen(true)}
+              userRole={userRole}
+              onRoleChange={setUserRole} // PASS ROLE HANDLER
+          />
+        )}
         
-        <main className="flex-1 p-8 overflow-y-auto custom-scrollbar">
+        {/* Conditional class for Main Container: Remove padding if in Form Mode */}
+        <main className={`flex-1 flex flex-col ${buildingPageMode === 'form' || vehiclePageMode === 'form' ? 'p-0 overflow-hidden' : 'p-8 overflow-y-auto custom-scrollbar'}`}>
           {renderContent()}
         </main>
       </div>
@@ -1366,31 +1522,17 @@ export const App: React.FC = () => {
               setImportState({ ...importState, isOpen: false });
           }}
       />
-      
-      {/* Log Book Modal (Dedicated) */}
-      <LogBookModal
-        isOpen={modalState.isOpen && modalState.type === 'LOGBOOK'}
-        onClose={closeModal}
-        onSave={handleSaveLogBook}
-        initialData={modalState.data}
-        mode={modalState.mode as any}
-      />
 
-      {/* Add Stock Modal (ATK/ARK only now) */}
+      {/* ATK/ARK/Logbook */}
       <AddStockModal 
-        isOpen={modalState.isOpen && (['ATK_REQUEST', 'ARK_REQUEST', 'ATK_APPROVAL', 'ARK_APPROVAL'].includes(modalState.type))}
+        isOpen={modalState.isOpen && (['ATK_REQUEST', 'ARK_REQUEST', 'ATK_APPROVAL', 'ARK_APPROVAL', 'LOGBOOK'].includes(modalState.type))}
         onClose={closeModal}
-        onSave={() => {}}
-        moduleName={modalState.type.includes('ATK') ? 'ATK' : 'ARK'}
+        moduleName={modalState.type.includes('ATK') ? 'ATK' : modalState.type.includes('ARK') ? 'ARK' : 'Log Book'}
         mode={modalState.mode}
         initialAssetData={modalState.type.includes('APPROVAL') || modalState.type.includes('REQUEST') ? modalState.data : undefined}
-        onSaveStationeryRequest={(data) => { 
-            // Simple mock save
-            const newReq: AssetRecord = { id: Date.now(), transactionNumber: `TRX/${Date.now()}`, employee: {name: 'User', role: 'Staff'}, category: 'ATK', itemName: 'New Item', qty: 1, date: '2024-01-01', status: 'Pending' };
-            if(modalState.type.includes('ARK')) setArkRequests(prev => [newReq, ...prev]);
-            else setAtkRequests(prev => [newReq, ...prev]);
-            closeModal();
-        }}
+        initialLogBookData={modalState.type === 'LOGBOOK' ? modalState.data : undefined}
+        onSaveLogBook={handleSaveLogBook}
+        onSaveStationeryRequest={handleSaveStationeryRequest}
       />
 
       {/* ... Other Modals ... */}
@@ -1418,17 +1560,8 @@ export const App: React.FC = () => {
         mode={modalState.mode as any}
       />
 
-      {/* Vehicle Modals */}
-      <VehicleModal 
-        isOpen={modalState.isOpen && modalState.type === 'VEHICLE'} 
-        onClose={closeModal} 
-        onSave={(d) => { if(modalState.mode==='create') setVehicles(p=>[...p, {...d, id: Date.now()} as VehicleRecord]); closeModal(); }} 
-        initialData={modalState.data} 
-        mode={modalState.mode as any}
-        brandList={MOCK_BRAND_DATA} colorList={MOCK_COLOR_DATA}
-        channelList={MOCK_GENERAL_MASTER_DATA} // Mock or correct list
-        branchList={MOCK_LOCATION_DATA}
-      />
+      {/* Vehicle Modals - VehicleModal sudah diganti dengan VehicleFormPage */}
+      {/* <VehicleModal /> is now replaced by VehicleFormPage in full page mode */}
       <VehicleContractModal isOpen={modalState.isOpen && modalState.type === 'VEHICLE_CONTRACT'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} vehicleList={vehicles} />
       <ServiceModal isOpen={modalState.isOpen && modalState.type === 'SERVICE'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} vehicleList={vehicles} vendorList={vendors} />
       <TaxKirModal isOpen={modalState.isOpen && modalState.type === 'TAX_KIR'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} vehicleList={vehicles} channelList={[]} branchList={MOCK_LOCATION_DATA} />
@@ -1456,11 +1589,12 @@ export const App: React.FC = () => {
         assetType={modalState.extraData?.type || 'VEHICLE'}
       />
 
-      {/* Building Modals */}
-      <BuildingModal isOpen={modalState.isOpen && modalState.type === 'BUILDING'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} existingBuildings={buildings} buildingTypeList={MOCK_BUILDING_TYPE_DATA} />
+      {/* Building Modals - OLD MODAL DELETED/DEPRECATED */}
+      
       <UtilityModal isOpen={modalState.isOpen && modalState.type === 'UTILITY'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} />
       <ComplianceModal isOpen={modalState.isOpen && modalState.type === 'COMPLIANCE'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} />
       <BuildingMaintenanceModal isOpen={modalState.isOpen && modalState.type === 'BUILDING_MAINTENANCE'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} assetList={MOCK_BUILDING_ASSETS} />
+      <BuildingAssetItemModal isOpen={modalState.isOpen && modalState.type === 'BUILDING_ASSET'} onClose={closeModal} onSave={handleSaveBuildingAsset} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} assetTypeList={MOCK_ASSET_TYPE_DATA} vendorList={MOCK_VENDOR_DATA} />
 
       {/* General Asset Modals */}
       <AssetGeneralModal isOpen={modalState.isOpen && modalState.type === 'GENERAL_ASSET'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} assetTypeList={MOCK_ASSET_TYPE_DATA} categoryList={MOCK_ASSET_CATEGORY_DATA} locationList={MOCK_LOCATION_DATA} departmentList={MOCK_DEPARTMENT_DATA} />

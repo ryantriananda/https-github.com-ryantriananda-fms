@@ -262,7 +262,7 @@ export const MutationModal: React.FC<Props> = ({
     <div className="flex flex-col">
         <div className="flex items-center gap-1.5 mb-1">
             {Icon && <Icon size={10} className="text-gray-400" />}
-            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{label}</span>
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{label}</span>
         </div>
         <span className="text-[11px] font-black text-black truncate" title={value}>{value || '-'}</span>
     </div>
@@ -276,7 +276,7 @@ export const MutationModal: React.FC<Props> = ({
             <div 
                 onClick={() => handleUploadClick(uploadKey)}
                 className={`relative flex-1 border-2 border-dashed rounded-[1.5rem] flex flex-col items-center justify-center transition-all overflow-hidden bg-white min-h-[140px]
-                  ${preview ? 'border-gray-200' : 'border-gray-100 hover:border-black hover:bg-gray-50/50'}
+                  ${preview ? 'border-gray-200' : 'border-gray-200 hover:border-black hover:bg-gray-50/50'}
                   ${!isView ? 'cursor-pointer' : 'cursor-default'}
                 `}
             >
@@ -321,7 +321,7 @@ export const MutationModal: React.FC<Props> = ({
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
                     {mode === 'create' ? 'Form Mutasi Aset' : 'Detail Mutasi'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">{assetType === 'VEHICLE' ? 'Vehicle Transfer Request' : 'General Asset Transfer'}</p>
+                <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">{assetType === 'VEHICLE' ? 'Vehicle Transfer Request' : 'General Asset Transfer'}</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
@@ -630,7 +630,7 @@ export const MutationModal: React.FC<Props> = ({
                                                                 <input
                                                                     type="text"
                                                                     disabled={isView}
-                                                                    className="w-full bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-[9px] font-medium text-black outline-none focus:border-black placeholder:text-gray-400"
+                                                                    className="w-full bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-[9px] font-bold text-black outline-none focus:border-black placeholder:text-gray-400"
                                                                     placeholder="Keterangan / Kondisi (Opsional)"
                                                                     value={currentNote}
                                                                     onChange={(e) => handleChecklistNoteChange(item, e.target.value)}
@@ -688,7 +688,7 @@ export const MutationModal: React.FC<Props> = ({
 
         {/* Footer */}
         <div className="px-10 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
-          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Batal</button>
+          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-200 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Batal</button>
           {!isView && (
             <button 
                 onClick={() => onSave(form)} 

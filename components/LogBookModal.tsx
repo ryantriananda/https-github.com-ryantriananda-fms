@@ -303,7 +303,7 @@ export const LogBookModal: React.FC<Props> = ({
                 <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
                     <SectionHeader icon={MessageSquare} title="CATATAN / NOTES" />
                     <textarea 
-                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 text-[13px] font-medium text-black outline-none focus:ring-2 focus:ring-black/5 placeholder:text-gray-300 resize-none transition-all shadow-inner italic"
+                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 text-[13px] font-black text-black outline-none focus:ring-2 focus:ring-black/5 placeholder:text-gray-300 resize-none transition-all shadow-inner italic"
                         rows={3}
                         placeholder="Tulis catatan kunjungan di sini..."
                         value={form.note}

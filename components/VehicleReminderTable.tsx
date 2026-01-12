@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { VehicleReminderRecord } from '../types';
 import { ChevronsUpDown, Calendar, AlertTriangle, CheckCircle2, Clock, Truck, FileText, Repeat, Pencil, Trash2 } from 'lucide-react';
@@ -151,7 +152,7 @@ export const VehicleReminderTable: React.FC<Props> = ({ data, onAction, onEdit, 
                                         <Pencil size={14} />
                                     </button>
                                     <button 
-                                        onClick={() => onDelete?.(item.id.toString())}
+                                        onClick={() => onDelete?.(item.id)}
                                         className="bg-white hover:bg-red-50 text-red-500 p-2 rounded-xl border border-gray-200 hover:border-red-200 transition-all active:scale-95"
                                         title="Delete Reminder"
                                     >

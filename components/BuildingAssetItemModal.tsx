@@ -471,14 +471,14 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
                         {/* Stats Summary */}
                         <div className="flex items-center gap-8 border-l border-gray-100 pl-8">
                              <div>
-                                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Total Vendor</p>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Total Vendor</p>
                                 <div className="flex items-baseline gap-1">
                                     <Users size={14} className="text-black" />
                                     <p className="text-[20px] font-black text-black leading-none">{form.proposals?.length || 0}</p>
                                 </div>
                              </div>
                              <div>
-                                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Avg. Cost Estimate</p>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Avg. Cost Estimate</p>
                                 <div className="flex items-baseline gap-1">
                                     <TrendingUp size={14} className="text-green-600" />
                                     <p className="text-[20px] font-black text-black leading-none font-mono">
@@ -672,7 +672,7 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
                                             ) : (
                                                 <div className="flex flex-col items-center p-4">
                                                     <ImageIcon size={20} className="text-gray-300 mb-2 group-hover:text-black transition-colors" />
-                                                    <p className="text-[9px] font-bold text-gray-400 uppercase">Upload Foto</p>
+                                                    <p className="text-[10px] font-bold text-gray-400 uppercase">Upload Foto</p>
                                                 </div>
                                             )}
                                         </div>
@@ -707,7 +707,7 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
                                             ) : (
                                                 <div className="flex flex-col items-center p-4">
                                                     <Paperclip size={20} className="text-gray-300 mb-2 group-hover:text-black transition-colors" />
-                                                    <p className="text-[9px] font-bold text-gray-400 uppercase">Upload Dokumen</p>
+                                                    <p className="text-[10px] font-bold text-gray-400 uppercase">Upload Dokumen</p>
                                                 </div>
                                             )}
                                         </div>
@@ -828,7 +828,7 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
                                             <ImageIcon size={24} />
                                         </div>
                                         <p className="text-[11px] font-black text-black uppercase tracking-widest mb-1">Belum ada Foto</p>
-                                        {!isView && <p className="text-[9px] font-bold text-gray-400">Klik untuk upload foto unit</p>}
+                                        {!isView && <p className="text-[10px] font-bold text-gray-400">Klik untuk upload foto unit</p>}
                                     </div>
                                 )}
                             </div>
@@ -871,7 +871,7 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
                                             <Paperclip size={24} />
                                         </div>
                                         <p className="text-[11px] font-black text-black uppercase tracking-widest mb-1">Belum ada Dokumen</p>
-                                        {!isView && <p className="text-[9px] font-bold text-gray-400">Upload PDF / Doc Penawaran</p>}
+                                        {!isView && <p className="text-[10px] font-bold text-gray-400">Upload PDF / Doc Penawaran</p>}
                                     </div>
                                 )}
                             </div>
@@ -884,7 +884,7 @@ export const BuildingAssetItemModal: React.FC<Props> = ({
 
         {/* Footer */}
         <div className="px-12 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
-          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
+          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-200 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
           {!isView && (
             <button 
                 onClick={() => onSave({ ...form, attachmentUrl: docPreviews.photo || undefined })} 

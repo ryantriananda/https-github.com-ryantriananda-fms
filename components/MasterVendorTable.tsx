@@ -88,7 +88,7 @@ export const MasterVendorTable: React.FC<Props> = ({ data, onEdit, onView }) => 
                 </td>
                 <td className="p-6">
                     <span className="bg-gray-50 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase border border-gray-100 inline-block text-gray-600">
-                        {item.type}
+                        {item.tipe}
                     </span>
                 </td>
                 <td className="p-6 text-gray-600 font-bold uppercase text-[11px]">

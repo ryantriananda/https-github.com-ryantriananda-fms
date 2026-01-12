@@ -100,7 +100,7 @@ export const InsuranceClaimModal: React.FC<Props> = ({
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
                     {mode === 'create' ? 'Register New Claim' : 'Edit Claim Details'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Insurance Management</p>
+                <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Insurance Management</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
@@ -182,7 +182,7 @@ export const InsuranceClaimModal: React.FC<Props> = ({
                         <Label required>Incident Description</Label>
                         <div className="relative">
                             <textarea 
-                                className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-medium text-black focus:border-black outline-none shadow-sm min-h-[100px] resize-none"
+                                className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-black focus:border-black outline-none shadow-sm min-h-[100px] resize-none"
                                 value={form.description}
                                 onChange={(e) => setForm({...form, description: e.target.value})}
                                 placeholder="Describe what happened..."
@@ -226,7 +226,7 @@ export const InsuranceClaimModal: React.FC<Props> = ({
 
         {/* Footer */}
         <div className="px-10 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
-          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
+          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-200 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
           <button 
               onClick={handleSave} 
               disabled={!selectedPolicyId}

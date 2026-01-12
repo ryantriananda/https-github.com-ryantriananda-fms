@@ -72,7 +72,7 @@ export const VendorModal: React.FC<Props> = ({ isOpen, onClose, onSave, initialD
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
                     {mode === 'create' ? 'Register Vendor' : mode === 'edit' ? 'Update Vendor' : 'Vendor Details'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Supplier Management</p>
+                <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Supplier Management</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
@@ -112,7 +112,7 @@ export const VendorModal: React.FC<Props> = ({ isOpen, onClose, onSave, initialD
                                     key={status}
                                     disabled={isView}
                                     onClick={() => setForm({...form, status: status as any})}
-                                    className={`flex-1 py-3 text-[9px] font-black uppercase tracking-widest rounded-xl border transition-all ${
+                                    className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl border transition-all ${
                                         form.status === status
                                         ? 'bg-black text-white border-black shadow-lg'
                                         : 'bg-white text-gray-400 border-gray-200 hover:border-black hover:text-black'

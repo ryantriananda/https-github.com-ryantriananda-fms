@@ -50,10 +50,10 @@ export const FilterBar: React.FC<Props> = ({
   }
 
   return (
-    <div className="mb-8 space-y-6">
+    <div className="mb-10 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         {/* Left Side: Pill Tabs */}
-        <div className="flex bg-white rounded-2xl p-1.5 shadow-sm border border-gray-100">
+        <div className="flex bg-white rounded-2xl p-2 shadow-md border-2 border-gray-100 gap-1">
           {tabs.map((tab) => {
             const isActive = activeTab === tab;
             const isApprovalTab = tab.toLowerCase().includes('persetujuan') || tab === 'APPROVED';
@@ -62,16 +62,16 @@ export const FilterBar: React.FC<Props> = ({
               <button
                 key={tab}
                 onClick={() => onTabChange(tab)}
-                className={`px-6 py-2.5 text-[10px] font-black uppercase tracking-[0.15em] transition-all rounded-xl flex items-center gap-2
+                className={`px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-200 rounded-xl flex items-center gap-2
                 ${isActive 
-                  ? 'bg-black text-white shadow-lg shadow-black/10 scale-105' 
-                  : 'text-gray-400 hover:text-black hover:bg-gray-50'
+                  ? 'bg-gradient-to-r from-black to-gray-800 text-white shadow-lg shadow-black/20 scale-105' 
+                  : 'text-gray-400 hover:text-black hover:bg-gray-50 hover:scale-102'
                 }`}
               >
                 {t(tab)}
                 {/* Mock counter for demo */}
                 {isApprovalTab && (
-                   <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${isActive ? 'bg-white/20 text-white' : 'bg-red-50 text-red-500'}`}>3</span>
+                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${isActive ? 'bg-white/20 text-white' : 'bg-red-100 text-red-600 border border-red-200'}`}>3</span>
                 )}
               </button>
             )
@@ -81,73 +81,75 @@ export const FilterBar: React.FC<Props> = ({
         {/* Right Side: Search & Buttons */}
         <div className="flex items-center gap-3">
           <div className="relative group hidden xl:block">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-hover:text-black transition-colors" size={16} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-black transition-colors" size={18} />
             <input 
               type="text" 
               placeholder={searchPlaceholder || t("Search...")} 
-              className="w-64 bg-white pl-11 pr-4 py-3 text-[11px] font-bold border border-gray-200 rounded-xl focus:border-black outline-none transition-all placeholder:text-gray-300 shadow-sm focus:shadow-md"
+              className="w-72 bg-white pl-12 pr-4 py-3.5 text-[12px] font-bold border-2 border-gray-200 rounded-2xl hover:border-gray-300 focus:border-black outline-none transition-all placeholder:text-gray-300 shadow-sm focus:shadow-lg focus:ring-4 focus:ring-black/5"
             />
           </div>
           
-          <div className="flex items-center bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm h-[42px]">
-            <button className="flex items-center justify-center w-10 h-full border-r border-gray-100 text-gray-400 hover:text-black hover:bg-gray-50 transition-all">
-              <Grid size={16} />
+          <div className="flex items-center bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-sm h-[46px]">
+            <button className="flex items-center justify-center w-11 h-full border-r-2 border-gray-100 text-gray-400 hover:text-black hover:bg-gray-50 transition-all">
+              <Grid size={18} />
             </button>
-            <button className="flex items-center justify-center w-10 h-full bg-gray-50 text-black border-r border-gray-100 transition-all">
-              <List size={16} />
+            <button className="flex items-center justify-center w-11 h-full bg-gray-50 text-black transition-all">
+              <List size={18} />
             </button>
           </div>
 
-          <div className="flex items-center bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm h-[42px]">
+          <div className="flex items-center bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-sm h-[46px]">
             {onSyncClick && (
                 <button 
                   onClick={onSyncClick}
-                  className="flex items-center gap-2 px-4 h-full border-r border-gray-100 text-gray-500 hover:text-black hover:bg-gray-50 transition-all text-[10px] font-black uppercase tracking-widest"
+                  className="flex items-center gap-2 px-5 h-full border-r-2 border-gray-100 text-gray-500 hover:text-black hover:bg-gray-50 transition-all text-[10px] font-black uppercase tracking-widest"
                   title="Synchronize Data"
                 >
-                <RefreshCw size={14} /> <span className="hidden sm:inline">{t('SYNC')}</span>
+                <RefreshCw size={16} strokeWidth={2.5} /> <span className="hidden sm:inline">{t('SYNC')}</span>
                 </button>
             )}
             {!hideImport && (
                 <button 
                   onClick={onImportClick}
-                  className="flex items-center gap-2 px-4 h-full border-r border-gray-100 text-gray-500 hover:text-black hover:bg-gray-50 transition-all text-[10px] font-black uppercase tracking-widest"
+                  className="flex items-center gap-2 px-5 h-full border-r-2 border-gray-100 text-gray-500 hover:text-black hover:bg-gray-50 transition-all text-[10px] font-black uppercase tracking-widest"
                 >
-                <Upload size={14} /> <span className="hidden sm:inline">{t('IMPORT')}</span>
+                <Upload size={16} strokeWidth={2.5} /> <span className="hidden sm:inline">{t('IMPORT')}</span>
                 </button>
             )}
             {!hideExport && (
                 <button 
                   onClick={onExportClick}
-                  className="flex items-center gap-2 px-4 h-full border-r border-gray-100 text-gray-500 hover:text-black hover:bg-gray-50 transition-all text-[10px] font-black uppercase tracking-widest"
+                  className="flex items-center gap-2 px-5 h-full border-r-2 border-gray-100 text-gray-500 hover:text-black hover:bg-gray-50 transition-all text-[10px] font-black uppercase tracking-widest"
                 >
-                <Download size={14} /> <span className="hidden sm:inline">{t('EXPORT')}</span>
+                <Download size={16} strokeWidth={2.5} /> <span className="hidden sm:inline">{t('EXPORT')}</span>
                 </button>
             )}
-            <button className="flex items-center gap-2 px-4 h-full text-gray-500 hover:text-black hover:bg-gray-50 transition-all text-[10px] font-black uppercase tracking-widest">
-              <Filter size={14} /> <span className="hidden sm:inline">{t('FILTER')}</span>
+            <button className="flex items-center gap-2 px-5 h-full text-gray-500 hover:text-black hover:bg-gray-50 transition-all text-[10px] font-black uppercase tracking-widest">
+              <Filter size={16} strokeWidth={2.5} /> <span className="hidden sm:inline">{t('FILTER')}</span>
             </button>
           </div>
 
           {!hideAdd && (
             <button 
               onClick={onAddClick}
-              className="bg-black text-white px-6 h-[42px] rounded-xl font-black text-[10px] uppercase tracking-[0.15em] flex items-center gap-2 hover:bg-gray-900 transition-all shadow-xl shadow-black/20 hover:scale-105 active:scale-95 whitespace-nowrap"
+              className="bg-gradient-to-r from-black to-gray-800 text-white px-8 h-[46px] rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 hover:from-gray-900 hover:to-black transition-all shadow-xl shadow-black/30 hover:scale-105 hover:shadow-2xl active:scale-95 whitespace-nowrap"
             >
-              <Plus size={16} strokeWidth={3} /> {addButtonLabel}
+              <Plus size={18} strokeWidth={3} /> {addButtonLabel}
             </button>
           )}
         </div>
       </div>
 
       {podFilters && onPodFilterChange && (
-        <div className="flex flex-wrap gap-4 items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+        <div className="flex flex-wrap gap-4 items-center bg-gradient-to-r from-gray-50 to-white p-4 rounded-2xl border-2 border-gray-100 shadow-sm">
             <div className="flex items-center gap-2">
-                <Filter size={14} className="text-gray-400" />
-                <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Additional Filters:</span>
+                <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-sm border border-gray-100">
+                    <Filter size={14} className="text-gray-500" />
+                </div>
+                <span className="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Additional Filters:</span>
             </div>
             <select 
-                className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-[11px] font-bold outline-none cursor-pointer"
+                className="bg-white border-2 border-gray-200 rounded-xl px-4 py-2.5 text-[11px] font-bold outline-none cursor-pointer hover:border-gray-300 focus:border-black transition-all shadow-sm"
                 value={podFilters.lantai}
                 onChange={(e) => onPodFilterChange('lantai', e.target.value)}
             >
@@ -158,7 +160,7 @@ export const FilterBar: React.FC<Props> = ({
                 <option value="Lt 3 Perempuan">Lt 3 Perempuan</option>
             </select>
             <select 
-                className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-[11px] font-bold outline-none cursor-pointer"
+                className="bg-white border-2 border-gray-200 rounded-xl px-4 py-2.5 text-[11px] font-bold outline-none cursor-pointer hover:border-gray-300 focus:border-black transition-all shadow-sm"
                 value={podFilters.jenisKamar}
                 onChange={(e) => onPodFilterChange('jenisKamar', e.target.value)}
             >

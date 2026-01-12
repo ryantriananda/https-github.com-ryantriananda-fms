@@ -43,7 +43,7 @@ export const GeneralMasterModal: React.FC<Props> = ({ isOpen, onClose, onSave, i
               <h2 className="text-[18px] font-black tracking-tight text-black uppercase leading-none">
                 {initialData ? `Edit ${title}` : `Tambah ${title}`}
               </h2>
-              <p className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.3em] mt-2">Master Database Registry</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] mt-2">Master Database Registry</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black p-3 transition-all rounded-full hover:bg-gray-50">

@@ -6,7 +6,6 @@ import { Eye, CheckCircle2, XCircle, Clock } from 'lucide-react';
 interface Props {
   data: LockerRequestRecord[];
   onView?: (item: LockerRequestRecord) => void;
-  // Note: we remove onAction from table directly because instructions say workflow actions are in detail
 }
 
 export const LockerRequestTable: React.FC<Props> = ({ data, onView }) => {
@@ -34,16 +33,11 @@ export const LockerRequestTable: React.FC<Props> = ({ data, onView }) => {
               <th className="px-6 w-64">REQUESTER</th>
               <th className="px-6 w-40 text-center">DATE</th>
               <th className="px-6 w-48 text-center">STATUS</th>
-              <th className="px-6 w-40 text-center">WORKFLOW</th>
               <th className="px-6 w-32 text-center pr-10">ACTION</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
             {data.map((item, index) => {
-                const isPending = (item.status || '').toLowerCase().includes('pending') || (item.status || '').toLowerCase().includes('waiting');
-                const isApproved = (item.status || '').toLowerCase().includes('approved');
-                const isRejected = (item.status || '').toLowerCase().includes('rejected');
-
                 return (
                   <tr key={item.id} className="bg-white hover:bg-[#FDFDFD] transition-all group cursor-pointer h-24" onClick={() => onView?.(item)}>
                     <td className="pl-10 text-center font-bold text-gray-300 text-[11px]">{index + 1}</td>
@@ -77,33 +71,6 @@ export const LockerRequestTable: React.FC<Props> = ({ data, onView }) => {
                         {getStatusBadge(item.status)}
                     </td>
                     
-                    <td className="px-6 text-center">
-                        <div className="flex items-center justify-center gap-2">
-                            {/* Workflow indicators (Static for now as per Image 1 style, but disabled buttons to show flow) */}
-                            {isApproved ? (
-                                <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center shadow-md">
-                                    <CheckCircle2 size={16} />
-                                </div>
-                            ) : isRejected ? (
-                                <div className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md">
-                                    <XCircle size={16} />
-                                </div>
-                            ) : (
-                                <>
-                                    <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center shadow-md opacity-50 grayscale">
-                                        <CheckCircle2 size={16} />
-                                    </div>
-                                    <div className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md opacity-50 grayscale">
-                                        <XCircle size={16} />
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                        <div className="text-[8px] font-bold text-gray-300 mt-1 uppercase tracking-widest">
-                            {isApproved ? 'COMPLETED' : isRejected ? 'COMPLETED' : 'PENDING'}
-                        </div>
-                    </td>
-                    
                     <td className="px-6 text-center pr-10">
                         <button 
                             onClick={(e) => { e.stopPropagation(); onView?.(item); }}
@@ -117,7 +84,7 @@ export const LockerRequestTable: React.FC<Props> = ({ data, onView }) => {
             })}
             {data.length === 0 && (
                 <tr>
-                    <td colSpan={7} className="p-24 text-center text-gray-300 italic text-[11px] uppercase tracking-widest">No locker requests found</td>
+                    <td colSpan={6} className="p-24 text-center text-gray-300 italic text-[11px] uppercase tracking-widest">No locker requests found</td>
                 </tr>
             )}
           </tbody>

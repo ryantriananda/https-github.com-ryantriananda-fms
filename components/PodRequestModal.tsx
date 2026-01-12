@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, Send, Calendar, MapPin, User, MessageSquare, Bed, Save, CheckCircle2, XCircle, Briefcase, Mail, Phone, Monitor, Wind, Zap, Box, Lock, Droplets, Utensils, Shirt, Waves, Home, Layers, Check } from 'lucide-react';
 import { PodRequestRecord, UserRecord } from '../types';
@@ -75,7 +76,7 @@ export const PodRequestModal: React.FC<Props> = ({
             roomType: 'SINGLE BED',
             status: 'Pending',
             requesterName: currentUser?.name || 'AAN JUNAIDI',
-            departemen: currentUser?.department || 'AFTER SALES',
+            department: currentUser?.department || 'AFTER SALES',
             requesterRole: currentUser?.role || 'TECHNICIAN',
             gender: 'Pria',
             isExpat: false,
@@ -109,7 +110,7 @@ export const PodRequestModal: React.FC<Props> = ({
   const Label = ({ children, icon: Icon }: { children?: React.ReactNode, icon?: any }) => (
     <div className="flex items-center gap-2 mb-2">
         {Icon && <Icon size={12} className="text-black" />}
-        <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">
+        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
             {children}
         </label>
     </div>
@@ -296,8 +297,8 @@ export const PodRequestModal: React.FC<Props> = ({
                                         disabled={isView || isApprove}
                                         className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 pl-14 text-[11px] font-black text-black outline-none uppercase"
                                         placeholder="CONTOH: AFTER SALES"
-                                        value={form.departemen}
-                                        onChange={(e) => setForm({...form, departemen: e.target.value})}
+                                        value={form.department}
+                                        onChange={(e) => setForm({...form, department: e.target.value})}
                                     />
                                     <MapPin size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300" />
                                 </div>

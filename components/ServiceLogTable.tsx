@@ -104,7 +104,7 @@ export const ServiceLogTable: React.FC<Props> = ({ data, onEdit, onView, onDelet
                     <div className="flex items-center justify-end gap-1">
                         <button onClick={(e) => { e.stopPropagation(); onView?.(item); }} className="p-1.5 text-gray-300 hover:text-black transition-all"><Eye size={18} /></button>
                         <button onClick={(e) => { e.stopPropagation(); onEdit?.(item); }} className="p-1.5 text-gray-300 hover:text-black transition-all"><Pencil size={18} /></button>
-                        <button onClick={(e) => { e.stopPropagation(); onDelete?.(item.id.toString()); }} className="p-1.5 text-gray-300 hover:text-red-500 transition-all"><Trash2 size={18} /></button>
+                        <button onClick={(e) => { e.stopPropagation(); onDelete?.(item.id); }} className="p-1.5 text-gray-300 hover:text-red-500 transition-all"><Trash2 size={18} /></button>
                     </div>
                 </td>
               </tr>

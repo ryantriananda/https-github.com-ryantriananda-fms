@@ -78,7 +78,7 @@ const translations: Record<string, Record<Language, string>> = {
   // Gedung
   'Pemeliharaan Asset': { id: 'Pemeliharaan Aset', en: 'Asset Maintenance' },
   'Utility Monitoring': { id: 'Monitoring Utilitas', en: 'Utility Monitoring' },
-  'Branch Improvement': { id: 'Perbaikan Cabang', en: 'Branch Improvement' },
+  'Branch Improvement': { id: 'Permintaan Perbaikan Cabang', en: 'Branch Improvement Request' },
   'Compliance & Legal': { id: 'Kepatuhan & Legal', en: 'Compliance & Legal' },
   'Master Gedung': { id: 'Master Gedung', en: 'Master Building' },
 

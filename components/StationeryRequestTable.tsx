@@ -25,7 +25,7 @@ export const StationeryRequestTable: React.FC<Props> = ({ data, onView, isApprov
   return (
     <div className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden transition-all duration-500">
       <div className="overflow-x-auto custom-scrollbar">
-        <table className="w-full min-w-[1400px] text-left border-collapse">
+        <table className="w-full min-w-[1200px] text-left border-collapse">
           <thead>
             <tr className="bg-[#FAFAFA] border-b border-gray-100 h-16">
               <th className="pl-10 w-20 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">#</th>
@@ -55,9 +55,6 @@ export const StationeryRequestTable: React.FC<Props> = ({ data, onView, isApprov
               </th>
               <th className="px-6 w-40 text-center text-[10px] font-black text-black uppercase tracking-[0.15em]">DATE</th>
               <th className="px-6 w-48 text-center text-[10px] font-black text-black uppercase tracking-[0.15em]">STATUS</th>
-              {isApprovalMode && (
-                  <th className="px-6 w-40 text-center text-[10px] font-black text-black uppercase tracking-[0.15em]">WORKFLOW</th>
-              )}
               <th className="px-6 w-32 text-center pr-10 text-[10px] font-black text-black uppercase tracking-[0.15em]">ACTION</th>
             </tr>
           </thead>
@@ -119,36 +116,10 @@ export const StationeryRequestTable: React.FC<Props> = ({ data, onView, isApprov
                     {getStatusBadge(item.status)}
                 </td>
                 
-                {/* Workflow Column */}
-                {isApprovalMode && (
-                    <td className="px-6 text-center">
-                        {isPending && onAction ? (
-                            <div className="flex items-center justify-center gap-2">
-                                <button 
-                                    onClick={(e) => { e.stopPropagation(); onAction(item, 'Approve'); }}
-                                    className="text-white bg-[#10B981] hover:bg-green-600 transition-all p-2.5 rounded-xl shadow-lg shadow-green-200 active:scale-95 transform hover:-translate-y-0.5"
-                                    title="Approve"
-                                >
-                                    <CheckCircle2 size={16} strokeWidth={2.5} />
-                                </button>
-                                <button 
-                                    onClick={(e) => { e.stopPropagation(); onAction(item, 'Reject'); }}
-                                    className="text-white bg-red-500 hover:bg-red-600 transition-all p-2.5 rounded-xl shadow-lg shadow-red-200 active:scale-95 transform hover:-translate-y-0.5"
-                                    title="Reject"
-                                >
-                                    <XCircle size={16} strokeWidth={2.5} />
-                                </button>
-                            </div>
-                        ) : (
-                            <span className="text-[9px] font-bold text-gray-300 italic uppercase">Processed</span>
-                        )}
-                    </td>
-                )}
-
                 <td className="px-6 text-center pr-10">
                     <button 
                         onClick={(e) => { e.stopPropagation(); onView?.(item); }}
-                        className="text-gray-300 hover:text-black transition-all p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 active:scale-90 border border-transparent hover:border-gray-200"
+                        className="text-gray-300 hover:text-black transition-all p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 active:scale-90 border border-transparent hover:border-gray-200 group-hover:bg-black group-hover:text-white"
                         title="View Details"
                     >
                         <Eye size={16} />

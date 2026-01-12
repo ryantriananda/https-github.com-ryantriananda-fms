@@ -147,7 +147,7 @@ export const MasterApprovalModal: React.FC<Props> = ({
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
                     {mode === 'create' ? 'Buat Workflow Approval' : mode === 'edit' ? 'Edit Workflow Approval' : 'View Workflow Approval'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">General System Approval Configuration</p>
+                <p className="text-[10px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">General System Approval Configuration</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
@@ -225,7 +225,7 @@ export const MasterApprovalModal: React.FC<Props> = ({
                                         
                                         {/* Type Selector */}
                                         <div className="w-32">
-                                            <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">Type</label>
+                                            <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Type</label>
                                             <div className="relative">
                                                 <select 
                                                     className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 pl-8 text-[11px] font-bold text-black focus:border-black outline-none disabled:text-gray-500 appearance-none cursor-pointer"
@@ -244,7 +244,7 @@ export const MasterApprovalModal: React.FC<Props> = ({
 
                                         {/* Dynamic Value Selector (Role or User) */}
                                         <div className="flex-1">
-                                            <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">
+                                            <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">
                                                 {tier.type === 'User' ? 'Select User' : 'Select Role'}
                                             </label>
                                             <select 
@@ -264,7 +264,7 @@ export const MasterApprovalModal: React.FC<Props> = ({
                                                 ) : (
                                                     // Map Roles
                                                     roleList.length > 0 ? (
-                                                        roleList.map(r => <option key={r.id} value={r.name}>{r.name}</option>
+                                                        roleList.map(r => <option key={r.id} value={r.name}>{r.name}</option>)
                                                     ) : (
                                                         <>
                                                             <option value="Admin GA">Admin GA</option>
@@ -281,7 +281,7 @@ export const MasterApprovalModal: React.FC<Props> = ({
                                         </div>
                                         
                                         <div className="w-24">
-                                            <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">SLA (Days)</label>
+                                            <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">SLA (Days)</label>
                                             <input 
                                                 type="number"
                                                 className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-[11px] font-black text-center text-black focus:border-black outline-none disabled:text-gray-500"
@@ -319,7 +319,7 @@ export const MasterApprovalModal: React.FC<Props> = ({
 
         {/* Footer */}
         <div className="px-10 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
-          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
+          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-200 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
           {!isView && (
             <button 
                 onClick={handleSave} 

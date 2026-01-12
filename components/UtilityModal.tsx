@@ -266,7 +266,7 @@ export const UtilityModal: React.FC<Props> = ({
                                 <div className="p-3 bg-white rounded-full shadow-sm mb-3">
                                     <UploadCloud size={20} className="text-black" />
                                 </div>
-                                <span className="text-[9px] font-black uppercase tracking-widest">Upload Foto / PDF</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest">Upload Foto / PDF</span>
                             </div>
                         )}
                         <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
@@ -280,7 +280,7 @@ export const UtilityModal: React.FC<Props> = ({
                                     key={s}
                                     onClick={() => !isView && setForm({...form, status: s as any})}
                                     disabled={isView}
-                                    className={`flex-1 py-3 text-[9px] font-black uppercase tracking-widest rounded-xl border transition-all ${
+                                    className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl border transition-all ${
                                         form.status === s
                                         ? s === 'Paid' ? 'bg-green-500 text-white border-green-600' 
                                           : s === 'Unpaid' ? 'bg-red-500 text-white border-red-600'
@@ -299,7 +299,7 @@ export const UtilityModal: React.FC<Props> = ({
 
         {/* Footer */}
         <div className="px-12 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
-          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
+          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 bg-gray-50 border border-gray-200 rounded-2xl hover:bg-gray-100 hover:text-black transition-all">Cancel</button>
           {!isView && (
             <button 
                 onClick={() => onSave({ ...form, attachmentUrl: imagePreview || undefined })} 

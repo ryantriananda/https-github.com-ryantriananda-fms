@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { X, Save, Clock, MapPin, User, CheckSquare, Calendar, Image as ImageIcon, Trash2, Building, Plus, AlertTriangle, Box, QrCode, PenTool, ShieldAlert, Timer, RotateCcw, Copy, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Save, Clock, MapPin, User, CheckSquare, Calendar, Image as ImageIcon, Trash2, Building, Plus, AlertTriangle, Box, QrCode, PenTool, ShieldAlert, Timer, RotateCcw, Copy, CheckCircle2, ChevronDown, ChevronUp, Camera, FileText } from 'lucide-react';
 import { TimesheetRecord, BuildingRecord, UserRecord, TimesheetActivity } from '../types';
 import { ACTIVITY_TYPES, MOCK_BUILDING_ASSETS, MOCK_GENERAL_ASSET_DATA, CLEANING_CHECKLISTS } from '../constants';
 
@@ -72,7 +73,9 @@ export const TimesheetModal: React.FC<Props> = ({
       return [...bldAssets, ...genAssets];
   }, []);
 
-  const validEmployees = userList.filter(u => ['Cleaning', 'Security', 'Teknisi'].includes(u.role));
+  const validEmployees = useMemo(() => {
+     return userList.filter(u => ['Cleaning', 'Security', 'Teknisi'].includes(u.role));
+  }, [userList]);
 
   useEffect(() => {
     if (isOpen) {
@@ -162,16 +165,33 @@ export const TimesheetModal: React.FC<Props> = ({
       setForm(prev => ({ ...prev, activities: updated }));
   };
 
-  // --- Deep Dive Logic ---
+  // --- Photo Upload Logic ---
 
-  const handleChecklistToggle = (actIndex: number, checkIndex: number) => {
-      if (isView && !isApprove) return; 
-      const updated = [...(form.activities || [])];
-      const activity = updated[actIndex];
-      if (activity.checklist) {
-          activity.checklist[checkIndex].checked = !activity.checklist[checkIndex].checked;
-          setForm(prev => ({ ...prev, activities: updated }));
+  const handleUploadClick = (index: number) => {
+      if(isView || isApprove) return; // Prevent upload in view/approve mode
+      setActiveActivityIndex(index);
+      fileInputRef.current?.click();
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file && activeActivityIndex !== null) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+              handleActivityChange(activeActivityIndex, 'photo', ev.target?.result as string);
+          };
+          reader.readAsDataURL(file);
       }
+      e.target.value = '';
+  };
+
+  const handleCopyYesterday = () => {
+      // Mock Copy Logic
+      const dummyActivities: TimesheetActivity[] = [
+          { id: `COPY-1`, activityType: 'Patroli area', location: 'Lobby', startTime: '07:00', endTime: '08:00', duration: 1, notes: 'Routine check' },
+          { id: `COPY-2`, activityType: 'CCTV check', location: 'Control Room', startTime: '08:00', endTime: '09:00', duration: 1, notes: 'All cameras OK' },
+      ];
+      setForm(prev => ({ ...prev, activities: dummyActivities }));
   };
 
   const handleGeoLocation = () => {
@@ -192,53 +212,6 @@ export const TimesheetModal: React.FC<Props> = ({
       }
   };
 
-  const handleCopyYesterday = () => {
-      // Mock Copy Logic
-      const dummyActivities: TimesheetActivity[] = [
-          { id: `COPY-1`, activityType: 'Patroli area', location: 'Lobby', startTime: '07:00', endTime: '08:00', duration: 1, notes: 'Routine check' },
-          { id: `COPY-2`, activityType: 'CCTV check', location: 'Control Room', startTime: '08:00', endTime: '09:00', duration: 1, notes: 'All cameras OK' },
-      ];
-      setForm(prev => ({ ...prev, activities: dummyActivities }));
-  };
-
-  const toggleTimer = (index: number) => {
-      if (activeTimerIndex === index) {
-          // Stop Timer
-          const now = new Date();
-          const hours = String(now.getHours()).padStart(2, '0');
-          const minutes = String(now.getMinutes()).padStart(2, '0');
-          handleActivityChange(index, 'endTime', `${hours}:${minutes}`);
-          setActiveTimerIndex(null);
-      } else {
-          // Start Timer
-          const now = new Date();
-          const hours = String(now.getHours()).padStart(2, '0');
-          const minutes = String(now.getMinutes()).padStart(2, '0');
-          handleActivityChange(index, 'startTime', `${hours}:${minutes}`);
-          setActiveTimerIndex(index);
-      }
-  };
-
-  // --- Photo Upload Logic ---
-
-  const handleUploadClick = (index: number) => {
-      if(isView && !isApprove) return;
-      setActiveActivityIndex(index);
-      fileInputRef.current?.click();
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file && activeActivityIndex !== null) {
-          const reader = new FileReader();
-          reader.onload = (ev) => {
-              handleActivityChange(activeActivityIndex, 'photo', ev.target?.result as string);
-          };
-          reader.readAsDataURL(file);
-      }
-      e.target.value = '';
-  };
-
   const Label = ({ children, required }: { children?: React.ReactNode, required?: boolean }) => (
     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2.5">
       {children} {required && <span className="text-red-500 font-black ml-0.5">*</span>}
@@ -257,9 +230,9 @@ export const TimesheetModal: React.FC<Props> = ({
             </div>
             <div>
                 <h2 className="text-[18px] font-black text-black uppercase tracking-tight leading-none">
-                    {mode === 'create' ? 'Input Laporan Harian' : mode === 'approve' ? 'Approval Laporan' : 'Detail Laporan'}
+                    {mode === 'create' ? 'INPUT LAPORAN HARIAN' : mode === 'approve' ? 'APPROVAL LAPORAN' : 'DETAIL LAPORAN'}
                 </h2>
-                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">Daily Activity Timesheet</p>
+                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-[0.3em]">DAILY ACTIVITY TIMESHEET</p>
             </div>
           </div>
           <button onClick={onClose} className="text-gray-300 hover:text-black transition-all p-2 rounded-full hover:bg-gray-50">
@@ -292,7 +265,7 @@ export const TimesheetModal: React.FC<Props> = ({
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
                                 <div className="w-1.5 h-6 bg-black rounded-full"></div>
-                                <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Informasi Petugas & Waktu</h3>
+                                <h3 className="text-[11px] font-black text-black uppercase tracking-widest">INFORMASI PETUGAS & WAKTU</h3>
                             </div>
                             {!isView && !isApprove && (
                                 <button 
@@ -306,31 +279,31 @@ export const TimesheetModal: React.FC<Props> = ({
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
-                                <Label required>Nama Petugas</Label>
+                                <Label required>NAMA PETUGAS</Label>
                                 <div className="relative">
                                     <select 
                                         disabled={isView || isApprove}
-                                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm appearance-none cursor-pointer"
-                                        value={form.employee?.name || ''}
+                                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm appearance-none cursor-pointer uppercase"
+                                        value={form.employee?.id || ''}
                                         onChange={(e) => {
-                                            const user = validEmployees.find((c) => c.name === e.target.value);
+                                            const user = validEmployees.find((c) => c.id === e.target.value);
                                             if(user) setForm({ ...form, employee: user });
                                         }}
                                     >
-                                        <option value="">-- Pilih Petugas --</option>
-                                        {validEmployees.map((c) => <option key={c.id} value={c.name}>{c.name} ({c.role})</option>)}
+                                        <option value="">-- PILIH PETUGAS --</option>
+                                        {validEmployees.map((c) => <option key={c.id} value={c.id}>{c.name} ({c.role})</option>)}
                                     </select>
                                     <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
                                 </div>
                             </div>
 
                             <div>
-                                <Label required>Tanggal Laporan</Label>
+                                <Label required>TANGGAL LAPORAN</Label>
                                 <div className="relative">
                                     <input 
                                         type="date"
                                         disabled={isView || isApprove}
-                                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm"
+                                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm uppercase"
                                         value={form.date}
                                         onChange={(e) => setForm({...form, date: e.target.value})}
                                     />
@@ -339,7 +312,7 @@ export const TimesheetModal: React.FC<Props> = ({
                             </div>
 
                             <div>
-                                <Label required>Shift Kerja</Label>
+                                <Label required>SHIFT KERJA</Label>
                                 <div className="flex gap-3">
                                     {['Pagi', 'Siang', 'Malam'].map(s => (
                                         <button
@@ -359,19 +332,22 @@ export const TimesheetModal: React.FC<Props> = ({
                             </div>
 
                             <div>
-                                <Label required>Status Kehadiran</Label>
-                                <select 
-                                    disabled={isView || isApprove}
-                                    className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm appearance-none cursor-pointer"
-                                    value={form.status}
-                                    onChange={(e) => setForm({...form, status: e.target.value as any})}
-                                >
-                                    <option value="Tepat Waktu">Tepat Waktu</option>
-                                    <option value="Terlambat">Terlambat</option>
-                                    <option value="Absen">Absen</option>
-                                    <option value="Izin">Izin</option>
-                                    <option value="Libur">Libur</option>
-                                </select>
+                                <Label required>STATUS KEHADIRAN</Label>
+                                <div className="relative">
+                                    <select 
+                                        disabled={isView || isApprove}
+                                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm appearance-none cursor-pointer uppercase"
+                                        value={form.status}
+                                        onChange={(e) => setForm({...form, status: e.target.value as any})}
+                                    >
+                                        <option value="Tepat Waktu">Tepat Waktu</option>
+                                        <option value="Terlambat">Terlambat</option>
+                                        <option value="Absen">Absen</option>
+                                        <option value="Izin">Izin</option>
+                                        <option value="Libur">Libur</option>
+                                    </select>
+                                    <ChevronDown size={18} className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -379,30 +355,30 @@ export const TimesheetModal: React.FC<Props> = ({
                     <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="w-1.5 h-6 bg-black rounded-full"></div>
-                            <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Lokasi & Validasi</h3>
+                            <h3 className="text-[11px] font-black text-black uppercase tracking-widest">LOKASI & VALIDASI</h3>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
-                                <Label required>Gedung / Cabang</Label>
+                                <Label required>GEDUNG / CABANG</Label>
                                 <div className="relative">
                                     <select 
                                         disabled={isView || isApprove}
-                                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm appearance-none cursor-pointer"
+                                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pl-12 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm appearance-none cursor-pointer uppercase"
                                         value={form.location || ''}
                                         onChange={(e) => setForm({...form, location: e.target.value})}
                                     >
-                                        <option value="">-- Pilih Lokasi --</option>
+                                        <option value="">-- PILIH LOKASI --</option>
                                         {buildingList.map(b => <option key={b.id} value={b.name}>{b.name}</option>)}
-                                        <option value="Jakarta Head Office">Jakarta Head Office</option>
-                                        <option value="Surabaya Branch">Surabaya Branch</option>
+                                        <option value="Jakarta Head Office">JAKARTA HEAD OFFICE</option>
+                                        <option value="Surabaya Branch">SURABAYA BRANCH</option>
                                     </select>
                                     <Building size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
                                 </div>
                             </div>
                             
                             <div>
-                                <Label>Validasi GPS</Label>
+                                <Label>VALIDASI GPS</Label>
                                 <div className="flex items-center gap-3">
                                     <div className="relative flex-1">
                                         <input 
@@ -427,7 +403,7 @@ export const TimesheetModal: React.FC<Props> = ({
                             </div>
 
                             <div className="md:col-span-2">
-                                <Label>Catatan Umum (Optional)</Label>
+                                <Label>CATATAN UMUM (OPTIONAL)</Label>
                                 <textarea 
                                     className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-medium text-black focus:border-black outline-none disabled:bg-gray-50 transition-all placeholder:text-gray-300 shadow-sm resize-none"
                                     placeholder="Tulis catatan tambahan harian..."
@@ -444,8 +420,6 @@ export const TimesheetModal: React.FC<Props> = ({
 
             {activeTab === 'AKTIVITAS' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
-                    
-                    {/* Validation Error Banner */}
                     {validationError && (
                         <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-start gap-3 animate-in shake">
                             <AlertTriangle size={18} className="text-red-500 mt-0.5" />
@@ -456,82 +430,47 @@ export const TimesheetModal: React.FC<Props> = ({
                         </div>
                     )}
 
-                    {/* Max Hours Warning */}
-                    {form.totalHours > 16 && (
-                        <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 flex items-start gap-3">
-                            <AlertTriangle size={18} className="text-orange-500 mt-0.5" />
-                            <div>
-                                <h4 className="text-[11px] font-black text-orange-700 uppercase tracking-wide">Peringatan Durasi Shift</h4>
-                                <p className="text-[10px] text-orange-600 font-medium">Total jam kerja melebihi batas wajar (16 Jam). Mohon periksa kembali.</p>
-                            </div>
-                        </div>
-                    )}
-
                     <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
                         <div className="flex justify-between items-center mb-6">
                             <div className="flex items-center gap-3">
                                 <CheckSquare size={18} className="text-black"/>
-                                <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Daftar Aktivitas ({form.activities?.length || 0})</h3>
+                                <h3 className="text-[11px] font-black text-black uppercase tracking-widest">DAFTAR AKTIVITAS ({form.activities?.length || 0})</h3>
                             </div>
                             {!isView && !isApprove && form.employee?.role && (
                                 <button 
                                     onClick={handleAddActivity}
                                     className="bg-black text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-gray-800 transition-all shadow-lg shadow-black/10"
                                 >
-                                    <Plus size={14} /> Tambah Aktivitas
+                                    <Plus size={14} /> TAMBAH
                                 </button>
                             )}
                         </div>
 
                         {!form.employee?.role && (
                             <div className="text-center p-8 bg-red-50 border border-red-100 rounded-2xl mb-6">
-                                <p className="text-[11px] font-black text-red-500 uppercase">Silakan pilih petugas terlebih dahulu untuk memuat jenis kegiatan.</p>
+                                <p className="text-[11px] font-black text-red-500 uppercase">SILAKAN PILIH PETUGAS TERLEBIH DAHULU UNTUK MEMUAT JENIS KEGIATAN.</p>
                             </div>
                         )}
 
                         <div className="space-y-6">
-                            {form.activities?.map((activity, idx) => (
+                             {form.activities?.map((activity, idx) => (
                                 <div key={activity.id} className="bg-gray-50 p-6 rounded-2xl border border-gray-100 relative group transition-all hover:border-gray-200">
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 mb-4">
-                                        
-                                        {/* Activity Type Dropdown */}
                                         <div className="lg:col-span-4">
-                                            <Label required>Jenis Kegiatan</Label>
+                                            <Label required>JENIS KEGIATAN</Label>
                                             <select 
                                                 disabled={isView || isApprove}
-                                                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-bold text-black focus:border-black outline-none appearance-none cursor-pointer"
+                                                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-bold text-black focus:border-black outline-none appearance-none cursor-pointer uppercase"
                                                 value={activity.activityType}
                                                 onChange={(e) => handleActivityChange(idx, 'activityType', e.target.value)}
                                             >
-                                                <option value="">-- Pilih Kegiatan --</option>
+                                                <option value="">-- PILIH KEGIATAN --</option>
                                                 {activityTypes.map(t => <option key={t} value={t}>{t}</option>)}
                                             </select>
                                         </div>
-
-                                        {/* DEEP DIVE: Technician Asset Selection */}
-                                        {role === 'Teknisi' && (
-                                            <div className="lg:col-span-4">
-                                                <Label>Aset Terkait (Opsional)</Label>
-                                                <div className="relative">
-                                                    <select 
-                                                        disabled={isView || isApprove}
-                                                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-bold text-blue-600 focus:border-blue-500 outline-none appearance-none cursor-pointer"
-                                                        value={activity.linkedAssetId || ''}
-                                                        onChange={(e) => handleActivityChange(idx, 'linkedAssetId', e.target.value)}
-                                                    >
-                                                        <option value="">-- Pilih Aset --</option>
-                                                        {availableAssets.map(a => (
-                                                            <option key={a.id} value={a.id}>{a.name}</option>
-                                                        ))}
-                                                    </select>
-                                                    <Box size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Location specific for activity */}
+                                        
                                         <div className={role === 'Teknisi' ? "lg:col-span-4" : "lg:col-span-8"}>
-                                            <Label>Lokasi Spesifik</Label>
+                                            <Label>LOKASI SPESIFIK</Label>
                                             <input 
                                                 type="text"
                                                 disabled={isView || isApprove}
@@ -541,10 +480,8 @@ export const TimesheetModal: React.FC<Props> = ({
                                                 onChange={(e) => handleActivityChange(idx, 'location', e.target.value)}
                                             />
                                         </div>
-
-                                        {/* Time Inputs & Timer */}
                                         <div className="lg:col-span-3 relative">
-                                            <Label required>Jam Mulai</Label>
+                                            <Label required>JAM MULAI</Label>
                                             <div className="relative">
                                                 <input 
                                                     type="time" 
@@ -553,19 +490,10 @@ export const TimesheetModal: React.FC<Props> = ({
                                                     value={activity.startTime}
                                                     onChange={(e) => handleActivityChange(idx, 'startTime', e.target.value)}
                                                 />
-                                                {!isView && !isApprove && (
-                                                    <button 
-                                                        onClick={() => toggleTimer(idx)}
-                                                        className={`absolute right-1 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all ${activeTimerIndex === idx ? 'text-red-500 animate-pulse' : 'text-green-500 hover:bg-green-50'}`}
-                                                        title="Start/Stop Timer"
-                                                    >
-                                                        <Timer size={14} />
-                                                    </button>
-                                                )}
                                             </div>
                                         </div>
                                         <div className="lg:col-span-3">
-                                            <Label required>Jam Selesai</Label>
+                                            <Label required>JAM SELESAI</Label>
                                             <input 
                                                 type="time" 
                                                 disabled={isView || isApprove}
@@ -576,138 +504,69 @@ export const TimesheetModal: React.FC<Props> = ({
                                                 onChange={(e) => handleActivityChange(idx, 'endTime', e.target.value)}
                                             />
                                         </div>
-
-                                        {/* Calculated Duration */}
                                         <div className="lg:col-span-2">
-                                            <Label>Durasi (Jam)</Label>
+                                            <Label>DURASI (JAM)</Label>
                                             <div className={`w-full bg-gray-200 rounded-xl px-4 py-3 text-[12px] font-black text-center ${activity.duration < 0 ? 'text-red-500' : 'text-gray-600'}`}>
-                                                {activity.duration > 0 ? activity.duration : 'Invalid'} h
+                                                {activity.duration > 0 ? activity.duration : 'INVALID'} H
                                             </div>
                                         </div>
-
-                                        {/* Evidence Upload */}
+                                    </div>
+                                    
+                                    {/* Additional Details: Notes & Photo */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 pt-4 border-t border-gray-200/50 mt-4">
+                                        <div className="lg:col-span-8">
+                                            <Label>CATATAN AKTIVITAS</Label>
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    disabled={isView || isApprove}
+                                                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 pl-10 text-[12px] font-medium text-black focus:border-black outline-none placeholder:text-gray-400"
+                                                    placeholder="Deskripsi detail pekerjaan..."
+                                                    value={activity.notes || ''}
+                                                    onChange={(e) => handleActivityChange(idx, 'notes', e.target.value)}
+                                                />
+                                                <FileText size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none" />
+                                            </div>
+                                        </div>
                                         <div className="lg:col-span-4">
-                                            <Label>Bukti Foto</Label>
-                                            <div 
+                                            <Label>FOTO KEGIATAN</Label>
+                                            <button 
                                                 onClick={() => handleUploadClick(idx)}
-                                                className={`w-full h-[46px] border-2 border-dashed rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all ${
-                                                    activity.photo ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-white hover:border-black'
-                                                }`}
+                                                disabled={isView || isApprove}
+                                                className={`w-full h-[46px] rounded-xl border border-dashed flex items-center justify-center gap-2 transition-all relative overflow-hidden
+                                                    ${activity.photo 
+                                                    ? 'bg-black border-black text-white' 
+                                                    : 'bg-white border-gray-300 text-gray-400 hover:border-black hover:text-black hover:bg-gray-50'}
+                                                    ${(isView || isApprove) ? 'cursor-default' : 'cursor-pointer'}
+                                                `}
                                             >
                                                 {activity.photo ? (
-                                                    <span className="text-[10px] font-black text-green-600 uppercase">Uploaded</span>
+                                                    <>
+                                                        <img src={activity.photo} className="w-6 h-6 rounded-md object-cover border border-white/20" alt="Activity" />
+                                                        <span className="text-[10px] font-bold uppercase truncate max-w-[100px]">Ubah Foto</span>
+                                                    </>
                                                 ) : (
                                                     <>
-                                                        <ImageIcon size={14} className="text-gray-400" />
-                                                        <span className="text-[9px] font-bold text-gray-400 uppercase">Upload</span>
+                                                        <Camera size={16} />
+                                                        <span className="text-[10px] font-bold uppercase">Upload</span>
                                                     </>
                                                 )}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* DEEP DIVE: Cleaning Checklist */}
-                                    {role === 'Cleaning' && activity.checklist && activity.checklist.length > 0 && (
-                                        <div className="mb-4 bg-white p-4 rounded-xl border border-gray-100">
-                                            <div className="flex items-center justify-between mb-2 cursor-pointer" onClick={() => setExpandedChecklists(prev => ({...prev, [idx]: !prev[idx]}))}>
-                                                <Label>CHECKLIST KEBERSIHAN</Label>
-                                                {expandedChecklists[idx] ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                                            </div>
-                                            {(expandedChecklists[idx] || !isView) && (
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {activity.checklist.map((item, cIdx) => (
-                                                        <label key={cIdx} className="flex items-center gap-2 text-[10px] font-medium text-gray-600 cursor-pointer">
-                                                            <input 
-                                                                type="checkbox" 
-                                                                checked={item.checked} 
-                                                                disabled={isView && !isApprove}
-                                                                onChange={() => handleChecklistToggle(idx, cIdx)}
-                                                                className="rounded border-gray-300 text-black focus:ring-0"
-                                                            />
-                                                            {item.label}
-                                                        </label>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-
-                                    {/* DEEP DIVE: Security Incident & Checkpoint */}
-                                    {role === 'Security' && (
-                                        <div className="mb-4 flex flex-wrap gap-4 items-center">
-                                            <button 
-                                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[10px] font-bold transition-all ${activity.isQrVerified ? 'bg-green-100 border-green-200 text-green-700' : 'bg-white border-gray-200 text-gray-500'}`}
-                                                onClick={() => !isView && !isApprove && handleActivityChange(idx, 'isQrVerified', !activity.isQrVerified)}
-                                            >
-                                                <QrCode size={12} /> {activity.isQrVerified ? 'Checkpoint Verified' : 'Scan Checkpoint'}
                                             </button>
-                                            
-                                            <div className="flex items-center gap-2">
-                                                <input 
-                                                    type="checkbox" 
-                                                    id={`incident-${idx}`}
-                                                    checked={!!activity.incidentDescription}
-                                                    onChange={(e) => handleActivityChange(idx, 'incidentDescription', e.target.checked ? 'Incident detected' : '')}
-                                                    disabled={isView && !isApprove}
-                                                />
-                                                <label htmlFor={`incident-${idx}`} className="text-[10px] font-bold text-red-500 uppercase cursor-pointer">Report Incident</label>
-                                            </div>
-                                            
-                                            {activity.incidentDescription && (
-                                                <input 
-                                                    type="text" 
-                                                    className="flex-1 bg-red-50 border border-red-100 rounded-lg px-3 py-1.5 text-[10px] text-red-700 focus:outline-none placeholder:text-red-300"
-                                                    placeholder="Describe incident..."
-                                                    value={activity.incidentDescription}
-                                                    onChange={(e) => handleActivityChange(idx, 'incidentDescription', e.target.value)}
-                                                    disabled={isView && !isApprove}
-                                                />
+                                            {activity.photo && !isView && !isApprove && (
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleActivityChange(idx, 'photo', '');
+                                                    }}
+                                                    className="absolute -top-2 -right-2 p-1.5 bg-white rounded-full text-red-500 shadow-md hover:bg-red-50 border border-gray-100 z-10"
+                                                    title="Hapus Foto"
+                                                >
+                                                    <Trash2 size={12} />
+                                                </button>
                                             )}
                                         </div>
-                                    )}
-
-                                    {/* DEEP DIVE: Technician Spare Parts */}
-                                    {role === 'Teknisi' && (
-                                        <div className="mb-4">
-                                            <Label>Spare Parts Used</Label>
-                                            <input 
-                                                type="text"
-                                                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-[11px] font-medium text-black focus:border-black outline-none placeholder:text-gray-300"
-                                                placeholder="e.g. 2x Lampu LED, 1x Kabel (Optional)"
-                                                value={activity.spareParts || ''}
-                                                onChange={(e) => handleActivityChange(idx, 'spareParts', e.target.value)}
-                                                disabled={isView && !isApprove}
-                                            />
-                                        </div>
-                                    )}
-
-                                    {/* Notes */}
-                                    <div className="mb-2">
-                                        <input 
-                                            type="text"
-                                            disabled={isView && !isApprove}
-                                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[12px] font-medium text-black focus:border-black outline-none placeholder:text-gray-300"
-                                            placeholder="Catatan hasil pekerjaan..."
-                                            value={activity.notes}
-                                            onChange={(e) => handleActivityChange(idx, 'notes', e.target.value)}
-                                        />
                                     </div>
 
-                                    {/* APPROVAL MODE: Rejection Note Per Item */}
-                                    {isApprove && (
-                                        <div className="mt-2 pt-2 border-t border-gray-200">
-                                            <Label>Revisi / Catatan Supervisor</Label>
-                                            <input 
-                                                type="text"
-                                                className="w-full bg-yellow-50 border border-yellow-100 rounded-xl px-4 py-2 text-[11px] text-yellow-800 focus:border-yellow-400 outline-none placeholder:text-yellow-400/50"
-                                                placeholder="Berikan catatan jika ada koreksi..."
-                                                value={activity.rejectionNote || ''}
-                                                onChange={(e) => handleActivityChange(idx, 'rejectionNote', e.target.value)}
-                                            />
-                                        </div>
-                                    )}
-
-                                    {/* Remove Button */}
                                     {!isView && !isApprove && (
                                         <button 
                                             onClick={() => handleRemoveActivity(idx)}
@@ -717,56 +576,31 @@ export const TimesheetModal: React.FC<Props> = ({
                                         </button>
                                     )}
                                 </div>
-                            ))}
-
-                            {(!form.activities || form.activities.length === 0) && (
-                                <div className="text-center p-12 border-2 border-dashed border-gray-100 rounded-2xl">
-                                    <p className="text-[10px] font-bold text-gray-300 uppercase">Belum ada aktivitas ditambahkan</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="bg-black text-white p-6 rounded-[2rem] shadow-xl shadow-black/20 flex justify-between items-center">
-                        <div>
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Jam Kerja</p>
-                            <h3 className="text-[24px] font-black">{form.totalHours} Jam</h3>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Jumlah Aktivitas</p>
-                            <h3 className="text-[24px] font-black">{form.activities?.length || 0} Item</h3>
+                             ))}
                         </div>
                     </div>
                 </div>
             )}
-
-            {/* TAB: APPROVAL (Only in Approve Mode) */}
+            
             {isApprove && activeTab === 'APPROVAL' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
                     <div className="bg-white p-10 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col items-center text-center">
                         <PenTool size={32} className="text-black mb-4" />
-                        <h3 className="text-[14px] font-black text-black uppercase tracking-widest mb-2">Tanda Tangan Digital</h3>
+                        <h3 className="text-[14px] font-black text-black uppercase tracking-widest mb-2">TANDA TANGAN DIGITAL</h3>
                         <p className="text-[10px] text-gray-400 font-medium mb-6 max-w-md">
                             Dengan menandatangani ini, Anda menyetujui bahwa laporan aktivitas yang diajukan adalah benar dan valid sesuai prosedur perusahaan.
                         </p>
-                        
                         <div className="w-full max-w-md h-40 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center cursor-crosshair hover:bg-gray-100 transition-all mb-4">
-                            <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest pointer-events-none">Area Tanda Tangan (Touch/Mouse)</span>
-                        </div>
-                        
-                        <div className="flex gap-4 w-full max-w-md">
-                            <button className="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-gray-500 bg-gray-100 rounded-xl hover:bg-gray-200">Clear</button>
-                            <button className="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200">Confirm Sign</button>
+                            <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest pointer-events-none">AREA TANDA TANGAN (TOUCH/MOUSE)</span>
                         </div>
                     </div>
                 </div>
             )}
-
         </div>
 
         {/* Footer */}
         <div className="px-10 py-8 bg-white border-t border-gray-100 flex justify-end gap-4 shrink-0">
-          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-widest text-gray-400 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 hover:text-black transition-all">Cancel</button>
+          <button onClick={onClose} className="px-12 py-4 text-[11px] font-black uppercase tracking-widest text-gray-400 bg-white border border-gray-200 rounded-2xl hover:bg-gray-50 hover:text-black transition-all">CANCEL</button>
           
           {!isView && !isApprove && (
             <button 
@@ -774,23 +608,23 @@ export const TimesheetModal: React.FC<Props> = ({
                 disabled={!form.employee || (form.activities?.length || 0) === 0 || !!validationError}
                 className="px-16 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-black rounded-2xl hover:bg-gray-900 shadow-xl shadow-black/20 transition-all active:scale-95 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                <Save size={18} strokeWidth={2.5} /> Simpan Laporan
+                <Save size={18} strokeWidth={2.5} /> SIMPAN LAPORAN
             </button>
           )}
 
           {isApprove && (
               <>
                 <button 
-                    onClick={() => { setForm(prev => ({ ...prev, status: 'Izin' })); onClose(); }} // Mock Reject
+                    onClick={() => { setForm(prev => ({ ...prev, status: 'Izin' })); onClose(); }} 
                     className="px-12 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-red-500 rounded-2xl hover:bg-red-600 shadow-xl shadow-red-200 transition-all active:scale-95 flex items-center gap-2"
                 >
-                    <ShieldAlert size={16} /> Reject
+                    <ShieldAlert size={16} /> REJECT
                 </button>
                 <button 
-                    onClick={() => { setForm(prev => ({ ...prev, status: 'Tepat Waktu' })); onClose(); }} // Mock Approve
+                    onClick={() => { setForm(prev => ({ ...prev, status: 'Tepat Waktu' })); onClose(); }} 
                     className="px-12 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-green-500 rounded-2xl hover:bg-green-600 shadow-xl shadow-green-200 transition-all active:scale-95 flex items-center gap-2"
                 >
-                    <CheckCircle2 size={16} strokeWidth={2.5} /> Approve
+                    <CheckCircle2 size={16} strokeWidth={2.5} /> APPROVE
                 </button>
               </>
           )}

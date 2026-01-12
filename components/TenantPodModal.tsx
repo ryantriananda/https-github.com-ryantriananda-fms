@@ -156,7 +156,7 @@ export const TenantPodModal: React.FC<Props> = ({
 
   // UI Components
   const Label = ({ children }: { children?: React.ReactNode }) => (
-    <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">
+    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">
       {children}
     </label>
   );
@@ -330,7 +330,7 @@ export const TenantPodModal: React.FC<Props> = ({
                             >
                                 <div className="flex items-center gap-3">
                                     <fac.icon size={14} className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-600'} />
-                                    <span className={`text-[9px] font-black uppercase tracking-tight ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-black'}`}>
+                                    <span className={`text-[10px] font-black uppercase tracking-tight ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-black'}`}>
                                         {fac.label}
                                     </span>
                                 </div>
@@ -385,7 +385,7 @@ export const TenantPodModal: React.FC<Props> = ({
                         </div>
                         <div>
                             <h3 className="text-[12px] font-black text-black uppercase tracking-[0.2em] leading-none">RIWAYAT PENGHUNI & UTILITAS</h3>
-                            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">DATA TRANSAKSI BERDASARKAN KAMAR {form.nomorKamar}</p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">DATA TRANSAKSI BERDASARKAN KAMAR {form.nomorKamar}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -410,7 +410,7 @@ export const TenantPodModal: React.FC<Props> = ({
                             <Zap size={20} />
                         </div>
                         <div>
-                            <p className="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1">AVG PEMAKAIAN LISTRIK</p>
+                            <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">AVG PEMAKAIAN LISTRIK</p>
                             <p className="text-[20px] font-black text-blue-600 leading-none">152.5 <span className="text-[12px] font-bold">kWh/Bln</span></p>
                         </div>
                     </div>
@@ -419,7 +419,7 @@ export const TenantPodModal: React.FC<Props> = ({
                             <History size={20} />
                         </div>
                         <div>
-                            <p className="text-[9px] font-black text-green-400 uppercase tracking-widest mb-1">AVG TAGIHAN LISTRIK</p>
+                            <p className="text-[10px] font-black text-green-400 uppercase tracking-widest mb-1">AVG TAGIHAN LISTRIK</p>
                             <p className="text-[20px] font-black text-green-600 leading-none">Rp 228.750 <span className="text-[12px] font-bold">/Bln</span></p>
                         </div>
                     </div>
@@ -534,7 +534,7 @@ export const TenantPodModal: React.FC<Props> = ({
                 <div className="overflow-hidden rounded-2xl border border-gray-100">
                     <table className="w-full text-left">
                         <thead>
-                            <tr className="bg-[#FAFAFA] border-b border-gray-100 text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                            <tr className="bg-[#FAFAFA] border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                 <th className="py-4 pl-6">#</th>
                                 <th className="py-4">PENGHUNI</th>
                                 <th className="py-4">PERIODE</th>
@@ -553,7 +553,7 @@ export const TenantPodModal: React.FC<Props> = ({
                                         <td className="py-5">
                                             <div className="flex flex-col">
                                                 <span className="text-[11px] font-black text-black uppercase">{form.namaPenghuni}</span>
-                                                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{form.departemen}</span>
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{form.departemen}</span>
                                             </div>
                                         </td>
                                         <td className="py-5 text-[10px] font-black text-black uppercase">{hist.period}</td>
@@ -588,7 +588,7 @@ export const TenantPodModal: React.FC<Props> = ({
             <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm mt-8">
                 <SectionHeader icon={Info} title="KETERANGAN TAMBAHAN" />
                 <textarea 
-                    className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 text-[12px] font-medium text-black outline-none resize-none placeholder:text-gray-300 focus:ring-2 focus:ring-black/5"
+                    className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 text-[12px] font-black text-black outline-none resize-none placeholder:text-gray-300 focus:ring-2 focus:ring-black/5"
                     placeholder="Isi catatan tambahan..."
                     rows={2}
                     value={form.keterangan}

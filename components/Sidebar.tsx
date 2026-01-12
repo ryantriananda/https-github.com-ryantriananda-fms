@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, FileText, Clock, Users, Home, BookOpen, ChevronLeft, ChevronRight, 
@@ -212,10 +213,10 @@ export const Sidebar: React.FC<Props> = ({
       label: 'Master Data', 
       icon: <Home size={20} />,
       subItems: [
-        { label: 'Master ATK', icon: <Box size={16} /> },
-        { label: 'Master ARK', icon: <House size={16} /> },
         { label: 'Master Approval', icon: <CheckCircle2 size={16} /> },
         { label: 'Master Vendor', icon: <Users size={16} /> },
+        { label: 'Master ATK', icon: <Box size={16} /> },
+        { label: 'Master ARK', icon: <House size={16} /> },
         { label: 'Master Pod', icon: <Bed size={16} /> },
         { label: 'Master PPN', icon: <Percent size={16} /> },
         { label: 'Master Brand Type', icon: <Stamp size={16} /> },
