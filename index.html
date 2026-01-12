@@ -8,23 +8,55 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+      * {
+        scroll-behavior: smooth;
+      }
+      
       body {
         font-family: 'Inter', sans-serif;
       }
-      /* Custom scrollbar for table if needed */
+      
+      /* Custom scrollbar for table */
       .custom-scrollbar::-webkit-scrollbar {
-        height: 8px;
-        width: 8px;
+        height: 10px;
+        width: 10px;
       }
       .custom-scrollbar::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: #f8fafc;
+        border-radius: 10px;
       }
       .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
+        background: linear-gradient(to bottom, #cbd5e1, #94a3b8);
+        border-radius: 10px;
+        border: 2px solid #f8fafc;
       }
       .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
+        background: linear-gradient(to bottom, #94a3b8, #64748b);
+      }
+      
+      /* Animation utilities */
+      @keyframes slideInFromTop {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      .animate-slide-in {
+        animation: slideInFromTop 0.3s ease-out;
+      }
+      
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease-out;
       }
     </style>
   <script type="importmap">

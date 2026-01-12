@@ -96,6 +96,8 @@ export interface VehicleRecord {
   pengguna?: string;
   noBpkb?: string;
   keteranganBpkb?: string;
+  noStnk?: string;
+  noKir?: string;
   masaBerlaku1?: string;
   masaBerlaku5?: string;
   masaBerlakuKir?: string;
@@ -113,6 +115,23 @@ export interface VehicleRecord {
   photoRight?: string;
   photoLeft?: string;
   tipeKendaraan?: string;
+  // NEW fields for Live Bidding
+  odometer?: string;
+  images?: Array<{
+    id: string;
+    url: string;
+    type: string;
+    caption: string;
+  }>;
+  documents?: Array<{
+    id: string;
+    name: string;
+    type: string;
+    url: string;
+    expiry?: string;
+  }>;
+  condition?: 'Baik' | 'Cukup' | 'Rusak';
+  conditionNotes?: string;
 }
 
 export interface VehicleContractRecord {

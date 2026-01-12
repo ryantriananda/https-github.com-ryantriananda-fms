@@ -63,19 +63,19 @@ interface CandidateBuilding {
 // --- HELPER COMPONENTS ---
 
 const SectionHeader = ({ num, title, sub, icon: Icon }: any) => (
-  <div className="flex items-start gap-4 mb-8 pb-4 border-b border-gray-100">
-    <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center text-white shrink-0 shadow-lg shadow-black/20">
-        {Icon ? <Icon size={20} /> : <span className="font-black text-[14px]">{num}</span>}
+  <div className="flex items-start gap-4 mb-10 pb-6 border-b-2 border-gradient-to-r from-gray-200 to-transparent relative">
+    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-black to-gray-800 flex items-center justify-center text-white shrink-0 shadow-2xl shadow-black/30 ring-4 ring-gray-100">
+        {Icon ? <Icon size={24} strokeWidth={2.5} /> : <span className="font-black text-[16px]">{num}</span>}
     </div>
-    <div>
-      <h3 className="text-[16px] font-black text-black uppercase tracking-tight">{title}</h3>
-      {sub && <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-1">{sub}</p>}
+    <div className="flex-1">
+      <h3 className="text-[20px] font-black text-black uppercase tracking-tight leading-none mb-2">{title}</h3>
+      {sub && <p className="text-[11px] text-gray-500 font-bold uppercase tracking-[0.2em]">{sub}</p>}
     </div>
   </div>
 );
 
 const Label = ({ children }: { children?: React.ReactNode }) => (
-  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
+  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.25em] mb-3">
     {children}
   </label>
 );
@@ -433,20 +433,20 @@ export const BuildingFormPage: React.FC<Props> = ({
       <div className="relative">
         <input 
             {...props}
-            className={`w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[13px] font-black text-black outline-none transition-all placeholder:text-gray-300 shadow-sm focus:ring-2 focus:ring-black/5 disabled:text-gray-400 ${props.className} ${props.icon ? 'pl-12' : ''}`}
+            className={`w-full bg-white border-2 border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-bold text-black outline-none transition-all placeholder:text-gray-300 hover:border-gray-300 focus:border-black focus:ring-4 focus:ring-black/5 disabled:bg-gray-50 disabled:text-gray-400 disabled:border-gray-100 ${props.className} ${props.icon ? 'pl-12' : ''}`}
             disabled={isView || props.disabled}
         />
-        {props.icon && <props.icon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />}
+        {props.icon && <props.icon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />}
       </div>
     </div>
   );
 
   const CheckboxItem = ({ label, checked, onChange }: any) => (
-      <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${checked ? 'bg-black text-white border-black' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'}`}>
-          <div className={`w-4 h-4 rounded border flex items-center justify-center ${checked ? 'bg-white border-white' : 'bg-gray-100 border-gray-300'}`}>
-              {checked && <div className="w-2 h-2 rounded-full bg-black"></div>}
+      <label className={`flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${checked ? 'bg-black text-white border-black shadow-lg' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:shadow-md'}`}>
+          <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all ${checked ? 'bg-white border-white' : 'bg-gray-50 border-gray-300'}`}>
+              {checked && <Check size={14} className="text-black" strokeWidth={3} />}
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-wide">{label}</span>
+          <span className="text-[11px] font-black uppercase tracking-wide">{label}</span>
           <input type="checkbox" className="hidden" checked={checked} onChange={onChange} disabled={isView} />
       </label>
   );
@@ -456,8 +456,8 @@ export const BuildingFormPage: React.FC<Props> = ({
       return (
         <div 
              onClick={() => handleGeneralPhotoUpload(uploadKey)}
-             className={`w-full h-40 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center relative overflow-hidden transition-all cursor-pointer group
-                ${preview ? 'border-gray-200 bg-white' : 'border-gray-300 bg-gray-50 hover:bg-white hover:border-black'}
+             className={`w-full h-48 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center relative overflow-hidden transition-all cursor-pointer group shadow-sm
+                ${preview ? 'border-gray-200 bg-white hover:shadow-xl' : 'border-gray-300 bg-gradient-to-br from-gray-50 to-white hover:bg-white hover:border-black hover:shadow-xl'}
              `}
              title={`Upload ${label}`}
         >
@@ -467,18 +467,20 @@ export const BuildingFormPage: React.FC<Props> = ({
                      {!isView && (
                          <button 
                             onClick={(e) => handleRemoveGeneralPhoto(e, uploadKey)}
-                            className="absolute inset-0 bg-black/40 opacity-0 group-hover/photo:opacity-100 flex items-center justify-center text-white transition-opacity"
+                            className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover/photo:opacity-100 flex items-center justify-center text-white transition-all duration-300"
                          >
-                             <Trash2 size={16} />
+                             <div className="bg-white/20 backdrop-blur-sm p-3 rounded-full border border-white/30">
+                                <Trash2 size={20} />
+                             </div>
                          </button>
                      )}
                  </div>
              ) : (
-                 <div className="flex flex-col items-center gap-2">
-                     <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Icon size={16} className="text-gray-400 group-hover:text-black" />
+                 <div className="flex flex-col items-center gap-3">
+                     <div className="w-14 h-14 rounded-2xl bg-white shadow-lg flex items-center justify-center group-hover:scale-110 group-hover:shadow-xl transition-all duration-300">
+                        <Icon size={20} className="text-gray-400 group-hover:text-black transition-colors" />
                      </div>
-                     <span className="text-[9px] font-black uppercase text-gray-400 group-hover:text-black tracking-widest">{label}</span>
+                     <span className="text-[10px] font-black uppercase text-gray-400 group-hover:text-black tracking-[0.2em] transition-colors">{label}</span>
                  </div>
              )}
         </div>
@@ -486,10 +488,10 @@ export const BuildingFormPage: React.FC<Props> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#FBFBFB] animate-in fade-in duration-300 relative">
+    <div className="flex flex-col h-full bg-gradient-to-br from-gray-50 via-white to-gray-50 animate-in fade-in duration-300 relative">
       
       {/* Sticky Header with Anchor Navigation */}
-      <div className="sticky top-0 z-30 px-8 py-6 bg-white/90 backdrop-blur-md border-b border-gray-100 flex items-center justify-between shrink-0 transition-all">
+      <div className="sticky top-0 z-30 px-8 py-6 bg-white/95 backdrop-blur-xl border-b border-gray-200/50 flex items-center justify-between shrink-0 transition-all shadow-sm">
         <div className="flex items-center gap-6">
           <button 
             onClick={onBack} 
@@ -595,30 +597,34 @@ export const BuildingFormPage: React.FC<Props> = ({
                             key={type}
                             onClick={() => !isView && setForm({...form, ownership: type as any})}
                             disabled={isView}
-                            className={`h-24 rounded-2xl flex items-center justify-center gap-4 transition-all duration-300 border-2
+                            className={`h-28 rounded-3xl flex items-center justify-center gap-4 transition-all duration-300 border-2 shadow-sm hover:shadow-xl
                                 ${form.ownership === type 
-                                ? 'bg-white border-black ring-4 ring-gray-50' 
-                                : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'}`}
+                                ? 'bg-gradient-to-br from-black to-gray-800 border-black ring-4 ring-black/10 scale-105' 
+                                : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:scale-102'}`}
                         >
-                            <div className={`p-3 rounded-xl ${form.ownership === type ? 'bg-black text-white' : 'bg-gray-50 text-gray-300'}`}>
-                                {type === 'Rent' ? <Key size={20} /> : <Home size={20} />}
+                            <div className={`p-4 rounded-2xl ${form.ownership === type ? 'bg-white/10 text-white' : 'bg-gray-50 text-gray-400'}`}>
+                                {type === 'Rent' ? <Key size={24} strokeWidth={2.5} /> : <Home size={24} strokeWidth={2.5} />}
                             </div>
                             <div className="text-left">
-                                <span className={`text-[14px] font-black uppercase tracking-tight block ${form.ownership === type ? 'text-black' : 'text-gray-400'}`}>
+                                <span className={`text-[16px] font-black uppercase tracking-tight block ${form.ownership === type ? 'text-white' : 'text-gray-400'}`}>
                                     {type === 'Rent' ? 'SEWA (RENT)' : 'MILIK SENDIRI (OWN)'}
+                                </span>
+                                <span className={`text-[9px] font-bold uppercase tracking-wider ${form.ownership === type ? 'text-white/70' : 'text-gray-300'}`}>
+                                    {type === 'Rent' ? 'Kontrak Rental' : 'Kepemilikan Penuh'}
                                 </span>
                             </div>
                         </button>
                     ))}
                 </div>
 
-                <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-6">
+                <div className="bg-white p-10 rounded-[3rem] border-2 border-gray-100 shadow-lg space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="md:col-span-2">
                             <div className="flex justify-between items-center mb-2">
                                 <Label>NAMA PROPERTI / GEDUNG</Label>
                                 {!isView && (
-                                    <button onClick={() => setIsManualInput(!isManualInput)} className="text-[9px] font-bold text-blue-600 hover:underline uppercase tracking-wider">
+                                    <button onClick={() => setIsManualInput(!isManualInput)} className="text-[9px] font-bold text-blue-600 hover:underline uppercase tracking-wider flex items-center gap-1">
+                                        <Edit3 size={10} />
                                         {isManualInput ? "Pilih dari Daftar" : "Input Manual"}
                                     </button>
                                 )}
@@ -626,7 +632,7 @@ export const BuildingFormPage: React.FC<Props> = ({
                             {isManualInput ? (
                                 <input 
                                     type="text"
-                                    className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 text-[16px] font-black text-black outline-none transition-all placeholder:text-gray-300 focus:ring-2 focus:ring-black/5"
+                                    className="w-full bg-white border-2 border-gray-200 rounded-2xl px-6 py-5 text-[16px] font-bold text-black outline-none transition-all placeholder:text-gray-300 hover:border-gray-300 focus:border-black focus:ring-4 focus:ring-black/5"
                                     value={form.name || ''} 
                                     onChange={e => setForm({...form, name: e.target.value})} 
                                     placeholder="Contoh: MODENA Home Center Bintaro"
@@ -636,7 +642,7 @@ export const BuildingFormPage: React.FC<Props> = ({
                                 <div className="relative">
                                     <select 
                                         disabled={isView}
-                                        className="w-full bg-[#F8F9FA] border-none rounded-2xl px-6 py-5 text-[16px] font-black text-black outline-none appearance-none shadow-sm cursor-pointer"
+                                        className="w-full bg-white border-2 border-gray-200 rounded-2xl px-6 py-5 text-[16px] font-bold text-black outline-none appearance-none cursor-pointer hover:border-gray-300 focus:border-black focus:ring-4 focus:ring-black/5 transition-all"
                                         value={existingBuildings.find(b => b.name === form.name) ? form.name : ''}
                                         onChange={handleBuildingSelect}
                                     >
@@ -654,7 +660,7 @@ export const BuildingFormPage: React.FC<Props> = ({
                             <div className="relative">
                                 <select 
                                     disabled={isView}
-                                    className="w-full bg-[#F8F9FA] border-none rounded-2xl px-5 py-4 text-[13px] font-black text-black outline-none appearance-none shadow-sm cursor-pointer"
+                                    className="w-full bg-white border-2 border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-bold text-black outline-none appearance-none cursor-pointer hover:border-gray-300 focus:border-black focus:ring-4 focus:ring-black/5 transition-all"
                                     value={form.type || ''}
                                     onChange={(e) => setForm({...form, type: e.target.value})}
                                 >
@@ -667,21 +673,27 @@ export const BuildingFormPage: React.FC<Props> = ({
 
                         <div>
                             <Label>ASSET NUMBER</Label>
-                            <div className="w-full bg-gray-100 rounded-2xl px-5 py-4 text-[13px] font-black text-gray-500 cursor-not-allowed border border-transparent">
+                            <div className="w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl px-5 py-4 text-[13px] font-black text-gray-400 cursor-not-allowed border-2 border-gray-200 flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"></span>
                                 {form.assetNo || '[AUTO GENERATED]'}
                             </div>
                         </div>
                     </div>
 
                     {/* CONDITIONAL FIELDS BASED ON OWNERSHIP */}
-                    <div className="pt-6 border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className={`p-2 rounded-lg text-white ${form.ownership === 'Rent' ? 'bg-black' : 'bg-blue-600'}`}>
-                                {form.ownership === 'Rent' ? <DollarSign size={16}/> : <FileBadge size={16}/>}
+                    <div className="pt-8 border-t-2 border-gray-100 mt-8 animate-in fade-in slide-in-from-top-2 duration-300">
+                        <div className="flex items-center gap-4 mb-8 bg-gradient-to-r from-gray-50 to-transparent p-5 rounded-2xl">
+                            <div className={`p-3 rounded-2xl text-white shadow-lg ${form.ownership === 'Rent' ? 'bg-gradient-to-br from-black to-gray-800' : 'bg-gradient-to-br from-blue-600 to-blue-700'}`}>
+                                {form.ownership === 'Rent' ? <DollarSign size={20} strokeWidth={2.5}/> : <FileBadge size={20} strokeWidth={2.5}/>}
                             </div>
-                            <h4 className="text-[12px] font-black text-black uppercase tracking-[0.2em]">
-                                {form.ownership === 'Rent' ? 'DETAIL BIAYA SEWA' : 'DETAIL LEGALITAS & NILAI ASET'}
-                            </h4>
+                            <div>
+                                <h4 className="text-[14px] font-black text-black uppercase tracking-tight">
+                                    {form.ownership === 'Rent' ? 'DETAIL BIAYA SEWA' : 'DETAIL LEGALITAS & NILAI ASET'}
+                                </h4>
+                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">
+                                    {form.ownership === 'Rent' ? 'Rental Cost Details' : 'Legal & Asset Value'}
+                                </p>
+                            </div>
                         </div>
 
                         {form.ownership === 'Rent' ? (
@@ -1600,7 +1612,7 @@ export const BuildingFormPage: React.FC<Props> = ({
                                                         <option value="2">2 Lantai</option>
                                                         <option value="3">3 Lantai</option>
                                                         <option value="4">4 Lantai</option>
-                                                        <option value=">4">> 4 Lantai</option>
+                                                        <option value=">4">&gt; 4 Lantai</option>
                                                     </select>
                                                 </div>
                                                 <div className="pt-2">

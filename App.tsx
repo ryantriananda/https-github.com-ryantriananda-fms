@@ -18,6 +18,7 @@ import { MasterItemModal } from './components/MasterItemModal';
 // Vehicle
 import { VehicleTable } from './components/VehicleTable';
 import { VehicleModal } from './components/VehicleModal';
+import { VehicleFormPage } from './pages/VehicleFormPage';
 import { VehicleContractTable } from './components/VehicleContractTable';
 import { VehicleContractModal } from './components/VehicleContractModal';
 import { ServiceTable } from './components/ServiceTable';
@@ -34,6 +35,8 @@ import { SalesModal } from './components/SalesModal';
 // Building
 import { BuildingTable } from './components/BuildingTable';
 import { BuildingFormPage } from './components/BuildingFormPage'; 
+import { BuildingAssetTable } from './components/BuildingAssetTable';
+import { BuildingAssetItemModal } from './components/BuildingAssetItemModal';
 import { UtilityTable } from './components/UtilityTable';
 import { UtilityModal } from './components/UtilityModal';
 import { ReminderTable } from './components/ReminderTable'; // Compliance & General Reminder
@@ -234,6 +237,11 @@ export const App: React.FC = () => {
   const [selectedBuildingData, setSelectedBuildingData] = useState<BuildingRecord | null>(null);
   const [buildingFormMode, setBuildingFormMode] = useState<'create' | 'edit' | 'view'>('create');
 
+  // --- VEHICLE FORM PAGE STATE ---
+  const [vehiclePageMode, setVehiclePageMode] = useState<'list' | 'form'>('list');
+  const [selectedVehicleData, setSelectedVehicleData] = useState<VehicleRecord | null>(null);
+  const [vehicleFormMode, setVehicleFormMode] = useState<'create' | 'edit' | 'view'>('create');
+
   // --- IMPORT MODAL STATE ---
   const [importState, setImportState] = useState<{
       isOpen: boolean;
@@ -270,6 +278,7 @@ export const App: React.FC = () => {
     setActiveItem(item);
     setActiveTab('SEMUA');
     setBuildingPageMode('list'); // Reset building view when navigating
+    setVehiclePageMode('list'); // Reset vehicle view when navigating
   };
 
   // --- BUILDING PAGE HANDLERS ---
@@ -292,6 +301,45 @@ export const App: React.FC = () => {
           setBuildings(prev => prev.map(b => b.id === selectedBuildingData?.id ? { ...b, ...data } as BuildingRecord : b));
       }
       handleCloseBuildingForm();
+  };
+
+  // --- VEHICLE PAGE HANDLERS ---
+  const handleOpenVehicleForm = (mode: 'create' | 'edit' | 'view', data?: VehicleRecord) => {
+      console.log('🚗 Opening Vehicle Form:', mode, data);
+      setVehicleFormMode(mode);
+      setSelectedVehicleData(data || null);
+      setVehiclePageMode('form');
+      console.log('🚗 Vehicle Page Mode set to: form');
+  };
+
+  const handleCloseVehicleForm = () => {
+       setVehiclePageMode('list');
+       setSelectedVehicleData(null);
+  };
+
+  const handleSaveVehicle = (data: Partial<VehicleRecord>) => {
+      if (vehicleFormMode === 'create') {
+          const newVehicle = { ...data, id: Date.now() } as VehicleRecord;
+          setVehicles(prev => [...prev, newVehicle]);
+      } else {
+          setVehicles(prev => prev.map(v => v.id === selectedVehicleData?.id ? { ...v, ...data } as VehicleRecord : v));
+      }
+      handleCloseVehicleForm();
+  };
+
+  const handleSaveBuildingAsset = (data: Partial<BuildingAssetRecord>) => {
+      setBuildingAssets(prev => {
+          const index = prev.findIndex(a => a.id === data.id);
+          if (index >= 0) {
+              const updated = [...prev];
+              updated[index] = { ...updated[index], ...data } as BuildingAssetRecord;
+              return updated;
+          } else {
+              const newAsset = { ...data, id: `BA-${Date.now()}`, assetCode: `AST-${Date.now()}` } as BuildingAssetRecord;
+              return [...prev, newAsset];
+          }
+      });
+      closeModal();
   };
 
   // --- IMPORT LOGIC ---
@@ -958,10 +1006,41 @@ export const App: React.FC = () => {
 
       // --- VEHICLE MODULE ---
       case 'Daftar Kendaraan':
+          console.log('🚗 Daftar Kendaraan - vehiclePageMode:', vehiclePageMode);
+          // --- FULL PAGE SWITCH LOGIC ---
+          if (vehiclePageMode === 'form') {
+              console.log('✅ Rendering VehicleFormPage');
+              return (
+                  <VehicleFormPage 
+                      onBack={handleCloseVehicleForm}
+                      onSave={handleSaveVehicle}
+                      initialData={selectedVehicleData || undefined}
+                      mode={vehicleFormMode}
+                      brandList={MOCK_BRAND_DATA}
+                      colorList={MOCK_COLOR_DATA}
+                      channelList={MOCK_GENERAL_MASTER_DATA.filter(m => m.category === 'Channel')}
+                      branchList={MOCK_LOCATION_DATA}
+                      serviceData={vehicleServices.filter(s => s.vehicleId === selectedVehicleData?.id) || []}
+                  />
+              );
+          }
+
+          console.log('📋 Rendering VehicleTable');
           return (
               <>
-                  <FilterBar tabs={['SEMUA', 'AVAILABLE', 'IN USE', 'SERVICE']} activeTab={activeTab} onTabChange={setActiveTab} onAddClick={() => openModal('VEHICLE', 'create')} customAddLabel="Request Vehicle" onImportClick={handleOpenImport}/>
-                  <VehicleTable data={vehicles} onView={(i) => openModal('VEHICLE', 'view', i)} onEdit={(i) => openModal('VEHICLE', 'edit', i)} />
+                  <FilterBar 
+                      tabs={['SEMUA', 'AVAILABLE', 'IN USE', 'SERVICE']} 
+                      activeTab={activeTab} 
+                      onTabChange={setActiveTab} 
+                      onAddClick={() => handleOpenVehicleForm('create')} 
+                      customAddLabel="Request Vehicle" 
+                      onImportClick={handleOpenImport}
+                  />
+                  <VehicleTable 
+                      data={vehicles} 
+                      onView={(i) => handleOpenVehicleForm('view', i)} 
+                      onEdit={(i) => handleOpenVehicleForm('edit', i)} 
+                  />
               </>
           );
       case 'Kontrak Kendaraan':
@@ -1381,26 +1460,32 @@ export const App: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-[#FBFBFB] font-sans text-black overflow-hidden">
-      <Sidebar 
-        activeItem={activeItem} 
-        onNavigate={handleNavigate} 
-        isCollapsed={isSidebarCollapsed} 
-        onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-        isMobileOpen={isMobileMenuOpen}
-        onCloseMobile={() => setIsMobileMenuOpen(false)}
-        userRole={userRole} // PASS ROLE
-      />
-      
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarCollapsed ? 'lg:ml-[90px]' : 'lg:ml-[280px]'}`}>
-        <TopBar 
-            breadcrumbs={['Home', activeItem]} 
-            onMenuClick={() => setIsMobileMenuOpen(true)}
-            userRole={userRole}
-            onRoleChange={setUserRole} // PASS ROLE HANDLER
+      {/* Hide Sidebar when in full page form mode */}
+      {buildingPageMode !== 'form' && vehiclePageMode !== 'form' && (
+        <Sidebar 
+          activeItem={activeItem} 
+          onNavigate={handleNavigate} 
+          isCollapsed={isSidebarCollapsed} 
+          onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          isMobileOpen={isMobileMenuOpen}
+          onCloseMobile={() => setIsMobileMenuOpen(false)}
+          userRole={userRole} // PASS ROLE
         />
+      )}
+      
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${buildingPageMode === 'form' || vehiclePageMode === 'form' ? '' : isSidebarCollapsed ? 'lg:ml-[90px]' : 'lg:ml-[280px]'}`}>
+        {/* Hide TopBar when in full page form mode */}
+        {buildingPageMode !== 'form' && vehiclePageMode !== 'form' && (
+          <TopBar 
+              breadcrumbs={['Home', activeItem]} 
+              onMenuClick={() => setIsMobileMenuOpen(true)}
+              userRole={userRole}
+              onRoleChange={setUserRole} // PASS ROLE HANDLER
+          />
+        )}
         
         {/* Conditional class for Main Container: Remove padding if in Form Mode */}
-        <main className={`flex-1 flex flex-col ${buildingPageMode === 'form' ? 'p-0 overflow-hidden' : 'p-8 overflow-y-auto custom-scrollbar'}`}>
+        <main className={`flex-1 flex flex-col ${buildingPageMode === 'form' || vehiclePageMode === 'form' ? 'p-0 overflow-hidden' : 'p-8 overflow-y-auto custom-scrollbar'}`}>
           {renderContent()}
         </main>
       </div>
@@ -1475,17 +1560,8 @@ export const App: React.FC = () => {
         mode={modalState.mode as any}
       />
 
-      {/* Vehicle Modals */}
-      <VehicleModal 
-        isOpen={modalState.isOpen && modalState.type === 'VEHICLE'} 
-        onClose={closeModal} 
-        onSave={(d) => { if(modalState.mode==='create') setVehicles(p=>[...p, {...d, id: Date.now()} as VehicleRecord]); closeModal(); }} 
-        initialData={modalState.data} 
-        mode={modalState.mode as any}
-        brandList={MOCK_BRAND_DATA} colorList={MOCK_COLOR_DATA}
-        channelList={MOCK_GENERAL_MASTER_DATA} // Mock or correct list
-        branchList={MOCK_LOCATION_DATA}
-      />
+      {/* Vehicle Modals - VehicleModal sudah diganti dengan VehicleFormPage */}
+      {/* <VehicleModal /> is now replaced by VehicleFormPage in full page mode */}
       <VehicleContractModal isOpen={modalState.isOpen && modalState.type === 'VEHICLE_CONTRACT'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} vehicleList={vehicles} />
       <ServiceModal isOpen={modalState.isOpen && modalState.type === 'SERVICE'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} vehicleList={vehicles} vendorList={vendors} />
       <TaxKirModal isOpen={modalState.isOpen && modalState.type === 'TAX_KIR'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} vehicleList={vehicles} channelList={[]} branchList={MOCK_LOCATION_DATA} />
@@ -1518,6 +1594,7 @@ export const App: React.FC = () => {
       <UtilityModal isOpen={modalState.isOpen && modalState.type === 'UTILITY'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} />
       <ComplianceModal isOpen={modalState.isOpen && modalState.type === 'COMPLIANCE'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} />
       <BuildingMaintenanceModal isOpen={modalState.isOpen && modalState.type === 'BUILDING_MAINTENANCE'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} assetList={MOCK_BUILDING_ASSETS} />
+      <BuildingAssetItemModal isOpen={modalState.isOpen && modalState.type === 'BUILDING_ASSET'} onClose={closeModal} onSave={handleSaveBuildingAsset} initialData={modalState.data} mode={modalState.mode as any} buildingList={buildings} assetTypeList={MOCK_ASSET_TYPE_DATA} vendorList={MOCK_VENDOR_DATA} />
 
       {/* General Asset Modals */}
       <AssetGeneralModal isOpen={modalState.isOpen && modalState.type === 'GENERAL_ASSET'} onClose={closeModal} onSave={() => closeModal()} initialData={modalState.data} mode={modalState.mode as any} assetTypeList={MOCK_ASSET_TYPE_DATA} categoryList={MOCK_ASSET_CATEGORY_DATA} locationList={MOCK_LOCATION_DATA} departmentList={MOCK_DEPARTMENT_DATA} />
