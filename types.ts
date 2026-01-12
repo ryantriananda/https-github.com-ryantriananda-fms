@@ -497,6 +497,7 @@ export interface BuildingMaintenanceRecord {
   evidenceBefore?: string;
   evidenceAfter?: string;
   buildingLocation?: string;
+  proposals?: any[];
 }
 
 export interface UtilityRecord {

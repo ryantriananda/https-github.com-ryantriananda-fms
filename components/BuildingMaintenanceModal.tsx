@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { X, Save, Wrench, Calendar, DollarSign, FileText, Building, User, UploadCloud, Trash2, Clock, CheckCircle2, AlertCircle, PlayCircle, Star, Image as ImageIcon, MapPin } from 'lucide-react';
-import { BuildingMaintenanceRecord, BuildingAssetRecord, BuildingRecord } from '../types';
+import { X, Save, Wrench, Calendar, DollarSign, FileText, Building, User, UploadCloud, Trash2, Clock, CheckCircle2, AlertCircle, PlayCircle, Star, Image as ImageIcon, MapPin, GitBranch, Users, Plus, Briefcase, Edit3 } from 'lucide-react';
+import { BuildingMaintenanceRecord, BuildingAssetRecord, BuildingRecord, VendorRecord } from '../types';
 
 interface Props {
   isOpen: boolean;
@@ -10,6 +10,7 @@ interface Props {
   initialData?: BuildingMaintenanceRecord | null;
   assetList: BuildingAssetRecord[];
   buildingList?: BuildingRecord[];
+  vendorList?: VendorRecord[];
   mode?: 'create' | 'edit' | 'view';
 }
 
@@ -20,20 +21,36 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
     initialData, 
     assetList,
     buildingList = [],
+    vendorList = [],
     mode = 'create'
 }) => {
+  const [activeTab, setActiveTab] = useState('ASSET SELECTION');
   const [form, setForm] = useState<Partial<BuildingMaintenanceRecord>>({
     requestDate: new Date().toISOString().split('T')[0],
     maintenanceType: 'Preventive',
     status: 'Scheduled',
     approvalStatus: 'Pending Approval',
     cost: '0',
-    rating: 0
+    rating: 0,
+    proposals: []
   });
 
   const [selectedBuilding, setSelectedBuilding] = useState<string>('');
   const beforeInputRef = useRef<HTMLInputElement>(null);
   const afterInputRef = useRef<HTMLInputElement>(null);
+
+  // Proposal States
+  const [isEditingProposal, setIsEditingProposal] = useState(false);
+  const [currentProposal, setCurrentProposal] = useState<Partial<any>>({
+      vendorName: '',
+      proposalName: '',
+      estimatedCost: '',
+      status: 'Pending',
+      submissionDate: new Date().toISOString().split('T')[0]
+  });
+
+  // Refs for Proposal Uploads
+  const propDocRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -56,7 +73,8 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
             rating: 0,
             assetId: '',
             assetName: '',
-            buildingLocation: ''
+            buildingLocation: '',
+            proposals: []
         });
         setSelectedBuilding('');
       }
@@ -143,6 +161,77 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
       }
   };
 
+  // Proposal CRUD Functions
+  const handleAddProposal = () => {
+      if (!currentProposal.vendorName || !currentProposal.proposalName) return;
+      
+      const newProposal = {
+          ...currentProposal,
+          id: Date.now().toString(),
+          status: currentProposal.status || 'Pending'
+      };
+      
+      setForm(prev => ({
+          ...prev,
+          proposals: [...(prev.proposals || []), newProposal]
+      }));
+      
+      setCurrentProposal({
+          vendorName: '',
+          proposalName: '',
+          estimatedCost: '',
+          status: 'Pending',
+          submissionDate: new Date().toISOString().split('T')[0]
+      });
+      setIsEditingProposal(false);
+  };
+
+  const handleEditProposal = (proposal: any) => {
+      setCurrentProposal(proposal);
+      setIsEditingProposal(true);
+  };
+
+  const handleUpdateProposal = () => {
+      if (!currentProposal.id) return;
+      
+      setForm(prev => ({
+          ...prev,
+          proposals: (prev.proposals || []).map(p => 
+              p.id === currentProposal.id ? { ...currentProposal } : p
+          )
+      }));
+      
+      setCurrentProposal({
+          vendorName: '',
+          proposalName: '',
+          estimatedCost: '',
+          status: 'Pending',
+          submissionDate: new Date().toISOString().split('T')[0]
+      });
+      setIsEditingProposal(false);
+  };
+
+  const handleDeleteProposal = (id: string) => {
+      setForm(prev => ({
+          ...prev,
+          proposals: (prev.proposals || []).filter(p => p.id !== id)
+      }));
+  };
+
+  const handleProposalDocUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+              setCurrentProposal(prev => ({
+                  ...prev,
+                  proposalDoc: ev.target?.result as string
+              }));
+          };
+          reader.readAsDataURL(file);
+      }
+  };
+
   const getLogs = () => {
       const logs = [
           { id: 1, date: '24/12/2025 09:00', user: 'System', role: 'System', action: 'Request Created', status: 'Draft', icon: FileText, color: 'text-gray-400', bg: 'bg-gray-100' },
@@ -221,15 +310,39 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
             
             {/* Left Column: Form */}
             <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-                    {/* Asset Info Section */}
+                
+                {/* Tab Navigation */}
+                <div className="flex gap-1 mb-8 bg-gray-50 p-2 rounded-2xl border border-gray-100">
+                    {[
+                        { id: 'ASSET SELECTION', label: 'Asset Selection', icon: Building },
+                        { id: 'SERVICE DETAILS', label: 'Service Details', icon: FileText },
+                        { id: 'PROPOSALS', label: 'Proposals', icon: Briefcase },
+                        { id: 'EVIDENCE', label: 'Evidence', icon: ImageIcon }
+                    ].map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
+                                activeTab === tab.id 
+                                ? 'bg-black text-white shadow-lg' 
+                                : 'text-gray-400 hover:text-black hover:bg-white'
+                            }`}
+                        >
+                            <tab.icon size={14} />
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Tab Content */}
+                {activeTab === 'ASSET SELECTION' && (
                     <div className="space-y-8">
                         <div className="flex items-center gap-3 mb-2">
                             <Building size={16} className="text-black"/>
                             <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Informasi Aset</h3>
                         </div>
                         
-                        {/* New Building Selection */}
+                        {/* Building Selection */}
                         <div>
                             <Label required>Lokasi Gedung / Cabang</Label>
                             <div className="relative">
@@ -297,8 +410,9 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
                             </div>
                         </div>
                     </div>
+                )}
 
-                    {/* Service Details Section */}
+                {activeTab === 'SERVICE DETAILS' && (
                     <div className="space-y-8">
                         <div className="flex items-center gap-3 mb-2">
                             <FileText size={16} className="text-black"/>
@@ -372,15 +486,229 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
                             </select>
                         </div>
                     </div>
+                )}
 
-                    {/* Feature 2: Evidence Based Maintenance */}
-                    <div className="md:col-span-2 space-y-8 pt-8 border-t border-gray-100">
+                {activeTab === 'PROPOSALS' && (
+                    <div className="space-y-8">
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-3">
+                                <Briefcase size={16} className="text-black"/>
+                                <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Vendor Proposals</h3>
+                            </div>
+                            {!isView && (
+                                <button
+                                    onClick={() => setIsEditingProposal(true)}
+                                    className="flex items-center gap-2 px-4 py-2 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-gray-900 transition-all"
+                                >
+                                    <Plus size={14} />
+                                    Add Proposal
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Proposal Form */}
+                        {isEditingProposal && (
+                            <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <h4 className="text-[12px] font-black text-black uppercase tracking-widest">
+                                        {currentProposal.id ? 'Edit Proposal' : 'New Proposal'}
+                                    </h4>
+                                    <button
+                                        onClick={() => {
+                                            setIsEditingProposal(false);
+                                            setCurrentProposal({
+                                                vendorName: '',
+                                                proposalName: '',
+                                                estimatedCost: '',
+                                                status: 'Pending',
+                                                submissionDate: new Date().toISOString().split('T')[0]
+                                            });
+                                        }}
+                                        className="text-gray-400 hover:text-black"
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div>
+                                        <Label>Vendor Name</Label>
+                                        <select
+                                            disabled={isView}
+                                            className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm cursor-pointer appearance-none"
+                                            value={currentProposal.vendorName || ''}
+                                            onChange={(e) => setCurrentProposal({...currentProposal, vendorName: e.target.value})}
+                                        >
+                                            <option value="">-- Select Vendor --</option>
+                                            {vendorList.map(vendor => (
+                                                <option key={vendor.id} value={vendor.name}>{vendor.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <InputField 
+                                        label="Proposal Name" 
+                                        value={currentProposal.proposalName} 
+                                        field="proposalName" 
+                                        placeholder="Proposal title"
+                                        className="col-span-1"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-6">
+                                    <InputField 
+                                        label="Estimated Cost (IDR)" 
+                                        value={currentProposal.estimatedCost} 
+                                        field="estimatedCost" 
+                                        placeholder="0"
+                                    />
+                                    <InputField 
+                                        label="Submission Date" 
+                                        value={currentProposal.submissionDate} 
+                                        field="submissionDate" 
+                                        type="date"
+                                    />
+                                </div>
+
+                                <div>
+                                    <Label>Status</Label>
+                                    <select
+                                        disabled={isView}
+                                        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-[13px] font-black text-black focus:border-black outline-none disabled:bg-gray-50 shadow-sm cursor-pointer appearance-none"
+                                        value={currentProposal.status || 'Pending'}
+                                        onChange={(e) => setCurrentProposal({...currentProposal, status: e.target.value})}
+                                    >
+                                        <option value="Pending">Pending</option>
+                                        <option value="Submitted">Submitted</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Rejected">Rejected</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <Label>Proposal Document</Label>
+                                    <div 
+                                        onClick={() => !isView && propDocRef.current?.click()}
+                                        className="h-32 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center bg-gray-50 hover:border-black hover:bg-gray-100 transition-all cursor-pointer"
+                                    >
+                                        {currentProposal.proposalDoc ? (
+                                            <div className="flex items-center gap-2 text-green-600">
+                                                <CheckCircle2 size={20} />
+                                                <span className="text-[12px] font-black">Document Uploaded</span>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center text-gray-400">
+                                                <UploadCloud size={24} className="mb-2" />
+                                                <span className="text-[10px] font-black uppercase tracking-widest">Upload Proposal Doc</span>
+                                            </div>
+                                        )}
+                                        <input type="file" ref={propDocRef} className="hidden" accept=".pdf,.doc,.docx" onChange={handleProposalDocUpload} />
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-3">
+                                    <button
+                                        onClick={() => {
+                                            setIsEditingProposal(false);
+                                            setCurrentProposal({
+                                                vendorName: '',
+                                                proposalName: '',
+                                                estimatedCost: '',
+                                                status: 'Pending',
+                                                submissionDate: new Date().toISOString().split('T')[0]
+                                            });
+                                        }}
+                                        className="px-6 py-2 text-[10px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={currentProposal.id ? handleUpdateProposal : handleAddProposal}
+                                        className="px-6 py-2 text-[10px] font-black uppercase tracking-widest text-white bg-black rounded-xl hover:bg-gray-900"
+                                    >
+                                        {currentProposal.id ? 'Update' : 'Add'} Proposal
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Proposals List */}
+                        <div className="space-y-4">
+                            {(form.proposals || []).length === 0 ? (
+                                <div className="text-center py-12 text-gray-400">
+                                    <Briefcase size={48} className="mx-auto mb-4 opacity-50" />
+                                    <p className="text-[12px] font-black uppercase tracking-widest">No Proposals Yet</p>
+                                    <p className="text-[10px] text-gray-500 mt-2">Add vendor proposals for this maintenance request</p>
+                                </div>
+                            ) : (
+                                (form.proposals || []).map((proposal: any) => (
+                                    <div key={proposal.id} className="bg-white border border-gray-200 rounded-2xl p-6">
+                                        <div className="flex items-start justify-between mb-4">
+                                            <div>
+                                                <h4 className="text-[14px] font-black text-black">{proposal.proposalName}</h4>
+                                                <p className="text-[12px] text-gray-600 font-medium">{proposal.vendorName}</p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className={`px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg ${
+                                                    proposal.status === 'Approved' ? 'bg-green-100 text-green-700' :
+                                                    proposal.status === 'Rejected' ? 'bg-red-100 text-red-700' :
+                                                    proposal.status === 'Submitted' ? 'bg-blue-100 text-blue-700' :
+                                                    'bg-gray-100 text-gray-700'
+                                                }`}>
+                                                    {proposal.status}
+                                                </span>
+                                                {!isView && (
+                                                    <div className="flex gap-1">
+                                                        <button
+                                                            onClick={() => handleEditProposal(proposal)}
+                                                            className="p-2 text-gray-400 hover:text-black hover:bg-gray-50 rounded-lg"
+                                                        >
+                                                            <Edit3 size={14} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeleteProposal(proposal.id)}
+                                                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg"
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="grid grid-cols-2 gap-4 text-[11px]">
+                                            <div>
+                                                <span className="text-gray-500 font-bold">Estimated Cost:</span>
+                                                <span className="ml-2 font-black text-black">Rp {proposal.estimatedCost?.toLocaleString()}</span>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-500 font-bold">Submitted:</span>
+                                                <span className="ml-2 font-black text-black">{proposal.submissionDate}</span>
+                                            </div>
+                                        </div>
+                                        
+                                        {proposal.proposalDoc && (
+                                            <div className="mt-4 pt-4 border-t border-gray-100">
+                                                <button className="flex items-center gap-2 text-[11px] font-black text-blue-600 hover:text-blue-800">
+                                                    <FileText size={14} />
+                                                    View Proposal Document
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'EVIDENCE' && (
+                    <div className="space-y-8">
                         <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-3">
                                 <ImageIcon size={16} className="text-black"/>
                                 <h3 className="text-[11px] font-black text-black uppercase tracking-widest">Evidence Based Maintenance</h3>
                             </div>
-                            {/* Feature 3: Vendor Rating (Only show if completed) */}
+                            {/* Vendor Rating (Only show if completed) */}
                             {form.status === 'Completed' && (
                                 <div className="flex items-center gap-3 bg-yellow-50 px-4 py-2 rounded-xl border border-yellow-100">
                                     <span className="text-[10px] font-black text-yellow-700 uppercase tracking-widest">Vendor Rating</span>
@@ -447,7 +775,7 @@ export const BuildingMaintenanceModal: React.FC<Props> = ({
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
             </div>
 
             {/* Right Column: Log History Sidebar */}
